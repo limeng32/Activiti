@@ -693,6 +693,15 @@
           </versions>
         </configuration>
       </plugin>
+      <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -930,7 +939,7 @@
         <module>modules/activiti-webapp-explorer2</module>
         <module>modules/activiti-cxf</module>
         <module>modules/activiti-osgi</module>
-        <module>modules/activiti-camel</module>
+        <!-- <module>modules/activiti-camel</module> -->
         <module>modules/activiti-mule</module>
         <module>modules/activiti-cdi</module>
         <module>modules/activiti-ldap</module>
@@ -940,7 +949,7 @@
       </modules>
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<executions>
@@ -954,7 +963,7 @@
             </configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
     </profile>
