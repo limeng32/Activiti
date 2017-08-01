@@ -280,7 +280,7 @@ public class HistoricProcessInstanceTest extends PluggableActivitiTestCase {
   }
   
   @Deployment(resources = {"org/activiti/engine/test/history/oneTaskProcess.bpmn20.xml"})
-  public void testHistoricProcessInstanceSorting() {
+  public void historicProcessInstanceSorting() {
     ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
     assertEquals(1, historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceId().asc().list().size());

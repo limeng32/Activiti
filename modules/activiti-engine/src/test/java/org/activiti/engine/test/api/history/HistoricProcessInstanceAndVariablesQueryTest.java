@@ -440,7 +440,7 @@ public class HistoricProcessInstanceAndVariablesQueryTest extends PluggableActiv
     }
   }
   
-  public void testOrQueryByprocessDefinition() {
+  public void orQueryByprocessDefinition() {
     if (processEngineConfiguration.getHistoryLevel().isAtLeast(HistoryLevel.ACTIVITY)) {
         // DeploymentId
         String deploymentId = repositoryService.createDeploymentQuery().list().get(0).getId();
