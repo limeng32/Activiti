@@ -45,9 +45,8 @@ public class ActivitiEngineConfiguration {
     SimpleDriverDataSource ds = new SimpleDriverDataSource();
     
     try {
-    	System.out.println(":::::::::::::::::::::");
       @SuppressWarnings("unchecked")
-      Class<? extends Driver> driverClass = (Class<? extends Driver>) Class.forName(environment.getProperty("jdbc.driver", "com.mysql.jdbc.Driver"));
+      Class<? extends Driver> driverClass = (Class<? extends Driver>) Class.forName(environment.getProperty("jdbc.driver", "org.h2.Driver"));
       ds.setDriverClass(driverClass);
       
     } catch (Exception e) {
@@ -55,9 +54,9 @@ public class ActivitiEngineConfiguration {
     }
     
     // Connection settings
-    ds.setUrl(environment.getProperty("jdbc.url", "jdbc:mysql://10.0.209.148:3306/activiti2?useUnicode=true"));
+    ds.setUrl(environment.getProperty("jdbc.url", "jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000"));
     ds.setUsername(environment.getProperty("jdbc.username", "sa"));
-    ds.setPassword(environment.getProperty("jdbc.password", "!@#rjyjy"));
+    ds.setPassword(environment.getProperty("jdbc.password", ""));
     
     return ds;
   }
