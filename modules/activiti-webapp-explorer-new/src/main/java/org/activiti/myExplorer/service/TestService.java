@@ -1,4 +1,4 @@
-package org.activiti.service;
+package org.activiti.myExplorer.service;
 
 import org.springframework.stereotype.Service;
 
