@@ -207,7 +207,7 @@
     "PROPERTY.TASKLISTENERS.FIELDS.EMPTY" : "No Field selected",
     
     "PROPERTY.EVENTLISTENERS.DISPLAY" : "{{length}} event listeners",
-    "PROPERTY.EVENTLISTENERS.EMPTY" : "No event listeners configured",
+    "PROPERTY.EVENTLISTENERS.EMPTY" : "没有监听器被指定",
     "PROPERTY.EVENTLISTENERS.EVENTS": "Events",
     "PROPERTY.EVENTLISTENERS.RETHROW": "Rethrow event?",
     "PROPERTY.EVENTLISTENERS.CLASS" : "Class",
