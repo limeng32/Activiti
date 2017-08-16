@@ -140,9 +140,9 @@ public class DefaultProcessDiagramCanvas {
   protected FontMetrics fontMetrics;
   protected boolean closed;
   protected ClassLoader customClassLoader;
-  protected String activityFontName = "Arial";
-  protected String labelFontName = "Arial";
-  protected String annotationFontName = "Arial";
+  protected String activityFontName = "WenQuanYi Micro Hei";
+  protected String labelFontName = "WenQuanYi Micro Hei";
+  protected String annotationFontName = "WenQuanYi Micro Hei";
   
   /**
    * Creates an empty canvas with given width and height.
@@ -155,7 +155,6 @@ public class DefaultProcessDiagramCanvas {
    */
   public DefaultProcessDiagramCanvas(int width, int height, int minX, int minY, String imageType, 
       String activityFontName, String labelFontName, String annotationFontName, ClassLoader customClassLoader) {
-    
     this.canvasWidth = width;
     this.canvasHeight = height;
     this.minX = minX;
@@ -170,7 +169,6 @@ public class DefaultProcessDiagramCanvas {
         this.annotationFontName = annotationFontName;
     }
     this.customClassLoader = customClassLoader;
-    
     initialize(imageType);
   }
 
@@ -1089,7 +1087,6 @@ public class DefaultProcessDiagramCanvas {
     
 	  Font originalFont = g.getFont();
 	  Stroke originalStroke = g.getStroke();
-	  
 	  g.setFont(ANNOTATION_FONT);
 	  
 	  Path2D path = new Path2D.Double();

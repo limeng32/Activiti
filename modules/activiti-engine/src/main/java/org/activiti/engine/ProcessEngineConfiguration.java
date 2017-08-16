@@ -212,9 +212,9 @@ public abstract class ProcessEngineConfiguration implements EngineServices {
   
   protected String defaultCamelContext = "camelContext";
   
-  protected String activityFontName = "Arial";
-  protected String labelFontName = "Arial";
-  protected String annotationFontName = "Arial";
+  protected String activityFontName = "WenQuanYi Micro Hei";
+  protected String labelFontName = "WenQuanYi Micro Hei";
+  protected String annotationFontName = "WenQuanYi Micro Hei";
   
   protected ClassLoader classLoader;
   /**

@@ -634,6 +634,8 @@
     <module>modules/activiti-image-generator</module>
     <module>modules/activiti-bpmn-converter</module>
     <module>modules/activiti-engine</module>
+    <module>modules/activiti-explorer</module>
+    <module>modules/activiti-webapp-explorer-new</module>
   </modules>
 
   <build>
@@ -946,6 +948,7 @@
         <module>modules/activiti-crystalball</module>
         <module>modules/activiti-jmx</module>
         <module>tooling/archetypes/activiti-archetype-unittest</module>
+        <module>modules/activiti-webapp-explorer-new</module>
       </modules>
 	<build>
 		<plugins>

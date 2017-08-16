@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>Activiti - Webapp - Explorer V2</name>
-	<artifactId>activiti-webapp-explorer2</artifactId>
+	<artifactId>activiti-webapp-explorer-new</artifactId>
 	<packaging>war</packaging>
 
 	<parent>
@@ -33,6 +33,7 @@
 	</repositories>
 
 	<build>
+		<finalName>activiti-explorer</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
