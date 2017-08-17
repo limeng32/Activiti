@@ -1,6 +1,5 @@
 package org.activiti.explorer.conf;
 
-import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ManagementService;
 import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -40,38 +39,44 @@ public class ActivitiEngineConfiguration {
   @Autowired
   protected Environment environment;
   
-  @Bean
-  public DataSource dataSource() { 
-    SimpleDriverDataSource ds = new SimpleDriverDataSource();
-    
-    try {
-      @SuppressWarnings("unchecked")
-      Class<? extends Driver> driverClass = (Class<? extends Driver>) Class.forName(environment.getProperty("jdbc.driver", "org.h2.Driver"));
-      ds.setDriverClass(driverClass);
-      
-    } catch (Exception e) {
-      log.error("Error loading driver class", e);
-    }
-    
-    // Connection settings
-    ds.setUrl(environment.getProperty("jdbc.url", "jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000"));
-    ds.setUsername(environment.getProperty("jdbc.username", "sa"));
-    ds.setPassword(environment.getProperty("jdbc.password", ""));
-    
-    return ds;
-  }
+  @Autowired
+  protected DataSource dataSource;
+  
+  @Autowired
+  protected ProcessEngineConfigurationImpl processEngineConfiguration;
+  
+//  @Bean
+//  public DataSource dataSource() { 
+//    SimpleDriverDataSource ds = new SimpleDriverDataSource();
+//    
+//    try {
+//      @SuppressWarnings("unchecked")
+//      Class<? extends Driver> driverClass = (Class<? extends Driver>) Class.forName(environment.getProperty("jdbc.driver", "org.h2.Driver"));
+//      ds.setDriverClass(driverClass);
+//      
+//    } catch (Exception e) {
+//      log.error("Error loading driver class", e);
+//    }
+//    
+//    // Connection settings
+//    ds.setUrl(environment.getProperty("jdbc.url", "jdbc:h2:mem:activiti;DB_CLOSE_DELAY=1000"));
+//    ds.setUsername(environment.getProperty("jdbc.username", "sa"));
+//    ds.setPassword(environment.getProperty("jdbc.password", ""));
+//    
+//    return ds;
+//  }
 
   @Bean(name = "transactionManager")
   public PlatformTransactionManager annotationDrivenTransactionManager() {
     DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-    transactionManager.setDataSource(dataSource());
+    transactionManager.setDataSource(dataSource);
     return transactionManager;
   }
   
   @Bean(name="processEngineFactoryBean")
   public ProcessEngineFactoryBean processEngineFactoryBean() {
     ProcessEngineFactoryBean factoryBean = new ProcessEngineFactoryBean();
-    factoryBean.setProcessEngineConfiguration(processEngineConfiguration());
+    factoryBean.setProcessEngineConfiguration(processEngineConfiguration);
     return factoryBean;
   }
   
@@ -86,10 +91,10 @@ public class ActivitiEngineConfiguration {
     }
   }
   
-  @Bean(name="processEngineConfiguration")
-  public ProcessEngineConfigurationImpl processEngineConfiguration() {
+//  @Bean(name="processEngineConfiguration")
+  public ProcessEngineConfigurationImpl processEngineConfiguration1() {
   	SpringProcessEngineConfiguration processEngineConfiguration = new SpringProcessEngineConfiguration();
-  	processEngineConfiguration.setDataSource(dataSource());
+  	processEngineConfiguration.setDataSource(dataSource);
   	processEngineConfiguration.setDatabaseSchemaUpdate(environment.getProperty("engine.schema.update", "true"));
   	processEngineConfiguration.setTransactionManager(annotationDrivenTransactionManager());
   	processEngineConfiguration.setJobExecutorActivate(Boolean.valueOf(
