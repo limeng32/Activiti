@@ -45,6 +45,9 @@ public class ActivitiEngineConfiguration {
   @Autowired
   protected ProcessEngineConfigurationImpl processEngineConfiguration;
   
+  @Autowired
+  protected ProcessEngine processEngine;
+  
 //  @Bean
 //  public DataSource dataSource() { 
 //    SimpleDriverDataSource ds = new SimpleDriverDataSource();
@@ -80,8 +83,8 @@ public class ActivitiEngineConfiguration {
     return factoryBean;
   }
   
-  @Bean(name="processEngine")
-  public ProcessEngine processEngine() {
+//  @Bean(name="processEngine")
+  public ProcessEngine processEngine1() {
     // Safe to call the getObject() on the @Bean annotated processEngineFactoryBean(), will be
     // the fully initialized object instanced from the factory and will NOT be created more than once
     try {
@@ -136,36 +139,36 @@ public class ActivitiEngineConfiguration {
   
   @Bean
   public RepositoryService repositoryService() {
-  	return processEngine().getRepositoryService();
+  	return processEngine.getRepositoryService();
   }
   
   @Bean
   public RuntimeService runtimeService() {
-  	return processEngine().getRuntimeService();
+  	return processEngine.getRuntimeService();
   }
   
   @Bean
   public TaskService taskService() {
-  	return processEngine().getTaskService();
+  	return processEngine.getTaskService();
   }
   
   @Bean
   public HistoryService historyService() {
-  	return processEngine().getHistoryService();
+  	return processEngine.getHistoryService();
   }
   
   @Bean
   public FormService formService() {
-  	return processEngine().getFormService();
+  	return processEngine.getFormService();
   }
   
   @Bean
   public IdentityService identityService() {
-  	return processEngine().getIdentityService();
+  	return processEngine.getIdentityService();
   }
   
   @Bean
   public ManagementService managementService() {
-  	return processEngine().getManagementService();
+  	return processEngine.getManagementService();
   }
 }

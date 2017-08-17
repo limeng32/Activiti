@@ -57,4 +57,8 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
+	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean"
+		destroy-method="destroy">
+		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
+	</bean>
 </beans>
