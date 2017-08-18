@@ -20,7 +20,7 @@
 		<property name="driverClassName" value="com.mysql.jdbc.Driver">
 		</property>
 		<property name="url"
-			value="jdbc:mysql://10.0.209.148:3306/activiti2?characterEncoding=UTF8"></property>
+			value="jdbc:mysql://10.0.209.148:3306/activiti2?useUnicode=true&amp;characterEncoding=utf-8"></property>
 		<property name="username" value="sa"></property>
 		<property name="password" value="!@#rjyjy"></property>
 	</bean>
