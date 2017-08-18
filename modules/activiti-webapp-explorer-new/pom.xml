@@ -125,6 +125,34 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.bpmn</include>
+					<include>**/*.json</include>
+					<include>**/*.properties</include>
+					<include>**/*.sql</include>
+					<include>**/*.vm</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.bpmn</include>
+					<include>**/*.json</include>
+					<include>**/*.properties</include>
+					<include>**/*.sql</include>
+					<include>**/*.vm</include>
+					<include>**/*.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
 	</build>
 
 	<profiles>

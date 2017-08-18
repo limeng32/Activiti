@@ -50,6 +50,12 @@
 				<bean class="org.activiti.explorer.form.MonthFormType" />
 			</list>
 		</property>
+		<property name="mailServerHost" value="${mailServerHost}" />
+		<property name="mailServerPort" value="25" />
+		<property name="mailServerDefaultFrom" value="${mailServerDefaultFrom}" />
+		<property name="mailServerUsername" value="${mailServerUsername}" />
+		<property name="mailServerPassword" value="${mailServerPassword}" />
+		<property name="xmlEncoding" value="utf-8" />
 	</bean>
 
 	<bean id="transactionManager"
