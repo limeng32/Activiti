@@ -1,0 +1,21 @@
+package myPackage
+rule "Test Rule"
+	when
+		Person(name == "limeng32");
+	then
+		System.out.println("Welcome");
+end
+
+rule "Test Rule2"
+	when
+		Person(name == "limeng321");
+	then
+		System.out.println("Welcome!!!");
+end
+
+rule "Test Rule3"
+	when
+		Person(name == "limeng3210");
+	then
+		System.out.println("Welcome!!!!!!");
+end
