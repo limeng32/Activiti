@@ -10,7 +10,7 @@
 					"id": "process_id",
 					"type": "String",
 					"title": "流程编辑器",
-					"value": "process",
+					"value": "",
 					"description": "Unique identifier of the process definition.",
 					"popular": true
 				}
@@ -35,7 +35,7 @@
 				{
 					"id": "name",
 					"type": "String",
-					"title": "名称",
+					"title": "元素名称",
 					"value": "",
 					"description": "The descriptive name of the BPMN element.",
 					"popular": true,
@@ -75,7 +75,7 @@
 				{
 					"id": "process_version",
 					"type": "String",
-					"title": "过程的版本字符串（仅文档）",
+					"title": "文档版本标识符（仅文档）",
 					"value": "",
 					"description": "Version identifier for documentation purpose.",
 					"popular": true
@@ -89,7 +89,7 @@
 					"id": "process_namespace",
 					"type": "String",
 					"title": "目标命名空间",
-					"value": "http://www.activiti.org/processdef",
+					"value": "",
 					"description": "Target namespace for the process definition.",
 					"popular": true
 				}
@@ -114,7 +114,7 @@
 				{
 					"id": "exclusivedefinition",
 					"type": "Boolean",
-					"title": "排外的",
+					"title": "专用活动",
 					"value": "false",
 					"description": "Define the activity as exclusive.",
 					"popular": true
@@ -244,7 +244,7 @@
 				{
 					"id": "servicetaskclass",
 					"type": "String",
-					"title": "等级",
+					"title": "服务任务逻辑类",
 					"value": "",
 					"description": "Class that implements the service task logic.",
 					"popular": true
@@ -257,7 +257,7 @@
 				{
 					"id": "servicetaskexpression",
 					"type": "String",
-					"title": "表达",
+					"title": "服务任务逻辑表达式",
 					"value": "",
 					"description": "Service task logic defined with an expression.",
 					"popular": true
@@ -270,7 +270,7 @@
 				{
 					"id": "servicetaskdelegateexpression",
 					"type": "String",
-					"title": "代表表达",
+					"title": "服务任务逻辑委托表达式",
 					"value": "",
 					"description": "Service task logic defined with a delegate expression.",
 					"popular": true
@@ -387,7 +387,7 @@
 				{
 					"id": "mailtaskto",
 					"type": "Text",
-					"title": "发送到",
+					"title": "邮件接收方",
 					"value": "",
 					"description": "The recipients if the e-mail. Multiple recipients are defined in a comma-separated list.",
 					"popular": true
@@ -400,7 +400,7 @@
 				{
 					"id": "mailtaskfrom",
 					"type": "Text",
-					"title": "表单",
+					"title": "邮件发送方",
 					"value": "",
 					"description": "The sender e-mail address. If not provided, the default configured from address is used.",
 					"popular": true
@@ -413,7 +413,7 @@
 				{
 					"id": "mailtasksubject",
 					"type": "Text",
-					"title": "主题",
+					"title": "邮件主题",
 					"value": "",
 					"description": "The subject of the e-mail.",
 					"popular": true
@@ -426,7 +426,7 @@
 				{
 					"id": "mailtaskcc",
 					"type": "Text",
-					"title": "复写的副本",
+					"title": "抄送",
 					"value": "",
 					"description": "The cc's of the e-mail. Multiple recipients are defined in a comma-separated list",
 					"popular": true
@@ -439,7 +439,7 @@
 				{
 					"id": "mailtaskbcc",
 					"type": "Text",
-					"title": "隐蔽副本",
+					"title": "隐蔽抄送",
 					"value": "",
 					"description": "The bcc's of the e-mail. Multiple recipients are defined in a comma-separated list",
 					"popular": true
@@ -452,7 +452,7 @@
 				{
 					"id": "mailtasktext",
 					"type": "Text",
-					"title": "文本",
+					"title": "邮件文本内容",
 					"value": "",
 					"description": "The content of the e-mail, in case one needs to send plain none-rich e-mails. Can be used in combination with html, for e-mail clients that don't support rich content. The client will then fall back to this text-only alternative.",
 					"popular": true
@@ -465,7 +465,7 @@
 				{
 					"id": "mailtaskhtml",
 					"type": "Text",
-					"title": "Html",
+					"title": "邮件Html内容",
 					"value": "",
 					"description": "A piece of HTML that is the content of the e-mail.",
 					"popular": true
@@ -478,7 +478,7 @@
 				{
 					"id": "mailtaskcharset",
 					"type": "String",
-					"title": "字符集",
+					"title": "字符编码",
 					"value": "",
 					"description": "Allows to change the charset of the email, which is necessary for many non-English languages. ",
 					"popular": true
@@ -491,7 +491,7 @@
 				{
 					"id": "callactivitycalledelement",
 					"type": "String",
-					"title": "被称为元",
+					"title": "流程参考元素",
 					"value": "",
 					"description": "Process reference.",
 					"popular": true
@@ -530,7 +530,7 @@
 				{
 					"id": "cameltaskcamelcontext",
 					"type": "String",
-					"title": "骆驼语境",
+					"title": "camel 上下文",
 					"value": "",
 					"description": "An optional camel context definition, if left empty the default is used.",
 					"popular": true
@@ -569,7 +569,7 @@
 				{
 					"id": "muletaskpayloadexpression",
 					"type": "String",
-					"title": "有效的表达",
+					"title": "Mule 消息定义",
 					"value": "",
 					"description": "A required definition for the payload of the message sent to Mule.",
 					"popular": true
@@ -595,7 +595,7 @@
 				{
 					"id": "conditionsequenceflow",
 					"type": "Complex",
-					"title": "流条件",
+					"title": "序列流条件",
 					"value": "",
 					"description": "The condition of the sequence flow",
 					"popular": true
@@ -608,7 +608,7 @@
 				{
 					"id": "defaultflow",
 					"type": "Boolean",
-					"title": "默认流程",
+					"title": "默认序列流",
 					"value": "false",
 					"description": "Define the sequence flow as default",
 					"popular": true,
@@ -622,7 +622,7 @@
 				{
 					"id": "conditionalflow",
 					"type": "Boolean",
-					"title": "条件流",
+					"title": "条件序列流",
 					"value": "false",
 					"description": "Define the sequence flow with a condition",
 					"popular": true
@@ -687,7 +687,7 @@
 				{
 					"id": "messageref",
 					"type": "String",
-					"title": "信息参考",
+					"title": "消息名称",
 					"value": "",
 					"description": "Define the message name.",
 					"popular": true
@@ -700,7 +700,7 @@
 				{
 					"id": "signalref",
 					"type": "String",
-					"title": "信号参考",
+					"title": "信号名称",
 					"value": "",
 					"description": "Define the signal name.",
 					"popular": true
@@ -713,7 +713,7 @@
 				{
 					"id": "errorref",
 					"type": "String",
-					"title": "错误参考",
+					"title": "错误名称",
 					"value": "",
 					"description": "Define the error name.",
 					"popular": true
@@ -797,7 +797,7 @@
 				{
 					"id": "multiinstance_collection",
 					"type": "String",
-					"title": "收集 (多实例)",
+					"title": "集合(多实例)",
 					"value": "",
 					"description": "Define the collection for the multi instance.",
 					"popular": true
@@ -876,7 +876,7 @@
 				{
 					"id": "messagedefinitions",
 					"type": "multiplecomplex",
-					"title": "消息的定义",
+					"title": "消息定义",
 					"value": "",
 					"description": "Message definitions",
 					"popular": true
@@ -889,7 +889,7 @@
 				{
 					"id": "istransaction",
 					"type": "Boolean",
-					"title": "是否是事务子进程",
+					"title": "事务子流程",
 					"value": "false",
 					"description": "A flag that identifies whether this sub process is of type transaction.",
 					"popular": true,
