@@ -50,6 +50,11 @@
 				<bean class="org.activiti.explorer.form.MonthFormType" />
 			</list>
 		</property>
+		<property name="customPostDeployers">
+			<list>
+				<bean class="org.activiti.engine.impl.rules.RulesDeployer" />
+			</list>
+		</property>
 		<property name="mailServerHost" value="${mailServerHost}" />
 		<property name="mailServerPort" value="25" />
 		<property name="mailServerDefaultFrom" value="${mailServerDefaultFrom}" />
