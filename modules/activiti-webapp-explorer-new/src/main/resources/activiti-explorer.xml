@@ -19,10 +19,9 @@
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver">
 		</property>
-		<property name="url"
-			value="jdbc:mysql://10.0.209.148:3306/activiti2?useUnicode=true&amp;characterEncoding=utf-8"></property>
-		<property name="username" value="sa"></property>
-		<property name="password" value="!@#rjyjy"></property>
+		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
+		<property name="username" value="${dbUser}"></property>
+		<property name="password" value="${dbPassword}"></property>
 	</bean>
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -71,5 +70,12 @@
 	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean"
 		destroy-method="destroy">
 		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
+	</bean>
+
+	<bean id="demoDataConfiguration" class="org.activiti.explorer.conf.DemoDataConfiguration">
+		<property name="createDemoUsers" value="false" />
+		<property name="createDemoDefinitions" value="false" />
+		<property name="createDemoModels" value="false" />
+		<property name="createDemoReports" value="false" />
 	</bean>
 </beans>

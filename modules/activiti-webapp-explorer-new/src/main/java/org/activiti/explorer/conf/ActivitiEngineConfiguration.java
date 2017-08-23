@@ -94,49 +94,6 @@ public class ActivitiEngineConfiguration {
     }
   }
   
-//  @Bean(name="processEngineConfiguration")
-  public ProcessEngineConfigurationImpl processEngineConfiguration1() {
-  	SpringProcessEngineConfiguration processEngineConfiguration = new SpringProcessEngineConfiguration();
-  	processEngineConfiguration.setDataSource(dataSource);
-  	processEngineConfiguration.setDatabaseSchemaUpdate(environment.getProperty("engine.schema.update", "true"));
-  	processEngineConfiguration.setTransactionManager(annotationDrivenTransactionManager());
-  	processEngineConfiguration.setJobExecutorActivate(Boolean.valueOf(
-  	    environment.getProperty("engine.activate.jobexecutor", "false")));
-  	processEngineConfiguration.setAsyncExecutorEnabled(Boolean.valueOf(
-        environment.getProperty("engine.asyncexecutor.enabled", "true")));
-  	processEngineConfiguration.setAsyncExecutorActivate(Boolean.valueOf(
-        environment.getProperty("engine.asyncexecutor.activate", "true")));
-  	processEngineConfiguration.setHistory(environment.getProperty("engine.history.level", "full"));
-  	
-  	String mailEnabled = environment.getProperty("engine.email.enabled");
-  	if ("true".equals(mailEnabled)) {
-  	  processEngineConfiguration.setMailServerHost(environment.getProperty("engine.email.host"));
-  	  int emailPort = 1025;
-  	  String emailPortProperty = environment.getProperty("engine.email.port");
-  	  if (StringUtils.isNotEmpty(emailPortProperty)) {
-  	    emailPort = Integer.valueOf(emailPortProperty);
-  	  }
-  	  processEngineConfiguration.setMailServerPort(emailPort);
-  	  String emailUsernameProperty = environment.getProperty("engine.email.username");
-  	  if (StringUtils.isNotEmpty(emailUsernameProperty)) {
-  	    processEngineConfiguration.setMailServerUsername(emailUsernameProperty);
-  	  }
-  	  
-  	  String emailPasswordProperty = environment.getProperty("engine.email.password");
-      if (StringUtils.isNotEmpty(emailPasswordProperty)) {
-        processEngineConfiguration.setMailServerPassword(emailPasswordProperty);
-      }
-  	}
-  	
-  	List<AbstractFormType> formTypes = new ArrayList<AbstractFormType>();
-  	formTypes.add(new UserFormType());
-  	formTypes.add(new ProcessDefinitionFormType());
-  	formTypes.add(new MonthFormType());
-  	processEngineConfiguration.setCustomFormTypes(formTypes);
-  	
-  	return processEngineConfiguration;
-  }
-  
   @Bean
   public RepositoryService repositoryService() {
   	return processEngine.getRepositoryService();

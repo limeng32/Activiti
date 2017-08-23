@@ -132,7 +132,11 @@
 				<includes>
 					<include>**/*.bpmn</include>
 					<include>**/*.drl</include>
+					<include>**/*.gif</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.jpg</include>
 					<include>**/*.json</include>
+					<include>**/*.png</include>
 					<include>**/*.properties</include>
 					<include>**/*.sql</include>
 					<include>**/*.vm</include>
@@ -147,7 +151,11 @@
 				<includes>
 					<include>**/*.bpmn</include>
 					<include>**/*.drl</include>
+					<include>**/*.gif</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.jpg</include>
 					<include>**/*.json</include>
+					<include>**/*.png</include>
 					<include>**/*.properties</include>
 					<include>**/*.sql</include>
 					<include>**/*.vm</include>
