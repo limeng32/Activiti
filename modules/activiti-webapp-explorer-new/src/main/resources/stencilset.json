@@ -9,7 +9,7 @@
 				{
 					"id": "process_id",
 					"type": "String",
-					"title": "流程编辑器",
+					"title": "流程 ID",
 					"value": "",
 					"description": "Unique identifier of the process definition.",
 					"popular": true
@@ -22,7 +22,7 @@
 				{
 					"id": "overrideid",
 					"type": "String",
-					"title": "Id",
+					"title": "ID",
 					"value": "",
 					"description": "Unique identifier of the element.",
 					"popular": true
