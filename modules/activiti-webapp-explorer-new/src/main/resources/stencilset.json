@@ -166,7 +166,7 @@
 				{
 					"id": "usertaskassignment",
 					"type": "Complex",
-					"title": "任务",
+					"title": "任务分配",
 					"value": "",
 					"description": "Assignment definition for the user task",
 					"popular": true
