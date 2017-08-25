@@ -108,7 +108,8 @@ public class DemoDataConfiguration {
 	}
 
 	protected void initDemoGroups() {
-		String[] assignmentGroups = new String[] { "management", "sales", "marketing", "engineering" };
+		String[] assignmentGroups = new String[] { "major", "deputymajor", "manager", "tmo", "finance", "dean",
+				"co-dean", "btmo", "bfinance", "leader", "projectmanager" };
 		for (String groupId : assignmentGroups) {
 			createGroup(groupId, "assignment");
 		}
@@ -129,17 +130,27 @@ public class DemoDataConfiguration {
 	}
 
 	protected void initDemoUsers() {
-		createUser("kermit", "Kermit", "The Frog", "kermit", "kermit@activiti.org",
-				"org/activiti/explorer/images/kermit.jpg",
-				Arrays.asList("management", "sales", "marketing", "engineering", "user", "admin"),
-				Arrays.asList("birthDate", "10-10-1955", "jobTitle", "Muppet", "location", "Hollywoord", "phone",
-						"+123456789", "twitterName", "alfresco", "skype", "activiti_kermit_frog"));
-
-		createUser("gonzo", "Gonzo", "The Great", "gonzo", "gonzo@activiti.org",
-				"org/activiti/explorer/images/gonzo.jpg", Arrays.asList("management", "sales", "marketing", "user"),
+		createUser("wfadmin", "工作流管理员",
+				"wfadmin", "1", "wfadmin@activiti.org", "", Arrays.asList("major", "deputymajor", "manager", "tmo",
+						"finance", "dean", "co-dean", "btmo", "bfinance", "leader", "projectmanager", "user", "admin"),
 				null);
-		createUser("fozzie", "Fozzie", "Bear", "fozzie", "fozzie@activiti.org",
-				"org/activiti/explorer/images/fozzie.jpg", Arrays.asList("marketing", "engineering", "user"), null);
+		createUser("major", "总院事业部经理", "major", "1", "major@activiti.org", "", Arrays.asList("major", "user"), null);
+		createUser("deputymajor", "总院事业部副经理", "deputymajor", "1", "deputymajor@activiti.org", "",
+				Arrays.asList("deputymajor", "user"), null);
+		createUser("manager", "总院中心经理", "manager", "1", "manager@activiti.org", "", Arrays.asList("manager", "user"),
+				null);
+		createUser("tmo", "总院TMO", "tmo", "1", "tmo@activiti.org", "", Arrays.asList("tmo", "user"), null);
+		createUser("finance", "总院财务部", "finance", "1", "finance@activiti.org", "", Arrays.asList("finance", "user"),
+				null);
+		createUser("dean", "分院院长", "dean", "1", "dean@activiti.org", "", Arrays.asList("dean", "user"), null);
+		createUser("co-dean", "分院副院长", "co-dean", "1", "co-dean@activiti.org", "", Arrays.asList("co-dean", "user"),
+				null);
+		createUser("btmo", "分院TMO", "btmo", "1", "btmo@activiti.org", "", Arrays.asList("btmo", "user"), null);
+		createUser("bfinance", "分院财务部", "bfinance", "1", "bfinance@activiti.org", "", Arrays.asList("bfinance", "user"),
+				null);
+		createUser("leader", "总院分管领导", "leader", "1", "leader@activiti.org", "", Arrays.asList("leader", "user"), null);
+		createUser("projectmanager", "项目经理", "projectmanager", "1", "projectmanager@activiti.org", "",
+				Arrays.asList("projectmanager", "user", "admin"), null);
 	}
 
 	protected void createUser(String userId, String firstName, String lastName, String password, String email,
