@@ -139,6 +139,7 @@
 					<include>**/*.png</include>
 					<include>**/*.properties</include>
 					<include>**/*.sql</include>
+					<include>**/*.svg</include>
 					<include>**/*.vm</include>
 					<include>**/*.xml</include>
 				</includes>
@@ -158,6 +159,7 @@
 					<include>**/*.png</include>
 					<include>**/*.properties</include>
 					<include>**/*.sql</include>
+					<include>**/*.svg</include>
 					<include>**/*.vm</include>
 					<include>**/*.xml</include>
 				</includes>
