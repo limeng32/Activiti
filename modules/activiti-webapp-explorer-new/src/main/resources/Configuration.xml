@@ -13,12 +13,18 @@
 		<setting name="multipleResultSetsEnabled" value="true" />
 	</settings>
 	<typeAliases>
+		<typeAlias
+			type="org.activiti.engine.impl.persistence.ByteArrayRefTypeHandler"
+			alias="ByteArrayRefTypeHandler" />
 		<package name="indi.mybatis.flying.handlers" />
 		<package name="org.apache.ibatis.type" />
 	</typeAliases>
 	<typeHandlers>
 		<typeHandler handler="BooleanHandler" />
 		<typeHandler handler="AdvancedStringTypeHandler" />
+		<typeHandler handler="ByteArrayRefTypeHandler"
+			javaType="org.activiti.engine.impl.persistence.entity.ByteArrayRef"
+			jdbcType="VARCHAR" />
 	</typeHandlers>
 	<plugins>
 		<plugin interceptor="indi.mybatis.flying.interceptors.AutoMapperInterceptor">

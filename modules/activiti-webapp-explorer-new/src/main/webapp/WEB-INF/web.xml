@@ -72,7 +72,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>modeler</servlet-name>
-		<url-pattern>/web/*</url-pattern>
+		<url-pattern>/wfservice/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

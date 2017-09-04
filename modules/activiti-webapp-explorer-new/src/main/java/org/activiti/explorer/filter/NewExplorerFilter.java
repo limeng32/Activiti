@@ -52,7 +52,7 @@ public class NewExplorerFilter implements Filter {
 			}
 
 			chain.doFilter(request, response); // Goes to default servlet.
-		} else if ("/web".equals(firstPart)) {
+		} else if ("/wfservice".equals(firstPart)) {
 			chain.doFilter(request, response);
 		} else {
 			request.getRequestDispatcher("/ui" + path).forward(request, response);

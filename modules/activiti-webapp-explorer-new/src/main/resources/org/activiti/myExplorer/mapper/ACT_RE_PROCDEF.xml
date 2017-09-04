@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.activiti.myExplorer.mapper.ActReModelMapper">
+<mapper namespace="org.activiti.myExplorer.mapper.ActReProcdefMapper">
 	<cache />
 
 	<select id="select" resultMap="result">
@@ -35,19 +35,20 @@
 		flying:delete
 	</delete>
 
-	<resultMap id="result" type="ActReModel" autoMapping="true">
+	<resultMap id="result" type="ActReProcdef" autoMapping="true">
 		<id property="id" column="ID_" />
 		<result property="rev" column="REV_" />
+		<result property="category" column="CATEGORY_" />
 		<result property="name" column="NAME_" />
 		<result property="key" column="KEY_" />
-		<result property="category" column="CATEGORY_" />
-		<result property="createTime" column="CREATE_TIME_" />
-		<result property="lastUpdateTime" column="LAST_UPDATE_TIME_" />
 		<result property="version" column="VERSION_" />
-		<result property="metaInfo" column="META_INFO_" />
 		<result property="deploymentId" column="DEPLOYMENT_ID_" />
-		<result property="editorSourceValueId" column="EDITOR_SOURCE_VALUE_ID_" />
-		<result property="editorSourceExtraValueId" column="EDITOR_SOURCE_EXTRA_VALUE_ID_" />
-		<result property="tenantId" column="TENANT_ID_" jdbcType="VARCHAR" />
+		<result property="resourceName" column="RESOURCE_NAME_" />
+		<result property="dgrmResourceName" column="DGRM_RESOURCE_NAME_" />
+		<result property="description" column="DESCRIPTION_" />
+		<result property="hasStartFormKey" column="HAS_START_FORM_KEY_" />
+		<result property="hasGraphicalNotation" column="HAS_GRAPHICAL_NOTATION_" />
+		<result property="suspensionState" column="SUSPENSION_STATE_" />
+		<result property="tenantId" column="TENANT_ID_" />
 	</resultMap>
 </mapper>
