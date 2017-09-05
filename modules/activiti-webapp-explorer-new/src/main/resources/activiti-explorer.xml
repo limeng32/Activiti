@@ -14,7 +14,7 @@
        	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
 	<import resource="classpath:activiti-explorer-service.xml" />
-	
+
 	<context:component-scan base-package="org.activiti" />
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -24,36 +24,6 @@
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
-	</bean>
-
-	<bean id="processEngineConfiguration"
-		class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
-		<property name="dataSource" ref="dataSource" />
-		<property name="databaseSchemaUpdate" value="false" />
-		<property name="jobExecutorActivate" value="true" />
-		<property name="customFormTypes">
-			<list>
-				<bean class="org.activiti.explorer.form.UserFormType" />
-				<bean class="org.activiti.explorer.form.ProcessDefinitionFormType" />
-				<bean class="org.activiti.explorer.form.MonthFormType" />
-			</list>
-		</property>
-		<property name="customPostDeployers">
-			<list>
-				<bean class="org.activiti.engine.impl.rules.RulesDeployer" />
-			</list>
-		</property>
-		<property name="mailServerHost" value="${mailServerHost}" />
-		<property name="mailServerPort" value="25" />
-		<property name="mailServerDefaultFrom" value="${mailServerDefaultFrom}" />
-		<property name="mailServerUsername" value="${mailServerUsername}" />
-		<property name="mailServerPassword" value="${mailServerPassword}" />
-		<property name="xmlEncoding" value="utf-8" />
-	</bean>
-
-	<bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean"
-		destroy-method="destroy">
-		<property name="processEngineConfiguration" ref="processEngineConfiguration" />
 	</bean>
 
 	<bean id="demoDataConfiguration" class="org.activiti.explorer.conf.DemoDataConfiguration">
