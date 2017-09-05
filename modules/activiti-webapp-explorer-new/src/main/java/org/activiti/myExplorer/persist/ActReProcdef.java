@@ -56,6 +56,78 @@ public class ActReProcdef extends PojoSupport<ActReProcdef> implements Serializa
 	@FieldMapperAnnotation(dbFieldName = "TENANT_ID_", jdbcType = JdbcType.VARCHAR)
 	private java.lang.String tenantId = "";
 
+	private java.util.Collection<MyBusinessProcdef> myBusinessProcdef;
+
+	public java.util.Collection<MyBusinessProcdef> getMyBusinessProcdef() {
+		if (myBusinessProcdef == null)
+			myBusinessProcdef = new java.util.LinkedHashSet<MyBusinessProcdef>();
+		return myBusinessProcdef;
+	}
+
+	public java.util.Iterator<MyBusinessProcdef> getIteratorMyBusinessProcdef() {
+		if (myBusinessProcdef == null)
+			myBusinessProcdef = new java.util.LinkedHashSet<MyBusinessProcdef>();
+		return myBusinessProcdef.iterator();
+	}
+
+	public void setMyBusinessProcdef(java.util.Collection<MyBusinessProcdef> newMyBusinessProcdef) {
+		removeAllMyBusinessProcdef();
+		for (java.util.Iterator<MyBusinessProcdef> iter = newMyBusinessProcdef.iterator(); iter.hasNext();)
+			addMyBusinessProcdef((MyBusinessProcdef) iter.next());
+	}
+
+	public void addMyBusinessProcdef(MyBusinessProcdef newMyBusinessProcdef) {
+		if (newMyBusinessProcdef == null)
+			return;
+		if (this.myBusinessProcdef == null)
+			this.myBusinessProcdef = new java.util.LinkedHashSet<MyBusinessProcdef>();
+		if (!this.myBusinessProcdef.contains(newMyBusinessProcdef)) {
+			this.myBusinessProcdef.add(newMyBusinessProcdef);
+			newMyBusinessProcdef.setActReProcdef(this);
+		} else {
+			for (MyBusinessProcdef temp : this.myBusinessProcdef) {
+				if (newMyBusinessProcdef.equals(temp)) {
+					if (temp != newMyBusinessProcdef) {
+						removeMyBusinessProcdef(temp);
+						this.myBusinessProcdef.add(newMyBusinessProcdef);
+						newMyBusinessProcdef.setActReProcdef(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeMyBusinessProcdef(MyBusinessProcdef oldMyBusinessProcdef) {
+		if (oldMyBusinessProcdef == null)
+			return;
+		if (this.myBusinessProcdef != null)
+			if (this.myBusinessProcdef.contains(oldMyBusinessProcdef)) {
+				for (MyBusinessProcdef temp : this.myBusinessProcdef) {
+					if (oldMyBusinessProcdef.equals(temp)) {
+						if (temp != oldMyBusinessProcdef) {
+							temp.setActReProcdef((ActReProcdef) null);
+						}
+						break;
+					}
+				}
+				this.myBusinessProcdef.remove(oldMyBusinessProcdef);
+				oldMyBusinessProcdef.setActReProcdef((ActReProcdef) null);
+			}
+	}
+
+	public void removeAllMyBusinessProcdef() {
+		if (myBusinessProcdef != null) {
+			MyBusinessProcdef oldMyBusinessProcdef;
+			for (java.util.Iterator<MyBusinessProcdef> iter = getIteratorMyBusinessProcdef(); iter.hasNext();) {
+				oldMyBusinessProcdef = (MyBusinessProcdef) iter.next();
+				iter.remove();
+				oldMyBusinessProcdef.setActReProcdef((ActReProcdef) null);
+			}
+			myBusinessProcdef.clear();
+		}
+	}
+
 	public java.lang.String getId() {
 		return id;
 	}
