@@ -206,3 +206,11 @@ create table ACT_PROCDEF_INFO (
     INFO_JSON_ID_ varchar(64),
     primary key (ID_)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS MY_BUSINESS_PROCDEF;
+create table MY_BUSINESS_PROCDEF (
+    ID varchar(64) not null,
+    PRCODEF_ID varchar(64),
+    BUSINESS_ID varchar(64),
+    primary key (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -25,7 +25,7 @@ public class MyBusinessProcdef extends PojoSupport<MyBusinessProcdef> implements
 	@FieldMapperAnnotation(dbFieldName = "BUSINESS_ID", jdbcType = JdbcType.VARCHAR)
 	private java.lang.String businessId;
 
-	@FieldMapperAnnotation(dbFieldName = "PRCODEF_ID", jdbcType = JdbcType.VARCHAR, dbAssociationUniqueKey = "_ID")
+	@FieldMapperAnnotation(dbFieldName = "PRCODEF_ID", jdbcType = JdbcType.VARCHAR, dbAssociationUniqueKey = "ID_")
 	private ActReProcdef actReProcdef;
 
 	public ActReProcdef getActReProcdef() {

@@ -1,6 +1,7 @@
 package org.activiti.myExplorer.service;
 
 import org.activiti.myExplorer.persist.ActReProcdef;
+import org.activiti.myExplorer.persist.MyBusinessProcdef;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +31,9 @@ public class ActReProcdefTest {
 	@Autowired
 	private ActReProcdefService actReProcdefService;
 
+	@Autowired
+	private MyBusinessProcdefService myBusinessProcdefService;
+
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.result.xml")
@@ -37,5 +41,15 @@ public class ActReProcdefTest {
 	public void testActReProcdef() {
 		ActReProcdef actReProcdef = actReProcdefService.select("a");
 		Assert.assertEquals("c", actReProcdef.getCategory());
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessProcdef.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessProcdef.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessProcdef.result.xml")
+	public void testMyBusinessProcdef() {
+		MyBusinessProcdef myBusinessProcdef = myBusinessProcdefService.select("b");
+		Assert.assertEquals("0001", myBusinessProcdef.getBusinessId());
+		Assert.assertEquals("c", myBusinessProcdef.getActReProcdef().getCategory());
 	}
 }
