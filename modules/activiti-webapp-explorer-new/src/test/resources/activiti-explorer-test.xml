@@ -17,22 +17,82 @@
        	http://www.springframework.org/schema/jdbc
        	http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
 
-	<import resource="classpath:activiti-explorer-service.xml" />
-	
 	<context:component-scan base-package="org.activiti.myExplorer" />
+
+	<!-- <import resource="classpath:activiti-explorer-service.xml" /> -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:Configuration.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations"
+			value="classpath:org/activiti/myExplorer/mapper/*.xml" />
+		<property name="typeAliasesPackage" value="org.activiti.myExplorer" />
+	</bean>
+
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="org.activiti.myExplorer.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="org.h2.jdbcx.JdbcDataSource" />
+		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url"
-			value="jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
+			value="jdbc:h2:mem:activiti;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
 		<property name="username" value="sa"></property>
 		<property name="password" value=""></property>
 	</bean>
-
+	
 	<jdbc:initialize-database data-source="dataSource"
 		ignore-failures="ALL">
 		<jdbc:script location="classpath:/INIT_TABLE1.sql"
 			encoding="UTF-8" />
 	</jdbc:initialize-database>
+
+	<!-- <bean id="processEngineConfiguration"
+		class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+		<property name="dataSource" ref="dataSource" />
+		<property name="databaseSchemaUpdate" value="true" />
+		<property name="jobExecutorActivate" value="true" />
+		<property name="customFormTypes">
+			<list>
+				<bean class="org.activiti.explorer.form.UserFormType" />
+				<bean class="org.activiti.explorer.form.ProcessDefinitionFormType" />
+				<bean class="org.activiti.explorer.form.MonthFormType" />
+			</list>
+		</property>
+		<property name="customPostDeployers">
+			<list>
+				<bean class="org.activiti.engine.impl.rules.RulesDeployer" />
+			</list>
+		</property>
+		<property name="mailServerHost" value="${mailServerHost}" />
+		<property name="mailServerPort" value="25" />
+		<property name="mailServerDefaultFrom" value="${mailServerDefaultFrom}" />
+		<property name="mailServerUsername" value="${mailServerUsername}" />
+		<property name="mailServerPassword" value="${mailServerPassword}" />
+		<property name="xmlEncoding" value="utf-8" />
+	</bean> -->
+
+	<bean id="processEngine1" class="org.activiti.spring.ProcessEngineFactoryBean"
+		destroy-method="destroy" lazy-init="true">
+		<property name="processEngineConfiguration" ref="processEngineConfiguration2" />
+	</bean>
+	
+	<bean id="processEngineConfiguration2"
+		class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration" lazy-init="true">
+		<property name="dataSource" ref="dataSource" />
+		<!-- <property name="jdbcUrl"
+			value="jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" />
+		<property name="jdbcDriver" value="org.h2.Driver" />
+		<property name="jdbcUsername" value="sa" />
+		<property name="jdbcPassword" value="" /> -->
+		<property name="databaseSchemaUpdate" value="false" />
+		<property name="jobExecutorActivate" value="true" />
+	</bean>
+
 </beans>
