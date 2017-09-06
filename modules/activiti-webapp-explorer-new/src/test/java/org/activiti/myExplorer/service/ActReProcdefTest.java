@@ -51,5 +51,14 @@ public class ActReProcdefTest {
 		MyBusinessProcdef myBusinessProcdef = myBusinessProcdefService.select("b");
 		Assert.assertEquals("0001", myBusinessProcdef.getBusinessId());
 		Assert.assertEquals("c", myBusinessProcdef.getActReProcdef().getCategory());
+
+		myBusinessProcdef.setBusinessId("0002");
+		myBusinessProcdefService.update(myBusinessProcdef);
+
+		MyBusinessProcdef m = new MyBusinessProcdef();
+		m.setBusinessId("0003");
+		myBusinessProcdefService.insert(m);
+		Assert.assertNotNull(m.getId());
+		myBusinessProcdefService.delete(m);
 	}
 }
