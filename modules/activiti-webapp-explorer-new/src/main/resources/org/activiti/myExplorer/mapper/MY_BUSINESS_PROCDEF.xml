@@ -40,6 +40,6 @@
 		<result property="businessId" column="BUSINESS_ID" />
 		<association property="actReProcdef" javaType="ActReProcdef"
 			select="org.activiti.myExplorer.mapper.ActReProcdefMapper.select"
-			column="PRCODEF_ID" />
+			column="PROCDEF_ID" />
 	</resultMap>
 </mapper>

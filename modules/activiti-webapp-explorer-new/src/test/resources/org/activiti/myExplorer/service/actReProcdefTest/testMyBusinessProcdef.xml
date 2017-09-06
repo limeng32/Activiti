@@ -2,5 +2,5 @@
 	<ACT_RE_PROCDEF ID_="a" REV_="1" CATEGORY_="c" VERSION_="1"
 		TENANT_ID_="" />
 	<MY_BUSINESS_PROCDEF ID="b" BUSINESS_ID="0001"
-		PRCODEF_ID="a" />
+		PROCDEF_ID="a" />
 </dataset>
