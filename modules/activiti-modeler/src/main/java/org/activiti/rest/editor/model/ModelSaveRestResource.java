@@ -52,17 +52,19 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
   @Autowired
   private ObjectMapper objectMapper;
   
+  public static final String MODEL_BUSINESS = "business";
+  
   @RequestMapping(value="/model/{modelId}/save", method = RequestMethod.PUT)
   @ResponseStatus(value = HttpStatus.OK)
   public void saveModel(@PathVariable String modelId, @RequestBody MultiValueMap<String, String> values) {
     try {
-      System.out.println("::::::"+modelId);
       Model model = repositoryService.getModel(modelId);
       
       ObjectNode modelJson = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
       
       modelJson.put(MODEL_NAME, values.getFirst("name"));
       modelJson.put(MODEL_DESCRIPTION, values.getFirst("description"));
+      modelJson.put(MODEL_BUSINESS, values.getFirst("business"));
       model.setMetaInfo(modelJson.toString());
       model.setName(values.getFirst("name"));
       

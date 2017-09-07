@@ -301,10 +301,13 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
     if (modelMetaData.description) {
     	description = modelMetaData.description;
     }
-    
+    var business = '';
+    if (modelMetaData.business) {
+    	business = modelMetaData.business;
+    }
     var saveDialog = { 'name' : modelMetaData.name,
-            'description' : description};
-    
+            'description' : description, 'business' : business};
+
     $scope.saveDialog = saveDialog;
     
     var json = $scope.editor.getJSON();
@@ -342,6 +345,7 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
         
         modelMetaData.name = $scope.saveDialog.name;
         modelMetaData.description = $scope.saveDialog.description;
+        modelMetaData.business = $scope.saveDialog.business;
 
         var json = $scope.editor.getJSON();
         json = JSON.stringify(json);
@@ -372,6 +376,7 @@ var SaveModelCtrl = [ '$rootScope', '$scope', '$http', '$route', '$location',
             json_xml: json,
             svg_xml: svgDOM,
             name: $scope.saveDialog.name,
+            business: $scope.saveDialog.business,
             description: $scope.saveDialog.description
         };
 

@@ -270,6 +270,7 @@
     "MODEL.SAVE.TITLE" : "保存模型",
     "MODEL.NAME" : "名称",
     "MODEL.DESCRIPTION" : "描述",
+    "MODEL.BUSINESS" : "关联业务",
     "MODEL.SAVE.NEWVERSION" : "保存为新版本？ 这意味着你可以随时回到以前的版本",
     "MODEL.SAVE.COMMENT" : "注解",
     "MODEL.SAVE.SAVING" : "保存模型",
