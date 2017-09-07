@@ -22,4 +22,5 @@ var ACTIVITI = ACTIVITI || {};
 
 ACTIVITI.CONFIG = {
 	'contextRoot' : '/activiti-explorer/service',
+	'contextWfServiceRoot' : '/activiti-explorer/wfservice'
 };
