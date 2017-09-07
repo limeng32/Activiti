@@ -636,6 +636,7 @@
     <module>modules/activiti-engine</module>
     <module>modules/activiti-explorer</module>
     <module>modules/activiti-webapp-explorer-new</module>
+    <module>modules/activiti-modeler</module>
   </modules>
 
   <build>
