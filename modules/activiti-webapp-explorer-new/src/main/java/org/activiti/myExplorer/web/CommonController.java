@@ -16,6 +16,7 @@ import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
+import org.activiti.myExplorer.service.MyBusinessProcdefService;
 import org.activiti.myExplorer.service.TestService;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -49,6 +50,9 @@ public class CommonController {
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
+	
+	@Autowired
+	private MyBusinessProcdefService myBusinessProcdefService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -90,7 +94,12 @@ public class CommonController {
 		try {
 			System.out.println("::"+modelId);
 			Model model = repositoryService.getModel(modelId);
-
+			System.out.println("1::"+model.getCategory());
+			System.out.println("2::"+model.getDeploymentId());
+			System.out.println("3::"+model.getId());
+			System.out.println("4::"+model.getKey());
+			System.out.println("5::"+model.getMetaInfo());
+			System.out.println("6::"+model.getName());
 			ObjectNode modelJson = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
 
 			modelJson.put(ModelDataJsonConstants.MODEL_NAME, values.getFirst("name"));
