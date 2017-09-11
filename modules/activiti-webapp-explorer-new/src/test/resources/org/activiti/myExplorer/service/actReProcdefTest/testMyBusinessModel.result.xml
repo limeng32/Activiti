@@ -1,0 +1,6 @@
+<dataset>
+	<ACT_RE_MODEL ID_="a" REV_="1" NAME_="n" KEY_="k"
+		CATEGORY_="c" TENANT_ID_="" />
+	<MY_BUSINESS_MODEL ID="b" BUSINESS_ID="0002"
+		MODEL_ID="a" />
+</dataset>

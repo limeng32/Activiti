@@ -214,3 +214,11 @@ create table MY_BUSINESS_PROCDEF (
     BUSINESS_ID varchar(64),
     primary key (ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS MY_BUSINESS_MODEL;
+create table MY_BUSINESS_MODEL (
+    ID varchar(64) not null,
+    MODEL_ID varchar(64),
+    BUSINESS_ID varchar(64),
+    primary key (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

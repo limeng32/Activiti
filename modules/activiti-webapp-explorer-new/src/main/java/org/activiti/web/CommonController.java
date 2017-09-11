@@ -16,7 +16,6 @@ import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
-import org.activiti.myExplorer.service.MyBusinessProcdefService;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
@@ -46,9 +45,6 @@ public class CommonController {
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
-
-	@Autowired
-	private MyBusinessProcdefService myBusinessProcdefService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
