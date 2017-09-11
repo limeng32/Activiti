@@ -1,6 +1,7 @@
 package org.activiti.myExplorer.service;
 
 import org.activiti.engine.RepositoryService;
+import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
 import org.activiti.spring.ProcessEngineFactoryBean;
@@ -29,6 +30,9 @@ import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 		DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class)
 public class ActReProcdefTest {
+
+	@Autowired
+	private ActReModelService actReModelService;
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
@@ -67,10 +71,11 @@ public class ActReProcdefTest {
 		myBusinessModel.setBusinessId("0002");
 		myBusinessModelService.update(myBusinessModel);
 
+		ActReModel actReModel = actReModelService.select("a2");
+
 		MyBusinessModel m = new MyBusinessModel();
 		m.setBusinessId("0003");
+		m.setActReModel(actReModel);
 		myBusinessModelService.insert(m);
-		Assert.assertNotNull(m.getId());
-		myBusinessModelService.delete(m);
 	}
 }
