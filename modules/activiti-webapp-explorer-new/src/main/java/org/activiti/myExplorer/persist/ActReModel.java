@@ -2,6 +2,7 @@ package org.activiti.myExplorer.persist;
 
 import java.io.Serializable;
 
+import org.activiti.engine.repository.Model;
 import org.activiti.myExplorer.pojoHelper.PojoSupport;
 import org.apache.ibatis.type.JdbcType;
 
@@ -10,6 +11,34 @@ import indi.mybatis.flying.annotations.TableMapperAnnotation;
 
 @TableMapperAnnotation(tableName = "ACT_RE_MODEL")
 public class ActReModel extends PojoSupport<ActReModel> implements Serializable {
+
+	public ActReModel() {
+
+	}
+
+	public ActReModel(Model model) {
+
+		this.id = model.getId();
+
+		this.name = model.getName();
+
+		this.key = model.getKey();
+
+		this.category = model.getCategory();
+
+		this.createTime = model.getCreateTime();
+
+		this.lastUpdateTime = model.getLastUpdateTime();
+
+		this.version = model.getVersion();
+
+		this.metaInfo = model.getMetaInfo();
+
+		this.deploymentId = model.getDeploymentId();
+
+		this.tenantId = model.getTenantId();
+
+	}
 
 	private static final long serialVersionUID = 1L;
 

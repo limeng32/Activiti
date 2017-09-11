@@ -14,8 +14,10 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Model;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
+import org.activiti.myExplorer.persist.MyBusinessModel;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
+import org.activiti.myExplorer.service.MyBusinessModelService;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
@@ -45,6 +47,9 @@ public class CommonController {
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
+
+	@Autowired
+	private MyBusinessModelService myBusinessModelService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -85,7 +90,9 @@ public class CommonController {
 	public void saveModel(@PathVariable String modelId, @RequestBody MultiValueMap<String, String> values) {
 		try {
 			System.out.println("::" + modelId);
+			String business = values.getFirst("business");
 			Model model = repositoryService.getModel(modelId);
+
 			System.out.println("1::" + model.getCategory());
 			System.out.println("2::" + model.getDeploymentId());
 			System.out.println("3::" + model.getId());
@@ -96,7 +103,7 @@ public class CommonController {
 
 			modelJson.put(ModelDataJsonConstants.MODEL_NAME, values.getFirst("name"));
 			modelJson.put(ModelDataJsonConstants.MODEL_DESCRIPTION, values.getFirst("description"));
-			modelJson.put(MODEL_BUSINESS, values.getFirst("business"));
+			modelJson.put(MODEL_BUSINESS, business);
 			model.setMetaInfo(modelJson.toString());
 			model.setName(values.getFirst("name"));
 
@@ -117,7 +124,12 @@ public class CommonController {
 			final byte[] result = outStream.toByteArray();
 			repositoryService.addModelEditorSourceExtra(model.getId(), result);
 			outStream.close();
-
+			MyBusinessModel mbm = new MyBusinessModel();
+			mbm.setBusinessId(business);
+			ActReModel actReModel = new ActReModel(model);
+			System.out.println("::"+actReModel.getId());
+			mbm.setActReModel(actReModel);
+			myBusinessModelService.insert(mbm);
 		} catch (Exception e) {
 			LOGGER.error("Error saving model", e);
 			throw new ActivitiException("Error saving model", e);

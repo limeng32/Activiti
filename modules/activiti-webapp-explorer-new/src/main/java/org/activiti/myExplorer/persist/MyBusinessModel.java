@@ -26,22 +26,22 @@ public class MyBusinessModel extends PojoSupport<MyBusinessModel> implements Ser
 	private java.lang.String businessId;
 
 	@FieldMapperAnnotation(dbFieldName = "MODEL_ID", jdbcType = JdbcType.VARCHAR, dbAssociationUniqueKey = "ID_")
-	private ActReModel ActReModel;
+	private ActReModel actReModel;
 
 	public ActReModel getActReModel() {
-		return ActReModel;
+		return actReModel;
 	}
 
 	public void setActReModel(ActReModel newActReModel) {
-		if (this.ActReModel == null || !this.ActReModel.equals(newActReModel)) {
-			if (this.ActReModel != null) {
-				ActReModel oldActReModel = this.ActReModel;
-				this.ActReModel = null;
+		if (this.actReModel == null || !this.actReModel.equals(newActReModel)) {
+			if (this.actReModel != null) {
+				ActReModel oldActReModel = this.actReModel;
+				this.actReModel = null;
 				oldActReModel.removeMyBusinessModel(this);
 			}
 			if (newActReModel != null) {
-				this.ActReModel = newActReModel;
-				this.ActReModel.addMyBusinessModel(this);
+				this.actReModel = newActReModel;
+				this.actReModel.addMyBusinessModel(this);
 			}
 		}
 	}
