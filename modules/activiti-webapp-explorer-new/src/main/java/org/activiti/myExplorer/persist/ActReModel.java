@@ -53,6 +53,78 @@ public class ActReModel extends PojoSupport<ActReModel> implements Serializable 
 	@FieldMapperAnnotation(dbFieldName = "TENANT_ID_", jdbcType = JdbcType.VARCHAR)
 	private java.lang.String tenantId = "";
 
+	private java.util.Collection<MyBusinessModel> myBusinessModel;
+
+	public java.util.Collection<MyBusinessModel> getMyBusinessModel() {
+		if (myBusinessModel == null)
+			myBusinessModel = new java.util.LinkedHashSet<MyBusinessModel>();
+		return myBusinessModel;
+	}
+
+	public java.util.Iterator<MyBusinessModel> getIteratorMyBusinessModel() {
+		if (myBusinessModel == null)
+			myBusinessModel = new java.util.LinkedHashSet<MyBusinessModel>();
+		return myBusinessModel.iterator();
+	}
+
+	public void setMyBusinessModel(java.util.Collection<MyBusinessModel> newMyBusinessModel) {
+		removeAllMyBusinessModel();
+		for (java.util.Iterator<MyBusinessModel> iter = newMyBusinessModel.iterator(); iter.hasNext();)
+			addMyBusinessModel((MyBusinessModel) iter.next());
+	}
+
+	public void addMyBusinessModel(MyBusinessModel newMyBusinessModel) {
+		if (newMyBusinessModel == null)
+			return;
+		if (this.myBusinessModel == null)
+			this.myBusinessModel = new java.util.LinkedHashSet<MyBusinessModel>();
+		if (!this.myBusinessModel.contains(newMyBusinessModel)) {
+			this.myBusinessModel.add(newMyBusinessModel);
+			newMyBusinessModel.setActReModel(this);
+		} else {
+			for (MyBusinessModel temp : this.myBusinessModel) {
+				if (newMyBusinessModel.equals(temp)) {
+					if (temp != newMyBusinessModel) {
+						removeMyBusinessModel(temp);
+						this.myBusinessModel.add(newMyBusinessModel);
+						newMyBusinessModel.setActReModel(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeMyBusinessModel(MyBusinessModel oldMyBusinessModel) {
+		if (oldMyBusinessModel == null)
+			return;
+		if (this.myBusinessModel != null)
+			if (this.myBusinessModel.contains(oldMyBusinessModel)) {
+				for (MyBusinessModel temp : this.myBusinessModel) {
+					if (oldMyBusinessModel.equals(temp)) {
+						if (temp != oldMyBusinessModel) {
+							temp.setActReModel((ActReModel) null);
+						}
+						break;
+					}
+				}
+				this.myBusinessModel.remove(oldMyBusinessModel);
+				oldMyBusinessModel.setActReModel((ActReModel) null);
+			}
+	}
+
+	public void removeAllMyBusinessModel() {
+		if (myBusinessModel != null) {
+			MyBusinessModel oldMyBusinessModel;
+			for (java.util.Iterator<MyBusinessModel> iter = getIteratorMyBusinessModel(); iter.hasNext();) {
+				oldMyBusinessModel = (MyBusinessModel) iter.next();
+				iter.remove();
+				oldMyBusinessModel.setActReModel((ActReModel) null);
+			}
+			myBusinessModel.clear();
+		}
+	}
+
 	public java.lang.String getId() {
 		return id;
 	}

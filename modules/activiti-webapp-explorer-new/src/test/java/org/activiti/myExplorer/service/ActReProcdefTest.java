@@ -1,7 +1,9 @@
 package org.activiti.myExplorer.service;
 
+import org.activiti.engine.RepositoryService;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessProcdef;
+import org.activiti.spring.ProcessEngineFactoryBean;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +36,17 @@ public class ActReProcdefTest {
 	@Autowired
 	private MyBusinessProcdefService myBusinessProcdefService;
 
+	@Autowired
+	private ProcessEngineFactoryBean processEngine;
+
 	@Test
+	public void test() {
+		RepositoryService repositoryService = processEngine.getProcessEngineConfiguration().getRepositoryService();
+		Assert.assertNotNull(repositoryService);
+		Assert.assertTrue(true);
+	}
+
+	// @Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.result.xml")
@@ -43,7 +55,7 @@ public class ActReProcdefTest {
 		Assert.assertEquals("c", actReProcdef.getCategory());
 	}
 
-	@Test
+	// @Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessProcdef.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessProcdef.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessProcdef.result.xml")

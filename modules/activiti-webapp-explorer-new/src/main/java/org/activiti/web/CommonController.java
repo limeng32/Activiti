@@ -1,4 +1,4 @@
-package org.activiti.myExplorer.web;
+package org.activiti.web;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +17,6 @@ import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
 import org.activiti.myExplorer.service.MyBusinessProcdefService;
-import org.activiti.myExplorer.service.TestService;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
@@ -43,14 +42,11 @@ public class CommonController {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
 
 	@Autowired
-	private TestService testServie;
-
-	@Autowired
 	private ActReModelService actReModelService;
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
-	
+
 	@Autowired
 	private MyBusinessProcdefService myBusinessProcdefService;
 
@@ -92,14 +88,14 @@ public class CommonController {
 	@ResponseStatus(value = HttpStatus.OK)
 	public void saveModel(@PathVariable String modelId, @RequestBody MultiValueMap<String, String> values) {
 		try {
-			System.out.println("::"+modelId);
+			System.out.println("::" + modelId);
 			Model model = repositoryService.getModel(modelId);
-			System.out.println("1::"+model.getCategory());
-			System.out.println("2::"+model.getDeploymentId());
-			System.out.println("3::"+model.getId());
-			System.out.println("4::"+model.getKey());
-			System.out.println("5::"+model.getMetaInfo());
-			System.out.println("6::"+model.getName());
+			System.out.println("1::" + model.getCategory());
+			System.out.println("2::" + model.getDeploymentId());
+			System.out.println("3::" + model.getId());
+			System.out.println("4::" + model.getKey());
+			System.out.println("5::" + model.getMetaInfo());
+			System.out.println("6::" + model.getName());
 			ObjectNode modelJson = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
 
 			modelJson.put(ModelDataJsonConstants.MODEL_NAME, values.getFirst("name"));
