@@ -44,6 +44,7 @@ public class ModelEditorJsonRestResource implements ModelDataJsonConstants {
   
   @RequestMapping(value="/model/{modelId}/json", method = RequestMethod.GET, produces = "application/json")
   public ObjectNode getEditorJson(@PathVariable String modelId) {
+	System.out.println("::::"+modelId);
     ObjectNode modelNode = null;
     
     Model model = repositoryService.getModel(modelId);
