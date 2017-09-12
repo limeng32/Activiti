@@ -20,10 +20,9 @@ public class HelloGroovy extends ApplicationObjectSupport implements JavaDelegat
 		binding.setVariable("execution", execution);
 		GroovyShell shell = new GroovyShell(binding);
 		Object value = shell.evaluate(s);
-		assert value.equals(10);
-		assert binding.getVariable("y").equals(20);
-		assert binding.getVariable("z").equals(30);
-
+		System.out.println("value:"+value);
+		System.out.println("y:"+binding.getVariable("y"));
+		System.out.println("z:"+binding.getVariable("z"));
 	}
 
 	@Override
@@ -31,6 +30,5 @@ public class HelloGroovy extends ApplicationObjectSupport implements JavaDelegat
 		String id = execution.getEngineServices().getRepositoryService().getModel("100014").getTenantId();
 		System.out.println(id);
 		fun2(id, execution);
-		System.out.println(" ms");
 	}
 }
