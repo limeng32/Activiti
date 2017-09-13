@@ -3,6 +3,7 @@ package org.activiti.web;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Collection;
 
 import org.activiti.editor.constants.ModelDataJsonConstants;
 import org.activiti.engine.ActivitiException;
@@ -30,8 +31,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class ModelHelper implements ModelFace {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ModelHelper.class);
-
-	public static final String MODEL_BUSINESS = "business";
 
 	@Autowired
 	private ActReModelService actReModelService;
@@ -99,7 +98,6 @@ public class ModelHelper implements ModelFace {
 
 			modelJson.put(ModelDataJsonConstants.MODEL_NAME, values.getFirst("name"));
 			modelJson.put(ModelDataJsonConstants.MODEL_DESCRIPTION, values.getFirst("description"));
-			modelJson.put(MODEL_BUSINESS, business);
 			model.setMetaInfo(modelJson.toString());
 			model.setName(values.getFirst("name"));
 
@@ -120,12 +118,25 @@ public class ModelHelper implements ModelFace {
 			final byte[] result = outStream.toByteArray();
 			repositoryService.addModelEditorSourceExtra(model.getId(), result);
 			outStream.close();
-			MyBusinessModel mbm = new MyBusinessModel();
-			mbm.setBusinessId(business);
+
+			// Deal MyBusinessModel
+			MyBusinessModel mbm_ = new MyBusinessModel(), mbm2_ = new MyBusinessModel();
+			mbm_.setBusinessId(business);
+			Collection<MyBusinessModel> myBusinessModelC = myBusinessModelService.selectAll(mbm_);
+			for (MyBusinessModel t : myBusinessModelC) {
+				myBusinessModelService.delete(t);
+			}
+			ActReModel arm_ = new ActReModel();
+			arm_.setId(model.getId());
+			mbm2_.setActReModel(arm_);
+			Collection<MyBusinessModel> myBusinessModelC2 = myBusinessModelService.selectAll(mbm2_);
+			for (MyBusinessModel t : myBusinessModelC2) {
+				myBusinessModelService.delete(t);
+			}
+
 			ActReModel actReModel = new ActReModel(model);
-			System.out.println("::" + actReModel.getId());
-			mbm.setActReModel(actReModel);
-			myBusinessModelService.insert(mbm);
+			mbm_.setActReModel(actReModel);
+			myBusinessModelService.insert(mbm_);
 		} catch (Exception e) {
 			LOGGER.error("Error saving model", e);
 			throw new ActivitiException("Error saving model", e);

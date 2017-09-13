@@ -80,7 +80,7 @@ public class ActReModel extends PojoSupport<ActReModel> implements Serializable 
 
 	/* 默认为"" */
 	@FieldMapperAnnotation(dbFieldName = "TENANT_ID_", jdbcType = JdbcType.VARCHAR)
-	private java.lang.String tenantId = "";
+	private java.lang.String tenantId;
 
 	private java.util.Collection<MyBusinessModel> myBusinessModel;
 
