@@ -29,6 +29,6 @@ KISBPM.URL = {
     },
 
     putModel: function(modelId) {
-        return ACTIVITI.CONFIG.contextWfServiceRoot + '/model-new/' + modelId + '/save';
+        return ACTIVITI.CONFIG.contextRoot + '/model/' + modelId + '/save';
     }
 };
