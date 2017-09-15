@@ -1,4 +1,4 @@
-package org.activiti;
+package org.activiti.myExplorer;
 
 import javax.servlet.ServletContext;
 

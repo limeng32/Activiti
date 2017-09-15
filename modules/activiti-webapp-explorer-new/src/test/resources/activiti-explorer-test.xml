@@ -36,4 +36,5 @@
 			encoding="UTF-8" />
 	</jdbc:initialize-database>
 
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 </beans>

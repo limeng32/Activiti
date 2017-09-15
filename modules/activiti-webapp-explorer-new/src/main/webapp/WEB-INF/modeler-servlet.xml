@@ -18,7 +18,7 @@
 			expression="org.springframework.stereotype.Service" />
 	</context:component-scan>
 
-	<bean id="rpe" class="org.activiti.ResourcePathExposer"
+	<bean id="rpe" class="org.activiti.myExplorer.ResourcePathExposer"
 		init-method="init">
 		<property name="tag" value="201708031625" />
 	</bean>

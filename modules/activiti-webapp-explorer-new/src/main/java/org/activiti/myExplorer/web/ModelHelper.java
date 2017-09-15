@@ -1,4 +1,4 @@
-package org.activiti.web;
+package org.activiti.myExplorer.web;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.activiti.editor.constants.ModelDataJsonConstants;
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Model;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.MyBusinessModel;
@@ -42,13 +42,13 @@ public class ModelHelper implements ModelFace {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private RepositoryService repositoryService;
+	private StandaloneProcessEngineConfiguration processEngineConfiguration;
 
 	@Override
 	public ObjectNode deal(String modelId) {
 		ObjectNode modelNode = null;
 
-		Model model = repositoryService.getModel(modelId);
+		Model model = processEngineConfiguration.getRepositoryService().getModel(modelId);
 
 		if (model != null) {
 			try {
@@ -69,8 +69,9 @@ public class ModelHelper implements ModelFace {
 					modelNode.put(ModelDataJsonConstants.MODEL_NAME, model.getName());
 				}
 				modelNode.put(ModelDataJsonConstants.MODEL_ID, model.getId());
-				ObjectNode editorJsonNode = (ObjectNode) objectMapper
-						.readTree(new String(repositoryService.getModelEditorSource(model.getId()), "utf-8"));
+				ObjectNode editorJsonNode = (ObjectNode) objectMapper.readTree(new String(
+						processEngineConfiguration.getRepositoryService().getModelEditorSource(model.getId()),
+						"utf-8"));
 				modelNode.put("model", editorJsonNode);
 
 			} catch (Exception e) {
@@ -86,7 +87,7 @@ public class ModelHelper implements ModelFace {
 		try {
 			System.out.println("1::" + modelId);
 			String business = values.getFirst("business");
-			Model model = repositoryService.getModel(modelId);
+			Model model = processEngineConfiguration.getRepositoryService().getModel(modelId);
 
 			System.out.println("1::" + model.getCategory());
 			System.out.println("2::" + model.getDeploymentId());
@@ -101,9 +102,10 @@ public class ModelHelper implements ModelFace {
 			model.setMetaInfo(modelJson.toString());
 			model.setName(values.getFirst("name"));
 
-			repositoryService.saveModel(model);
+			processEngineConfiguration.getRepositoryService().saveModel(model);
 
-			repositoryService.addModelEditorSource(model.getId(), values.getFirst("json_xml").getBytes("utf-8"));
+			processEngineConfiguration.getRepositoryService().addModelEditorSource(model.getId(),
+					values.getFirst("json_xml").getBytes("utf-8"));
 
 			InputStream svgStream = new ByteArrayInputStream(values.getFirst("svg_xml").getBytes("utf-8"));
 			TranscoderInput input = new TranscoderInput(svgStream);
@@ -116,7 +118,7 @@ public class ModelHelper implements ModelFace {
 			// Do the transformation
 			transcoder.transcode(input, output);
 			final byte[] result = outStream.toByteArray();
-			repositoryService.addModelEditorSourceExtra(model.getId(), result);
+			processEngineConfiguration.getRepositoryService().addModelEditorSourceExtra(model.getId(), result);
 			outStream.close();
 
 			// Deal MyBusinessModel

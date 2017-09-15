@@ -1,10 +1,10 @@
 package org.activiti.myExplorer.service;
 
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
-import org.activiti.spring.ProcessEngineFactoryBean;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,11 +41,11 @@ public class ActReProcdefTest {
 	private MyBusinessModelService myBusinessModelService;
 
 	@Autowired
-	private ProcessEngineFactoryBean processEngine;
+	private StandaloneProcessEngineConfiguration processEngineConfiguration;
 
 	@Test
 	public void test() {
-		RepositoryService repositoryService = processEngine.getProcessEngineConfiguration().getRepositoryService();
+		RepositoryService repositoryService = processEngineConfiguration.getRepositoryService();
 		Assert.assertNotNull(repositoryService);
 		Assert.assertTrue(true);
 	}
