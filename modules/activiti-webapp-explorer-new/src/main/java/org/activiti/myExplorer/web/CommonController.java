@@ -1,19 +1,16 @@
 package org.activiti.myExplorer.web;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
-import org.activiti.myExplorer.persist.MyBusinessModel;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
-import org.activiti.myExplorer.service.MyBusinessModelService;
+import org.activiti.myExplorer.service.DeploymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +34,7 @@ public class CommonController {
 	private ActReProcdefService actReProcdefService;
 
 	@Autowired
-	private MyBusinessModelService myBusinessModelService;
-
-	@Autowired
-	private StandaloneProcessEngineConfiguration processEngineConfiguration;
-
-	public static final String MODEL_BUSINESS = "business";
+	private DeploymentService deploymentService;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -73,7 +65,7 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/getProcess")
 	public String getProcess(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "businessId") String businessId) {
-		Deployment deployment = this.getDeployment(businessId);
+		Deployment deployment = deploymentService.getDeployment(businessId);
 		if (deployment != null && deployment.getId() != null) {
 			ActReProcdef arp_ = new ActReProcdef();
 			arp_.setDeploymentId(deployment.getId());
@@ -81,21 +73,6 @@ public class CommonController {
 			mm.addAttribute("_content", actReProcdef);
 		}
 		return UNIQUE_PATH;
-	}
-
-	public Deployment getDeployment(String businessId) {
-		MyBusinessModel mbm_ = new MyBusinessModel();
-		mbm_.setBusinessId(businessId);
-		MyBusinessModel myBusinessModel = myBusinessModelService.selectOne(mbm_);
-		if (myBusinessModel != null && myBusinessModel.getActReModel() != null) {
-			List<Deployment> deploymentC = processEngineConfiguration.getRepositoryService().createDeploymentQuery()
-					.deploymentName(myBusinessModel.getActReModel().getName()).orderByDeploymentId().desc().list();
-			if (deploymentC.size() > 0) {
-				Deployment deployment = deploymentC.get(0);
-				return deployment;
-			}
-		}
-		return null;
 	}
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/start")

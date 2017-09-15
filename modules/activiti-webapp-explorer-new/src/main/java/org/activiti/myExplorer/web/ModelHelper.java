@@ -11,7 +11,6 @@ import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Model;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.MyBusinessModel;
-import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.MyBusinessModelService;
 import org.activiti.rest.editor.model.ModelFace;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -31,9 +30,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class ModelHelper implements ModelFace {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(ModelHelper.class);
-
-	@Autowired
-	private ActReModelService actReModelService;
 
 	@Autowired
 	private MyBusinessModelService myBusinessModelService;
