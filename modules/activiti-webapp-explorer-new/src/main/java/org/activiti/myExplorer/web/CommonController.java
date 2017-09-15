@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.web;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,9 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
+import org.activiti.myExplorer.persist.ActRuExecution;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
 import org.activiti.myExplorer.service.DeploymentService;
@@ -89,7 +92,13 @@ public class CommonController {
 		ActReProcdef actReProcdef = deploymentService.getActReProcdef(businessId);
 		ProcessInstance pi = processEngineConfiguration.getRuntimeService()
 				.startProcessInstanceById(actReProcdef.getId());
-		mm.addAttribute("_content", pi.getId());
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(pi.getId()).list();
+		Collection<ActRuExecution> executionEntityC = new ArrayList<>();
+		for (Execution e : executionC) {
+			executionEntityC.add(new ActRuExecution(e));
+		}
+		mm.addAttribute("_content", executionEntityC);
 		return UNIQUE_PATH;
 	}
 }
