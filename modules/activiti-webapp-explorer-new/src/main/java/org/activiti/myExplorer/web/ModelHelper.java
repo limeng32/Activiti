@@ -81,16 +81,9 @@ public class ModelHelper implements ModelFace {
 	@Override
 	public void dealSave(String modelId, MultiValueMap<String, String> values) {
 		try {
-			System.out.println("1::" + modelId);
 			String business = values.getFirst("business");
 			Model model = processEngineConfiguration.getRepositoryService().getModel(modelId);
 
-			System.out.println("1::" + model.getCategory());
-			System.out.println("2::" + model.getDeploymentId());
-			System.out.println("3::" + model.getId());
-			System.out.println("4::" + model.getKey());
-			System.out.println("5::" + model.getMetaInfo());
-			System.out.println("6::" + model.getName());
 			ObjectNode modelJson = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
 
 			modelJson.put(ModelDataJsonConstants.MODEL_NAME, values.getFirst("name"));

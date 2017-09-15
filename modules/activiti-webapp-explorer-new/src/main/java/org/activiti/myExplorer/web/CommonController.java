@@ -5,7 +5,9 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.service.ActReModelService;
@@ -35,6 +37,9 @@ public class CommonController {
 
 	@Autowired
 	private DeploymentService deploymentService;
+
+	@Autowired
+	private StandaloneProcessEngineConfiguration processEngineConfiguration;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -81,7 +86,10 @@ public class CommonController {
 			@RequestParam(value = "dealRole", required = false) String dealRole,
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) JSONObject dataJson) {
-
+		ActReProcdef actReProcdef = deploymentService.getActReProcdef(businessId);
+		ProcessInstance pi = processEngineConfiguration.getRuntimeService()
+				.startProcessInstanceById(actReProcdef.getId());
+		mm.addAttribute("_content", pi.getId());
 		return UNIQUE_PATH;
 	}
 }
