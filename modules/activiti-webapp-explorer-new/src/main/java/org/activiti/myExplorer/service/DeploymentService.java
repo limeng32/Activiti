@@ -1,9 +1,12 @@
 package org.activiti.myExplorer.service;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.task.IdentityLink;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +49,19 @@ public class DeploymentService {
 			return actReProcdef;
 		}
 		return null;
+	}
+
+	public String[] getActRole(Collection<IdentityLink> identityLinkC) {
+		Collection<String> collection = new LinkedHashSet<>();
+		for (IdentityLink identityLink : identityLinkC) {
+			if (identityLink.getGroupId() != null) {
+				collection.add(identityLink.getGroupId());
+			}
+			if (identityLink.getUserId() != null) {
+				collection.add(identityLink.getUserId());
+			}
+		}
+		String[] ret = new String[collection.size()];
+		return collection.toArray(ret);
 	}
 }

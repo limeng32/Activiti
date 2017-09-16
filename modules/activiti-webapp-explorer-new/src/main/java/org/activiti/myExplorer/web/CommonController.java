@@ -10,6 +10,7 @@ import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.IdentityLink;
 import org.activiti.engine.task.Task;
 import org.activiti.myExplorer.model.EndCode;
 import org.activiti.myExplorer.model.ExecutionReturn;
@@ -102,8 +103,12 @@ public class CommonController {
 		for (Execution e : executionC) {
 			Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
 					.singleResult();
+			Collection<IdentityLink> identityLinkC = processEngineConfiguration.getTaskService()
+					.getIdentityLinksForTask(task.getId());
+			String[] actRole = deploymentService.getActRole(identityLinkC);
 			ExecutionReturn executionReturn = new ExecutionReturn(e);
 			executionReturn.setActName(task.getName());
+			executionReturn.setActRole(actRole);
 			executionReturn.setIsEnd(EndCode.no);
 			executionReturnC.add(executionReturn);
 		}

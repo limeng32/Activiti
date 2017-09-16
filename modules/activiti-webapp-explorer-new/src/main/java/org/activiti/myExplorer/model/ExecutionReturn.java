@@ -26,7 +26,7 @@ public class ExecutionReturn implements Serializable {
 
 	private String actName;
 
-	private String actRole;
+	private String[] actRole;
 
 	private EndCode isEnd;
 
@@ -54,11 +54,11 @@ public class ExecutionReturn implements Serializable {
 		this.actName = actName;
 	}
 
-	public String getActRole() {
+	public String[] getActRole() {
 		return actRole;
 	}
 
-	public void setActRole(String actRole) {
+	public void setActRole(String[] actRole) {
 		this.actRole = actRole;
 	}
 
