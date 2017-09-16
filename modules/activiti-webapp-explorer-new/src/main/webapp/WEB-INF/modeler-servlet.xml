@@ -59,6 +59,7 @@
 					<property name="features">
 						<array>
 							<value>WriteMapNullValue</value>
+							<value>WriteEnumUsingToString</value>
 							<!-- <value>PrettyFormat</value> -->
 						</array>
 					</property>

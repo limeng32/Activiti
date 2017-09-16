@@ -10,9 +10,13 @@ import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.activiti.myExplorer.model.EndCode;
+import org.activiti.myExplorer.model.ExecutionReturn;
+import org.activiti.myExplorer.model.ProcessInstReturn;
+import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
-import org.activiti.myExplorer.persist.ActRuExecution;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
 import org.activiti.myExplorer.service.DeploymentService;
@@ -94,11 +98,20 @@ public class CommonController {
 				.startProcessInstanceById(actReProcdef.getId());
 		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
 				.processInstanceId(pi.getId()).list();
-		Collection<ActRuExecution> executionEntityC = new ArrayList<>();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
 		for (Execution e : executionC) {
-			executionEntityC.add(new ActRuExecution(e));
+			Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
+					.singleResult();
+			ExecutionReturn executionReturn = new ExecutionReturn(e);
+			executionReturn.setActName(task.getName());
+			executionReturn.setIsEnd(EndCode.no);
+			executionReturnC.add(executionReturn);
 		}
-		mm.addAttribute("_content", executionEntityC);
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		processInstReturn.setExecutionReturn(executionReturnC);
+		processInstReturn.setRetCode(RetCode.success);
+		processInstReturn.setRetVal("1");
+		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
 }
