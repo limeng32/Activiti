@@ -2,6 +2,7 @@ package org.activiti.myExplorer.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 @Controller
@@ -93,29 +95,50 @@ public class CommonController {
 			@RequestParam(value = "businessId") String businessId,
 			@RequestParam(value = "dealRole", required = false) String dealRole,
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
-			@RequestParam(value = "formData", required = false) JSONObject dataJson) {
+			@RequestParam(value = "formData", required = false) String dataStr) {
+		JSONObject jsonObj = JSON.parseObject(dataStr);
+		JSONObject formData = jsonObj.getJSONObject("form_data");
 		ActReProcdef actReProcdef = deploymentService.getActReProcdef(businessId);
 		ProcessInstance pi = processEngineConfiguration.getRuntimeService()
 				.startProcessInstanceById(actReProcdef.getId());
-		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
-				.processInstanceId(pi.getId()).list();
-		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		for (Execution e : executionC) {
-			Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
-					.singleResult();
-			Collection<IdentityLink> identityLinkC = processEngineConfiguration.getTaskService()
-					.getIdentityLinksForTask(task.getId());
-			String[] actRole = deploymentService.getActRole(identityLinkC);
-			ExecutionReturn executionReturn = new ExecutionReturn(e);
-			executionReturn.setActName(task.getName());
-			executionReturn.setActRole(actRole);
-			executionReturn.setIsEnd(EndCode.no);
-			executionReturnC.add(executionReturn);
-		}
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		processInstReturn.setExecutionReturn(executionReturnC);
-		processInstReturn.setRetCode(RetCode.success);
-		processInstReturn.setRetVal("1");
+		if (pi != null) {
+			Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+					.processInstanceId(pi.getId()).list();
+			Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+			if (executionC.size() > 0) {
+				for (Execution e : executionC) {
+					Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
+							.singleResult();
+					Collection<IdentityLink> identityLinkC = processEngineConfiguration.getTaskService()
+							.getIdentityLinksForTask(task.getId());
+					String[] actRole = deploymentService.getActRole(identityLinkC);
+					ExecutionReturn executionReturn = new ExecutionReturn(e);
+					executionReturn.setActName(task.getName());
+					executionReturn.setActRole(actRole);
+					executionReturn.setIsEnd(EndCode.no);
+					executionReturnC.add(executionReturn);
+					if (formData != null) {
+						for (Map.Entry<String, Object> ee : formData.entrySet()) {
+							processEngineConfiguration.getTaskService().setVariable(task.getId(), ee.getKey(),
+									ee.getValue());
+						}
+					}
+				}
+				processInstReturn.setExecutionReturn(executionReturnC);
+				processInstReturn.setIsEnd(EndCode.no);
+				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetVal("1");
+			} else {
+				processInstReturn.setIsEnd(EndCode.yes);
+				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetVal("1");
+			}
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("流程无法启动");
+		}
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}

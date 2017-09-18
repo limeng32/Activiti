@@ -15,6 +15,8 @@ public class ProcessInstReturn implements Serializable {
 	@JSONField(name = "RetVal")
 	private String retVal;
 
+	private EndCode isEnd;
+
 	@JSONField(name = "DataRows")
 	private Collection<ExecutionReturn> executionReturn;
 
@@ -40,6 +42,14 @@ public class ProcessInstReturn implements Serializable {
 
 	public void setExecutionReturn(Collection<ExecutionReturn> executionReturn) {
 		this.executionReturn = executionReturn;
+	}
+
+	public EndCode getIsEnd() {
+		return isEnd;
+	}
+
+	public void setIsEnd(EndCode isEnd) {
+		this.isEnd = isEnd;
 	}
 
 }
