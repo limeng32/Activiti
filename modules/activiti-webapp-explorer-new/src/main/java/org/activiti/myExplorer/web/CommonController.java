@@ -97,7 +97,10 @@ public class CommonController {
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) String dataStr) {
 		JSONObject jsonObj = JSON.parseObject(dataStr);
-		JSONObject formData = jsonObj.getJSONObject("form_data");
+		JSONObject formData = null;
+		if (jsonObj != null) {
+			formData = jsonObj.getJSONObject("form_data");
+		}
 		ActReProcdef actReProcdef = deploymentService.getActReProcdef(businessId);
 		ProcessInstance pi = processEngineConfiguration.getRuntimeService()
 				.startProcessInstanceById(actReProcdef.getId());
@@ -140,6 +143,48 @@ public class CommonController {
 			processInstReturn.setRetVal("流程无法启动");
 		}
 		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/flow")
+	public String flow(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId,
+			@RequestParam(value = "dealRole", required = false) String dealRole,
+			@RequestParam(value = "dealPerson", required = false) String dealPerson,
+			@RequestParam(value = "formData", required = false) String dataStr) {
+		JSONObject jsonObj = JSON.parseObject(dataStr);
+		JSONObject formData = null;
+		if (jsonObj != null) {
+			formData = jsonObj.getJSONObject("form_data");
+		}
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		System.out.println("1::" + execution.getActivityId());
+		Task task = null;
+		if (execution != null) {
+			task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(execution.getId())
+					.singleResult();
+			if (task != null && dealPerson != null) {
+				processEngineConfiguration.getTaskService().claim(task.getId(), dealPerson);
+				if (formData != null) {
+					for (Map.Entry<String, Object> ee : formData.entrySet()) {
+						processEngineConfiguration.getTaskService().setVariable(task.getId(), ee.getKey(),
+								ee.getValue());
+					}
+				}
+				processEngineConfiguration.getTaskService().complete(task.getId());
+			}
+			Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+					.processInstanceId(execution.getProcessInstanceId()).list();
+
+			if (executionC.size() > 0) {
+				for (Execution e : executionC) {
+					System.out.println("2::" + e.getId());
+				}
+			} else {
+			}
+		}
+
 		return UNIQUE_PATH;
 	}
 }
