@@ -159,32 +159,51 @@ public class CommonController {
 		}
 		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
 				.singleResult();
-		System.out.println("1::" + execution.getActivityId());
-		Task task = null;
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		if (execution != null) {
-			task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(execution.getId())
+			Task task_ = processEngineConfiguration.getTaskService().createTaskQuery().executionId(execution.getId())
 					.singleResult();
-			if (task != null && dealPerson != null) {
-				processEngineConfiguration.getTaskService().claim(task.getId(), dealPerson);
+			if (task_ != null && dealPerson != null) {
+				processEngineConfiguration.getTaskService().claim(task_.getId(), dealPerson);
 				if (formData != null) {
 					for (Map.Entry<String, Object> ee : formData.entrySet()) {
-						processEngineConfiguration.getTaskService().setVariable(task.getId(), ee.getKey(),
+						processEngineConfiguration.getTaskService().setVariable(task_.getId(), ee.getKey(),
 								ee.getValue());
 					}
 				}
-				processEngineConfiguration.getTaskService().complete(task.getId());
+				processEngineConfiguration.getTaskService().complete(task_.getId());
 			}
 			Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
 					.processInstanceId(execution.getProcessInstanceId()).list();
-
+			Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
 			if (executionC.size() > 0) {
 				for (Execution e : executionC) {
-					System.out.println("2::" + e.getId());
+					Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
+							.singleResult();
+					Collection<IdentityLink> identityLinkC = processEngineConfiguration.getTaskService()
+							.getIdentityLinksForTask(task.getId());
+					String[] actRole = deploymentService.getActRole(identityLinkC);
+					ExecutionReturn executionReturn = new ExecutionReturn(e);
+					executionReturn.setActName(task.getName());
+					executionReturn.setActRole(actRole);
+					executionReturn.setIsEnd(EndCode.no);
+					executionReturnC.add(executionReturn);
 				}
+				processInstReturn.setExecutionReturn(executionReturnC);
+				processInstReturn.setIsEnd(EndCode.no);
+				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetVal("1");
 			} else {
+				processInstReturn.setIsEnd(EndCode.yes);
+				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetVal("1");
 			}
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("流程无法流转到下一步");
 		}
-
+		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
 }
