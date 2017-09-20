@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class CommonController {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
+	protected static final Logger LOGGER =  LoggerFactory.getLogger(CommonController.class);
 
 	@Autowired
 	private ActReModelService actReModelService;
