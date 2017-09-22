@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.web;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.myExplorer.model.EndCode;
 import org.activiti.myExplorer.model.ExecutionReturn;
 import org.activiti.myExplorer.model.ProcessInstReturn;
@@ -28,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class CommonController {
 
-	protected static final Logger LOGGER =  LoggerFactory.getLogger(CommonController.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
 
 	@Autowired
 	private ActReModelService actReModelService;
@@ -118,6 +120,99 @@ public class CommonController {
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) String dataStr) {
 		ProcessInstReturn processInstReturn = deploymentService.flowOneStep(exeId, dealRole, dealPerson, dataStr);
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/suspend")
+	public String suspend(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		processEngineConfiguration.getRuntimeService().suspendProcessInstanceById(execution.getProcessInstanceId());
+
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		}
+
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/activate")
+	public String activate(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		processEngineConfiguration.getRuntimeService().activateProcessInstanceById(execution.getProcessInstanceId());
+
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		}
+
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/terminate")
+	public String terminate(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		processEngineConfiguration.getRuntimeService().deleteProcessInstance(execution.getProcessInstanceId(), "终止流程");
+
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		}
+
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}

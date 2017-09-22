@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.Execution;
@@ -129,55 +130,62 @@ public class DeploymentService {
 
 	public ProcessInstReturn flowOneStep(String exeId, String dealRole, String dealPerson, String dataStr) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		JSONObject jsonObj = JSON.parseObject(dataStr);
-		JSONObject formData = null;
-		if (jsonObj != null) {
-			formData = jsonObj.getJSONObject("form_data");
-		}
-		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
-				.singleResult();
-		if (execution != null) {
-			Task task_ = processEngineConfiguration.getTaskService().createTaskQuery().executionId(execution.getId())
-					.singleResult();
-			if (task_ != null && dealPerson != null) {
-				processEngineConfiguration.getTaskService().claim(task_.getId(), dealPerson);
-				if (formData != null) {
-					for (Map.Entry<String, Object> ee : formData.entrySet()) {
-						processEngineConfiguration.getTaskService().setVariable(task_.getId(), ee.getKey(),
-								ee.getValue());
-					}
-				}
-				processEngineConfiguration.getTaskService().complete(task_.getId());
+		try {
+			JSONObject jsonObj = JSON.parseObject(dataStr);
+			JSONObject formData = null;
+			if (jsonObj != null) {
+				formData = jsonObj.getJSONObject("form_data");
 			}
-			Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
-					.processInstanceId(execution.getProcessInstanceId()).list();
-			Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-			if (executionC.size() > 0) {
-				for (Execution e : executionC) {
-					Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
-							.singleResult();
-					Collection<IdentityLink> identityLinkC = processEngineConfiguration.getTaskService()
-							.getIdentityLinksForTask(task.getId());
-					String[] actRole = getActRole(identityLinkC);
-					ExecutionReturn executionReturn = new ExecutionReturn(e);
-					executionReturn.setActName(task.getName());
-					executionReturn.setActRole(actRole);
-					executionReturn.setIsEnd(EndCode.no);
-					executionReturnC.add(executionReturn);
+			Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+					.executionId(exeId).singleResult();
+			if (execution != null) {
+				Task task_ = processEngineConfiguration.getTaskService().createTaskQuery()
+						.executionId(execution.getId()).singleResult();
+				if (task_ != null && dealPerson != null) {
+					if (task_.getAssignee() == null) {
+						processEngineConfiguration.getTaskService().claim(task_.getId(), dealPerson);
+						if (formData != null) {
+							for (Map.Entry<String, Object> ee : formData.entrySet()) {
+								processEngineConfiguration.getTaskService().setVariable(task_.getId(), ee.getKey(),
+										ee.getValue());
+							}
+						}
+					}
+					processEngineConfiguration.getTaskService().complete(task_.getId());
 				}
-				processInstReturn.setExecutionReturn(executionReturnC);
-				processInstReturn.setIsEnd(EndCode.no);
-				processInstReturn.setRetCode(RetCode.success);
-				processInstReturn.setRetVal("1");
+				Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+						.processInstanceId(execution.getProcessInstanceId()).list();
+				Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+				if (executionC.size() > 0) {
+					for (Execution e : executionC) {
+						Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(e.getId())
+								.singleResult();
+						Collection<IdentityLink> identityLinkC = processEngineConfiguration.getTaskService()
+								.getIdentityLinksForTask(task.getId());
+						String[] actRole = getActRole(identityLinkC);
+						ExecutionReturn executionReturn = new ExecutionReturn(e);
+						executionReturn.setActName(task.getName());
+						executionReturn.setActRole(actRole);
+						executionReturn.setIsEnd(EndCode.no);
+						executionReturnC.add(executionReturn);
+					}
+					processInstReturn.setExecutionReturn(executionReturnC);
+					processInstReturn.setIsEnd(EndCode.no);
+					processInstReturn.setRetCode(RetCode.success);
+					processInstReturn.setRetVal("1");
+				} else {
+					processInstReturn.setIsEnd(EndCode.yes);
+					processInstReturn.setRetCode(RetCode.success);
+					processInstReturn.setRetVal("1");
+				}
 			} else {
 				processInstReturn.setIsEnd(EndCode.yes);
-				processInstReturn.setRetCode(RetCode.success);
-				processInstReturn.setRetVal("1");
+				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetVal("流程无法流转到下一步");
 			}
-		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+		} catch (ActivitiException e) {
 			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("流程无法流转到下一步");
+			processInstReturn.setRetVal(e.getMessage());
 		}
 		return processInstReturn;
 	}
