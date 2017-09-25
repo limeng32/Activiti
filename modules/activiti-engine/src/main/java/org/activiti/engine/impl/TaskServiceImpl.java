@@ -59,6 +59,7 @@ import org.activiti.engine.impl.cmd.SaveTaskCmd;
 import org.activiti.engine.impl.cmd.SetTaskDueDateCmd;
 import org.activiti.engine.impl.cmd.SetTaskPriorityCmd;
 import org.activiti.engine.impl.cmd.SetTaskVariablesCmd;
+import org.activiti.engine.impl.cmd.TaskCommitCmd;
 import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.task.Attachment;
 import org.activiti.engine.task.Comment;
@@ -391,6 +392,11 @@ public class TaskServiceImpl extends ServiceImpl implements TaskService {
 
   public List<Task> getSubTasks(String parentTaskId) {
     return commandExecutor.execute(new GetSubTasksCmd(parentTaskId));
+  }
+
+  @Override
+  public void jump(String _taskId, String _toTaskKey, String _type, Map _variables) {
+	commandExecutor.execute(new TaskCommitCmd(_taskId, _toTaskKey,_type,_variables));
   }
 
 }

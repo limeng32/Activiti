@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
+import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.Execution;
+import org.activiti.engine.task.Task;
 import org.activiti.myExplorer.model.EndCode;
 import org.activiti.myExplorer.model.ExecutionReturn;
 import org.activiti.myExplorer.model.ProcessInstReturn;
@@ -213,6 +215,20 @@ public class CommonController {
 			processInstReturn.setRetVal("1");
 		}
 
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/jump")
+	public String jump(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "targetTaskId") String targetTaskId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+//		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+//				.singleResult();
+		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
+//		System.out.println("1::" + execution.getActivityId());
+//		System.out.println("2::" + task.getId());
+		processEngineConfiguration.getTaskService().jump(task.getId(), targetTaskId, TaskEntity.JUMP_REASON_JUMP, null);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}

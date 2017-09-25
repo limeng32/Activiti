@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
@@ -144,11 +145,13 @@ public class DeploymentService {
 				if (task_ != null && dealPerson != null) {
 					if (task_.getAssignee() == null) {
 						processEngineConfiguration.getTaskService().claim(task_.getId(), dealPerson);
-						if (formData != null) {
-							for (Map.Entry<String, Object> ee : formData.entrySet()) {
-								processEngineConfiguration.getTaskService().setVariable(task_.getId(), ee.getKey(),
-										ee.getValue());
-							}
+					} else {
+						processEngineConfiguration.getTaskService().claim(task_.getId(), task_.getAssignee());
+					}
+					if (formData != null) {
+						for (Map.Entry<String, Object> ee : formData.entrySet()) {
+							processEngineConfiguration.getTaskService().setVariable(task_.getId(), ee.getKey(),
+									ee.getValue());
 						}
 					}
 					processEngineConfiguration.getTaskService().complete(task_.getId());

@@ -56,6 +56,8 @@ public class TaskEntity extends VariableScopeImpl implements Task, DelegateTask,
 
   public static final String DELETE_REASON_COMPLETED = "completed";
   public static final String DELETE_REASON_DELETED = "deleted";
+  public static final String JUMP_REASON_JUMP = "jump";
+  public static final String JUMP_REASON_TURNBACK = "turnback";
 
   private static final long serialVersionUID = 1L;
 
