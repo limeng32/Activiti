@@ -232,4 +232,13 @@ public class CommonController {
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
+	
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/withdraw")
+	public String withdraw(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "taskId") String taskId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+//		processEngineConfiguration.getHistoryService().createHistoricTaskInstanceQuery().
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
 }

@@ -30,6 +30,8 @@ public class ExecutionReturn implements Serializable {
 
 	private EndCode isEnd;
 
+	private String taskId;
+
 	public String getExeId() {
 		return exeId;
 	}
@@ -68,6 +70,14 @@ public class ExecutionReturn implements Serializable {
 
 	public void setIsEnd(EndCode isEnd) {
 		this.isEnd = isEnd;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 
 }

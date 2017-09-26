@@ -101,6 +101,7 @@ public class DeploymentService {
 							.getIdentityLinksForTask(task.getId());
 					String[] actRole = getActRole(identityLinkC);
 					ExecutionReturn executionReturn = new ExecutionReturn(e);
+					executionReturn.setTaskId(task.getId());
 					executionReturn.setActName(task.getName());
 					executionReturn.setActRole(actRole);
 					executionReturn.setIsEnd(EndCode.no);
@@ -167,6 +168,7 @@ public class DeploymentService {
 								.getIdentityLinksForTask(task.getId());
 						String[] actRole = getActRole(identityLinkC);
 						ExecutionReturn executionReturn = new ExecutionReturn(e);
+						executionReturn.setTaskId(task.getId());
 						executionReturn.setActName(task.getName());
 						executionReturn.setActRole(actRole);
 						executionReturn.setIsEnd(EndCode.no);
