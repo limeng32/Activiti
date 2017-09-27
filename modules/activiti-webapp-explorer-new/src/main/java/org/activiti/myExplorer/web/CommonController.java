@@ -290,4 +290,28 @@ public class CommonController {
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/unreceipt")
+	public String unreceipt(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "dealPerson") String dealPerson) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
+		if (task != null && task.getId() != null) {
+			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
+				if (dealPerson.equals(task.getAssignee())) {
+					processEngineConfiguration.getTaskService().unclaim(task.getId());
+				}
+				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetVal("1");
+			} else {
+				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetVal("无法取消，因为任务并非由" + dealPerson + "认领");
+			}
+		} else {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
+		}
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
 }
