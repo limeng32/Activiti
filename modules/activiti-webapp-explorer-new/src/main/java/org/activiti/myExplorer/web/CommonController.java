@@ -223,21 +223,23 @@ public class CommonController {
 	public String jump(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "targetTaskId") String targetTaskId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-//		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
-//				.singleResult();
+		// Execution execution =
+		// processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+		// .singleResult();
 		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-//		System.out.println("1::" + execution.getActivityId());
-//		System.out.println("2::" + task.getId());
+		// System.out.println("1::" + execution.getActivityId());
+		// System.out.println("2::" + task.getId());
 		processEngineConfiguration.getTaskService().jump(task.getId(), targetTaskId, TaskEntity.JUMP_REASON_JUMP, null);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
-	
+
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/withdraw")
 	public String withdraw(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "taskId") String taskId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-//		processEngineConfiguration.getHistoryService().createHistoricTaskInstanceQuery().
+		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
+		processEngineConfiguration.getTaskService().jump(task.getId(), taskId, TaskEntity.JUMP_REASON_TURNBACK, null);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}

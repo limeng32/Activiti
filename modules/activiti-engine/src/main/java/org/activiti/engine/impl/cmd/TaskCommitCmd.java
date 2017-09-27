@@ -3,8 +3,8 @@ package org.activiti.engine.impl.cmd;
 import java.util.Map;
 
 import org.activiti.engine.ActivitiException;
+import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.RepositoryServiceImpl;
-import org.activiti.engine.impl.cmd.NeedsActiveTaskCmd;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.CommandContext;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
@@ -39,9 +39,9 @@ public class TaskCommitCmd extends NeedsActiveTaskCmd<Void> {
 	@Override
 	protected Void execute(CommandContext commandContext, TaskEntity task) {
 
-		if (variables != null)
+		if (variables != null) {
 			task.setExecutionVariables(variables);
-
+		}
 		ExecutionEntity execution = task.getExecution();
 		// 流程定义id
 		String procDefId = execution.getProcessDefinitionId();
@@ -55,13 +55,19 @@ public class TaskCommitCmd extends NeedsActiveTaskCmd<Void> {
 		ActivityImpl toActivityImpl = processDefinitionImpl.findActivity(this.toTaskKey);
 
 		if (toActivityImpl == null) {
-			throw new ActivitiException(this.toTaskKey + " to ActivityImpl is null!");
-		} else {
-			task.fireEvent("complete");
-			Context.getCommandContext().getTaskEntityManager().deleteTask(task, this.type, false);
-			execution.removeTask(task);// 执行规划的线
-			execution.executeActivity(toActivityImpl);
+			/* 从ACT_HI_TASKINST中找到以toTaskKey为主键的taskInst */
+			HistoricTaskInstance historicTaskInstance = execution.getEngineServices().getHistoryService()
+					.createHistoricTaskInstanceQuery().taskId(toTaskKey).singleResult();
+			if (historicTaskInstance == null) {
+				throw new ActivitiException(this.toTaskKey + " to ActivityImpl is null!");
+			} else {
+				toActivityImpl = processDefinitionImpl.findActivity(historicTaskInstance.getTaskDefinitionKey());
+			}
 		}
+		task.fireEvent("complete");
+		Context.getCommandContext().getTaskEntityManager().deleteTask(task, this.type, false);
+		execution.removeTask(task);// 执行规划的线
+		execution.executeActivity(toActivityImpl);
 		return null;
 	}
 }
