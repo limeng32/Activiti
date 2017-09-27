@@ -663,6 +663,9 @@ public interface TaskService {
 	/** The list of subtasks for this parent task */
 	List<Task> getSubTasks(String parentTaskId);
 
-	/** 跳转至指定任务 */
-	public void jump(String _taskId, String _toTaskKey, String _type, Map _variables);
+	/** 跳转至_toActivityKey指定的环节 */
+	public void jump(String _taskId, String _toActivityKey, Map _variables);
+
+	/** 退回至_toTaskId指定的任务 */
+	public void withdraw(String _taskId, String _toTaskId, Map _variables);
 }

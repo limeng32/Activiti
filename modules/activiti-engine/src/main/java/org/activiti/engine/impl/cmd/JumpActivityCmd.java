@@ -3,7 +3,6 @@ package org.activiti.engine.impl.cmd;
 import java.util.Map;
 
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.interceptor.CommandContext;
@@ -12,26 +11,21 @@ import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.pvm.process.ProcessDefinitionImpl;
 
-public class TaskCommitCmd extends NeedsActiveTaskCmd<Void> {
+public class JumpActivityCmd extends NeedsActiveTaskCmd<Void> {
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 目标任务的定义Id
 	 */
-	private String toTaskKey;
+	private String toActivityKey;
 	/**
 	 * 参数
 	 */
 	protected Map variables;
-	/**
-	 * jump跳跃 ，turnback 退回（）
-	 */
-	protected String type;
 
-	public TaskCommitCmd(String _taskId, String _toTaskKey, String _type, Map _variables) {
+	public JumpActivityCmd(String _taskId, String _toTaskKey, Map _variables) {
 		super(_taskId);
-		this.toTaskKey = _toTaskKey;
-		this.type = _type;
+		this.toActivityKey = _toTaskKey;
 		this.variables = _variables;
 
 	}
@@ -52,20 +46,13 @@ public class TaskCommitCmd extends NeedsActiveTaskCmd<Void> {
 		ProcessDefinitionImpl processDefinitionImpl = (ProcessDefinitionImpl) repositoryService
 				.getDeployedProcessDefinition(procDefId);
 		// 获取需要提交的节点
-		ActivityImpl toActivityImpl = processDefinitionImpl.findActivity(this.toTaskKey);
+		ActivityImpl toActivityImpl = processDefinitionImpl.findActivity(toActivityKey);
 
 		if (toActivityImpl == null) {
-			/* 从ACT_HI_TASKINST中找到以toTaskKey为主键的taskInst */
-			HistoricTaskInstance historicTaskInstance = execution.getEngineServices().getHistoryService()
-					.createHistoricTaskInstanceQuery().taskId(toTaskKey).singleResult();
-			if (historicTaskInstance == null) {
-				throw new ActivitiException(this.toTaskKey + " to ActivityImpl is null!");
-			} else {
-				toActivityImpl = processDefinitionImpl.findActivity(historicTaskInstance.getTaskDefinitionKey());
-			}
+			throw new ActivitiException(toActivityKey + " to ActivityImpl is null!");
 		}
 		task.fireEvent("complete");
-		Context.getCommandContext().getTaskEntityManager().deleteTask(task, this.type, false);
+		Context.getCommandContext().getTaskEntityManager().deleteTask(task, TaskEntity.JUMP_REASON_JUMP, false);
 		execution.removeTask(task);// 执行规划的线
 		execution.executeActivity(toActivityImpl);
 		return null;

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
-import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.task.Task;
@@ -221,15 +220,10 @@ public class CommonController {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/jump")
 	public String jump(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "targetTaskId") String targetTaskId) {
+			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "activityKey") String activityKey) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		// Execution execution =
-		// processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
-		// .singleResult();
 		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		// System.out.println("1::" + execution.getActivityId());
-		// System.out.println("2::" + task.getId());
-		processEngineConfiguration.getTaskService().jump(task.getId(), targetTaskId, TaskEntity.JUMP_REASON_JUMP, null);
+		processEngineConfiguration.getTaskService().jump(task.getId(), activityKey, null);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
@@ -239,7 +233,7 @@ public class CommonController {
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "taskId") String taskId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		processEngineConfiguration.getTaskService().jump(task.getId(), taskId, TaskEntity.JUMP_REASON_TURNBACK, null);
+		processEngineConfiguration.getTaskService().withdraw(task.getId(), taskId, null);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
