@@ -235,8 +235,8 @@ public class CommonController {
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "taskId") String taskId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		/* 判断taskId是否是task的上一环节 */
 		if (task != null && task.getId() != null) {
+			/* 判断taskId是否是task的上一环节 */
 			List<HistoricTaskInstance> htic = processEngineConfiguration.getHistoryService()
 					.createHistoricTaskInstanceQuery().executionId(exeId).orderByTaskId().asc().list();
 			HistoricTaskInstance lastTask = null;
@@ -258,6 +258,30 @@ public class CommonController {
 			} else {
 				processInstReturn.setRetCode(RetCode.exception);
 				processInstReturn.setRetVal("无法撤回到id为 " + taskId + " 的任务");
+			}
+		} else {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
+		}
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/receipt")
+	public String receipt(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "dealPerson") String dealPerson) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
+		if (task != null && task.getId() != null) {
+			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
+				if (task.getAssignee() == null) {
+					processEngineConfiguration.getTaskService().claim(task.getId(), dealPerson);
+				}
+				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetVal("1");
+			} else {
+				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetVal("任务已经被认领，无法再次认领");
 			}
 		} else {
 			processInstReturn.setRetCode(RetCode.exception);
