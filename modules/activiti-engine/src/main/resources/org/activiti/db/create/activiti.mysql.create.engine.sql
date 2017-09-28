@@ -322,3 +322,9 @@ alter table ACT_PROCDEF_INFO
     add constraint ACT_UNIQ_INFO_PROCDEF
     unique (PROC_DEF_ID_);
     
+create table MY_BUSINESS_MODEL (
+    ID varchar(64) not null,
+    MODEL_ID varchar(64),
+    BUSINESS_ID varchar(64),
+    primary key (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
