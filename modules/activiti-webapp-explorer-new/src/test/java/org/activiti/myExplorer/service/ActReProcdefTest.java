@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.service;
 
+import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.myExplorer.persist.ActReModel;
@@ -25,10 +26,10 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:activiti-explorer-test.xml" })
+@ContextConfiguration({ "classpath:activiti-explorer-test.xml", "classpath:activiti-custom-context.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class)
+@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource1" })
 public class ActReProcdefTest {
 
 	@Autowired
@@ -43,9 +44,15 @@ public class ActReProcdefTest {
 	@Autowired
 	private StandaloneProcessEngineConfiguration processEngineConfiguration;
 
+	@Autowired
+	private IdentityService identityService;
+
 	@Test
 	public void test() {
 		RepositoryService repositoryService = processEngineConfiguration.getRepositoryService();
+
+		identityService.createGroupQuery().groupId("1");
+
 		Assert.assertNotNull(repositoryService);
 		Assert.assertTrue(true);
 	}

@@ -15,7 +15,7 @@
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dataSource1" />
 		<property name="mapperLocations"
 			value="classpath:org/activiti/myExplorer/mapper/*.xml" />
 		<property name="typeAliasesPackage" value="org.activiti.myExplorer" />
@@ -28,13 +28,13 @@
 
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dataSource1" />
 	</bean>
 
 	<bean id="processEngineConfiguration"
 		class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
-		<property name="dataSource" ref="dataSource" />
-		<property name="databaseSchemaUpdate" value="false" />
+		<property name="dataSource" ref="dataSource1" />
+		<property name="databaseSchemaUpdate" value="true" />
 		<property name="jobExecutorActivate" value="true" />
 		<property name="customFormTypes">
 			<list>

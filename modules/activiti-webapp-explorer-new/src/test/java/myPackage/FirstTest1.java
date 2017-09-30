@@ -12,12 +12,12 @@ import org.drools.runtime.StatefulKnowledgeSession;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class FirstTest {
+public class FirstTest1 {
 
 	@Test
 	public void RuleTest1() {
 		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(ResourceFactory.newClassPathResource("rule/first.drl", FirstTest.class), ResourceType.DRL);
+		kbuilder.add(ResourceFactory.newClassPathResource("rule/first.drl", FirstTest1.class), ResourceType.DRL);
 		Collection<KnowledgePackage> pkgs = kbuilder.getKnowledgePackages();
 		KnowledgeBase kbase = kbuilder.newKnowledgeBase();
 		kbase.addKnowledgePackages(pkgs);

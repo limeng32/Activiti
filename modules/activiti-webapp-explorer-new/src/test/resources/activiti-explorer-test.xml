@@ -19,9 +19,13 @@
 
 	<import resource="classpath:activiti-explorer-service.xml" />
 
-	<context:component-scan base-package="org.activiti.myExplorer" />
+	<!-- <context:component-scan base-package="org.activiti"> <context:exclude-filter 
+		type="annotation" expression="org.springframework.stereotype.Controller" 
+		/> </context:component-scan> -->
 
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+	<context:annotation-config />
+
+	<bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.h2.jdbcx.JdbcDataSource" />
 		<property name="url"
@@ -30,18 +34,25 @@
 		<property name="password" value=""></property>
 	</bean>
 
-	<jdbc:initialize-database data-source="dataSource"
+	<jdbc:initialize-database data-source="dataSource1"
 		ignore-failures="ALL">
 		<jdbc:script location="classpath:/INIT_TABLE1.sql"
 			encoding="UTF-8" />
 	</jdbc:initialize-database>
 
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
-	
+
 	<bean id="demoDataConfiguration" class="org.activiti.explorer.conf.DemoDataConfiguration">
 		<property name="createDemoUsers" value="false" />
 		<property name="createDemoDefinitions" value="false" />
 		<property name="createDemoModels" value="false" />
 		<property name="createDemoReports" value="false" />
 	</bean>
+
+	<bean class="org.activiti.myExplorer.service.ActReModelService"
+		id="actReModelService"></bean>
+	<bean class="org.activiti.myExplorer.service.ActReProcdefService"
+		id="actReProcdefService"></bean>
+	<bean class="org.activiti.myExplorer.service.MyBusinessModelService"
+		id="myBusinessModelService"></bean>
 </beans>
