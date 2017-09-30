@@ -23,11 +23,6 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
-import org.activiti.engine.IdentityService;
-import org.activiti.engine.ManagementService;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.Picture;
 import org.activiti.engine.identity.User;
@@ -53,20 +48,20 @@ public class DemoDataConfiguration {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(DemoDataConfiguration.class);
 
-	@Autowired
-	protected IdentityService identityService;
-
-	@Autowired
-	protected RepositoryService repositoryService;
-
-	@Autowired
-	protected RuntimeService runtimeService;
-
-	@Autowired
-	protected TaskService taskService;
-
-	@Autowired
-	protected ManagementService managementService;
+	// @Autowired
+	// protected IdentityService identityService;
+	//
+	// @Autowired
+	// protected RepositoryService repositoryService;
+	//
+	// @Autowired
+	// protected RuntimeService runtimeService;
+	//
+	// @Autowired
+	// protected TaskService taskService;
+	//
+	// @Autowired
+	// protected ManagementService managementService;
 
 	@Autowired
 	protected ProcessEngineConfigurationImpl processEngineConfiguration;
@@ -121,11 +116,11 @@ public class DemoDataConfiguration {
 	}
 
 	protected void createGroup(String groupId, String type) {
-		if (identityService.createGroupQuery().groupId(groupId).count() == 0) {
-			Group newGroup = identityService.newGroup(groupId);
+		if (processEngineConfiguration.getIdentityService().createGroupQuery().groupId(groupId).count() == 0) {
+			Group newGroup = processEngineConfiguration.getIdentityService().newGroup(groupId);
 			newGroup.setName(groupId.substring(0, 1).toUpperCase() + groupId.substring(1));
 			newGroup.setType(type);
-			identityService.saveGroup(newGroup);
+			processEngineConfiguration.getIdentityService().saveGroup(newGroup);
 		}
 	}
 
@@ -156,20 +151,20 @@ public class DemoDataConfiguration {
 	protected void createUser(String userId, String firstName, String lastName, String password, String email,
 			String imageResource, List<String> groups, List<String> userInfo) {
 
-		if (identityService.createUserQuery().userId(userId).count() == 0) {
+		if (processEngineConfiguration.getIdentityService().createUserQuery().userId(userId).count() == 0) {
 
 			// Following data can already be set by demo setup script
 
-			User user = identityService.newUser(userId);
+			User user = processEngineConfiguration.getIdentityService().newUser(userId);
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			user.setPassword(password);
 			user.setEmail(email);
-			identityService.saveUser(user);
+			processEngineConfiguration.getIdentityService().saveUser(user);
 
 			if (groups != null) {
 				for (String group : groups) {
-					identityService.createMembership(userId, group);
+					processEngineConfiguration.getIdentityService().createMembership(userId, group);
 				}
 			}
 		}
@@ -181,13 +176,14 @@ public class DemoDataConfiguration {
 			byte[] pictureBytes = IoUtil
 					.readInputStream(this.getClass().getClassLoader().getResourceAsStream(imageResource), null);
 			Picture picture = new Picture(pictureBytes, "image/jpeg");
-			identityService.setUserPicture(userId, picture);
+			processEngineConfiguration.getIdentityService().setUserPicture(userId, picture);
 		}
 
 		// user info
 		if (userInfo != null) {
 			for (int i = 0; i < userInfo.size(); i += 2) {
-				identityService.setUserInfo(userId, userInfo.get(i), userInfo.get(i + 1));
+				processEngineConfiguration.getIdentityService().setUserInfo(userId, userInfo.get(i),
+						userInfo.get(i + 1));
 			}
 		}
 
@@ -196,11 +192,11 @@ public class DemoDataConfiguration {
 	protected void initProcessDefinitions() {
 
 		String deploymentName = "Demo processes";
-		List<Deployment> deploymentList = repositoryService.createDeploymentQuery().deploymentName(deploymentName)
-				.list();
+		List<Deployment> deploymentList = processEngineConfiguration.getRepositoryService().createDeploymentQuery()
+				.deploymentName(deploymentName).list();
 
 		if (deploymentList == null || deploymentList.isEmpty()) {
-			repositoryService.createDeployment().name(deploymentName)
+			processEngineConfiguration.getRepositoryService().createDeployment().name(deploymentName)
 					.addClasspathResource("org/activiti/explorer/demo/process/createTimersProcess.bpmn20.xml")
 					.addClasspathResource("org/activiti/explorer/demo/process/VacationRequest.bpmn20.xml")
 					.addClasspathResource("org/activiti/explorer/demo/process/VacationRequest.png")
@@ -213,9 +209,10 @@ public class DemoDataConfiguration {
 		}
 
 		String reportDeploymentName = "Demo reports";
-		deploymentList = repositoryService.createDeploymentQuery().deploymentName(reportDeploymentName).list();
+		deploymentList = processEngineConfiguration.getRepositoryService().createDeploymentQuery()
+				.deploymentName(reportDeploymentName).list();
 		if (deploymentList == null || deploymentList.isEmpty()) {
-			repositoryService.createDeployment().name(reportDeploymentName)
+			processEngineConfiguration.getRepositoryService().createDeployment().name(reportDeploymentName)
 					.addClasspathResource(
 							"org/activiti/explorer/demo/process/reports/taskDurationForProcessDefinition.bpmn20.xml")
 					.addClasspathResource(
@@ -253,20 +250,21 @@ public class DemoDataConfiguration {
 				for (int i = 0; i < 50; i++) {
 
 					if (random.nextBoolean()) {
-						runtimeService.startProcessInstanceByKey("fixSystemFailure");
+						processEngineConfiguration.getRuntimeService().startProcessInstanceByKey("fixSystemFailure");
 					}
 
 					if (random.nextBoolean()) {
-						identityService.setAuthenticatedUserId("kermit");
+						processEngineConfiguration.getIdentityService().setAuthenticatedUserId("kermit");
 						Map<String, Object> variables = new HashMap<String, Object>();
 						variables.put("customerName", "testCustomer");
 						variables.put("details", "Looks very interesting!");
 						variables.put("notEnoughInformation", false);
-						runtimeService.startProcessInstanceByKey("reviewSaledLead", variables);
+						processEngineConfiguration.getRuntimeService().startProcessInstanceByKey("reviewSaledLead",
+								variables);
 					}
 
 					if (random.nextBoolean()) {
-						runtimeService.startProcessInstanceByKey("escalationExample");
+						processEngineConfiguration.getRuntimeService().startProcessInstanceByKey("escalationExample");
 					}
 
 					if (random.nextInt(100) < 20) {
@@ -275,28 +273,28 @@ public class DemoDataConfiguration {
 					}
 				}
 
-				List<Job> jobs = managementService.createJobQuery().list();
+				List<Job> jobs = processEngineConfiguration.getManagementService().createJobQuery().list();
 				for (int i = 0; i < jobs.size() / 2; i++) {
 					processEngineConfiguration.getClock().setCurrentTime(jobs.get(i).getDuedate());
-					managementService.executeJob(jobs.get(i).getId());
+					processEngineConfiguration.getManagementService().executeJob(jobs.get(i).getId());
 				}
 
-				List<Task> tasks = taskService.createTaskQuery().list();
+				List<Task> tasks = processEngineConfiguration.getTaskService().createTaskQuery().list();
 				while (!tasks.isEmpty()) {
 					for (Task task : tasks) {
 
 						if (task.getAssignee() == null) {
 							String assignee = random.nextBoolean() ? "kermit" : "fozzie";
-							taskService.claim(task.getId(), assignee);
+							processEngineConfiguration.getTaskService().claim(task.getId(), assignee);
 						}
 
 						processEngineConfiguration.getClock().setCurrentTime(
 								new Date(task.getCreateTime().getTime() + random.nextInt(60 * 60 * 1000)));
 
-						taskService.complete(task.getId());
+						processEngineConfiguration.getTaskService().complete(task.getId());
 					}
 
-					tasks = taskService.createTaskQuery().list();
+					tasks = processEngineConfiguration.getTaskService().createTaskQuery().list();
 				}
 
 				processEngineConfiguration.getClock().reset();
@@ -320,11 +318,12 @@ public class DemoDataConfiguration {
 	}
 
 	protected void createModelData(String name, String description, String jsonFile) {
-		List<Model> modelList = repositoryService.createModelQuery().modelName("Demo model").list();
+		List<Model> modelList = processEngineConfiguration.getRepositoryService().createModelQuery()
+				.modelName("Demo model").list();
 
 		if (modelList == null || modelList.isEmpty()) {
 
-			Model model = repositoryService.newModel();
+			Model model = processEngineConfiguration.getRepositoryService().newModel();
 			model.setName(name);
 
 			ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
@@ -332,19 +331,21 @@ public class DemoDataConfiguration {
 			modelObjectNode.put("description", description);
 			model.setMetaInfo(modelObjectNode.toString());
 
-			repositoryService.saveModel(model);
+			processEngineConfiguration.getRepositoryService().saveModel(model);
 
 			try {
 				InputStream svgStream = this.getClass().getClassLoader()
 						.getResourceAsStream("org/activiti/explorer/demo/model/test.svg");
-				repositoryService.addModelEditorSourceExtra(model.getId(), IOUtils.toByteArray(svgStream));
+				processEngineConfiguration.getRepositoryService().addModelEditorSourceExtra(model.getId(),
+						IOUtils.toByteArray(svgStream));
 			} catch (Exception e) {
 				LOGGER.warn("Failed to read SVG", e);
 			}
 
 			try {
 				InputStream editorJsonStream = this.getClass().getClassLoader().getResourceAsStream(jsonFile);
-				repositoryService.addModelEditorSource(model.getId(), IOUtils.toByteArray(editorJsonStream));
+				processEngineConfiguration.getRepositoryService().addModelEditorSource(model.getId(),
+						IOUtils.toByteArray(editorJsonStream));
 			} catch (Exception e) {
 				LOGGER.warn("Failed to read editor JSON", e);
 			}
