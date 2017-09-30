@@ -56,4 +56,7 @@
 		<property name="xmlEncoding" value="utf-8" />
 	</bean>
 
+	<bean id="applicationContextProvder" class="org.activiti.ApplicationContextProvider" />
+
+	<bean class="org.activiti.myExplorer.demo.model.SIGroup" id="siGroup"></bean>
 </beans>
