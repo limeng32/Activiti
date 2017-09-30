@@ -2,7 +2,9 @@ package org.activiti.myExplorer.service;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
+import org.activiti.engine.identity.Group;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
@@ -42,19 +44,24 @@ public class ActReProcdefTest {
 	private MyBusinessModelService myBusinessModelService;
 
 	@Autowired
-	private StandaloneProcessEngineConfiguration processEngineConfiguration;
+	private IdentityService identityService;
 
 	@Autowired
-	private IdentityService identityService;
+	private RepositoryService repositoryService;
 
 	@Test
 	public void test() {
-		RepositoryService repositoryService = processEngineConfiguration.getRepositoryService();
 
-		identityService.createGroupQuery().groupId("1");
+		Group group = identityService.createGroupQuery().groupId("admin").singleResult();
+		Assert.assertEquals("Admin", group.getName());
 
-		Assert.assertNotNull(repositoryService);
-		Assert.assertTrue(true);
+		Deployment deployment = repositoryService.createDeploymentQuery().singleResult();
+		Assert.assertNotNull(deployment.getId());
+
+		ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+				.deploymentId(deployment.getId()).singleResult();
+		Assert.assertEquals("Real_1", processDefinition.getName());
+
 	}
 
 	@Test

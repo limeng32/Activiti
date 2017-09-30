@@ -31,5 +31,6 @@
 		<property name="createDemoDefinitions" value="false" />
 		<property name="createDemoModels" value="false" />
 		<property name="createDemoReports" value="false" />
+		<property name="deployDemoProcess" value="false" />
 	</bean>
 </beans>

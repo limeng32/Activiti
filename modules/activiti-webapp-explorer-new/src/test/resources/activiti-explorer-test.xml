@@ -63,7 +63,8 @@
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 
 	<bean id="demoDataConfiguration" class="org.activiti.explorer.conf.DemoDataConfiguration">
-		<property name="createDemoUsers" value="false" />
+		<property name="deployDemoProcess" value="true" />
+		<property name="createDemoUsers" value="true" />
 		<property name="createDemoDefinitions" value="false" />
 		<property name="createDemoModels" value="false" />
 		<property name="createDemoReports" value="false" />

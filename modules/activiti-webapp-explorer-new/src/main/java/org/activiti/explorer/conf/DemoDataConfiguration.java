@@ -13,6 +13,7 @@
 
 package org.activiti.explorer.conf;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
@@ -23,6 +24,11 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
+import org.activiti.engine.IdentityService;
+import org.activiti.engine.ManagementService;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.identity.Group;
 import org.activiti.engine.identity.Picture;
 import org.activiti.engine.identity.User;
@@ -48,20 +54,20 @@ public class DemoDataConfiguration {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(DemoDataConfiguration.class);
 
-	// @Autowired
-	// protected IdentityService identityService;
-	//
-	// @Autowired
-	// protected RepositoryService repositoryService;
-	//
-	// @Autowired
-	// protected RuntimeService runtimeService;
-	//
-	// @Autowired
-	// protected TaskService taskService;
-	//
-	// @Autowired
-	// protected ManagementService managementService;
+	@Autowired
+	protected IdentityService identityService;
+
+	@Autowired
+	protected RepositoryService repositoryService;
+
+	@Autowired
+	protected RuntimeService runtimeService;
+
+	@Autowired
+	protected TaskService taskService;
+
+	@Autowired
+	protected ManagementService managementService;
 
 	@Autowired
 	protected ProcessEngineConfigurationImpl processEngineConfiguration;
@@ -77,13 +83,17 @@ public class DemoDataConfiguration {
 
 	private boolean createDemoReports;
 
+	private boolean deployDemoProcess;
+
 	@PostConstruct
-	public void init() {
+	public void init() throws FileNotFoundException {
 		if (isCreateDemoUsers()) {
+			System.out.println("1::" + deployDemoProcess);
 			LOGGER.info("Initializing demo groups");
 			initDemoGroups();
 			LOGGER.info("Initializing demo users");
 			initDemoUsers();
+
 		}
 
 		if (isCreateDemoDefinitions()) {
@@ -100,6 +110,17 @@ public class DemoDataConfiguration {
 			LOGGER.info("Initializing demo report data");
 			generateReportData();
 		}
+
+		if (isDeployDemoProcess()) {
+			LOGGER.info("Deploying demo process");
+			initDeployDemoProcess();
+		}
+	}
+
+	protected void initDeployDemoProcess() throws FileNotFoundException {
+		repositoryService.createDeployment().addClasspathResource("diagrams/Real_1.bpmn20.xml").deploy();
+		// .addInputStream("Real_1.bpmn20.xml", new
+		// FileInputStream(filename)).deploy();
 	}
 
 	protected void initDemoGroups() {
@@ -116,11 +137,11 @@ public class DemoDataConfiguration {
 	}
 
 	protected void createGroup(String groupId, String type) {
-		if (processEngineConfiguration.getIdentityService().createGroupQuery().groupId(groupId).count() == 0) {
-			Group newGroup = processEngineConfiguration.getIdentityService().newGroup(groupId);
+		if (identityService.createGroupQuery().groupId(groupId).count() == 0) {
+			Group newGroup = identityService.newGroup(groupId);
 			newGroup.setName(groupId.substring(0, 1).toUpperCase() + groupId.substring(1));
 			newGroup.setType(type);
-			processEngineConfiguration.getIdentityService().saveGroup(newGroup);
+			identityService.saveGroup(newGroup);
 		}
 	}
 
@@ -151,20 +172,20 @@ public class DemoDataConfiguration {
 	protected void createUser(String userId, String firstName, String lastName, String password, String email,
 			String imageResource, List<String> groups, List<String> userInfo) {
 
-		if (processEngineConfiguration.getIdentityService().createUserQuery().userId(userId).count() == 0) {
+		if (identityService.createUserQuery().userId(userId).count() == 0) {
 
 			// Following data can already be set by demo setup script
 
-			User user = processEngineConfiguration.getIdentityService().newUser(userId);
+			User user = identityService.newUser(userId);
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			user.setPassword(password);
 			user.setEmail(email);
-			processEngineConfiguration.getIdentityService().saveUser(user);
+			identityService.saveUser(user);
 
 			if (groups != null) {
 				for (String group : groups) {
-					processEngineConfiguration.getIdentityService().createMembership(userId, group);
+					identityService.createMembership(userId, group);
 				}
 			}
 		}
@@ -176,14 +197,13 @@ public class DemoDataConfiguration {
 			byte[] pictureBytes = IoUtil
 					.readInputStream(this.getClass().getClassLoader().getResourceAsStream(imageResource), null);
 			Picture picture = new Picture(pictureBytes, "image/jpeg");
-			processEngineConfiguration.getIdentityService().setUserPicture(userId, picture);
+			identityService.setUserPicture(userId, picture);
 		}
 
 		// user info
 		if (userInfo != null) {
 			for (int i = 0; i < userInfo.size(); i += 2) {
-				processEngineConfiguration.getIdentityService().setUserInfo(userId, userInfo.get(i),
-						userInfo.get(i + 1));
+				identityService.setUserInfo(userId, userInfo.get(i), userInfo.get(i + 1));
 			}
 		}
 
@@ -192,11 +212,11 @@ public class DemoDataConfiguration {
 	protected void initProcessDefinitions() {
 
 		String deploymentName = "Demo processes";
-		List<Deployment> deploymentList = processEngineConfiguration.getRepositoryService().createDeploymentQuery()
-				.deploymentName(deploymentName).list();
+		List<Deployment> deploymentList = repositoryService.createDeploymentQuery().deploymentName(deploymentName)
+				.list();
 
 		if (deploymentList == null || deploymentList.isEmpty()) {
-			processEngineConfiguration.getRepositoryService().createDeployment().name(deploymentName)
+			repositoryService.createDeployment().name(deploymentName)
 					.addClasspathResource("org/activiti/explorer/demo/process/createTimersProcess.bpmn20.xml")
 					.addClasspathResource("org/activiti/explorer/demo/process/VacationRequest.bpmn20.xml")
 					.addClasspathResource("org/activiti/explorer/demo/process/VacationRequest.png")
@@ -209,10 +229,9 @@ public class DemoDataConfiguration {
 		}
 
 		String reportDeploymentName = "Demo reports";
-		deploymentList = processEngineConfiguration.getRepositoryService().createDeploymentQuery()
-				.deploymentName(reportDeploymentName).list();
+		deploymentList = repositoryService.createDeploymentQuery().deploymentName(reportDeploymentName).list();
 		if (deploymentList == null || deploymentList.isEmpty()) {
-			processEngineConfiguration.getRepositoryService().createDeployment().name(reportDeploymentName)
+			repositoryService.createDeployment().name(reportDeploymentName)
 					.addClasspathResource(
 							"org/activiti/explorer/demo/process/reports/taskDurationForProcessDefinition.bpmn20.xml")
 					.addClasspathResource(
@@ -250,21 +269,20 @@ public class DemoDataConfiguration {
 				for (int i = 0; i < 50; i++) {
 
 					if (random.nextBoolean()) {
-						processEngineConfiguration.getRuntimeService().startProcessInstanceByKey("fixSystemFailure");
+						runtimeService.startProcessInstanceByKey("fixSystemFailure");
 					}
 
 					if (random.nextBoolean()) {
-						processEngineConfiguration.getIdentityService().setAuthenticatedUserId("kermit");
+						identityService.setAuthenticatedUserId("kermit");
 						Map<String, Object> variables = new HashMap<String, Object>();
 						variables.put("customerName", "testCustomer");
 						variables.put("details", "Looks very interesting!");
 						variables.put("notEnoughInformation", false);
-						processEngineConfiguration.getRuntimeService().startProcessInstanceByKey("reviewSaledLead",
-								variables);
+						runtimeService.startProcessInstanceByKey("reviewSaledLead", variables);
 					}
 
 					if (random.nextBoolean()) {
-						processEngineConfiguration.getRuntimeService().startProcessInstanceByKey("escalationExample");
+						runtimeService.startProcessInstanceByKey("escalationExample");
 					}
 
 					if (random.nextInt(100) < 20) {
@@ -273,28 +291,28 @@ public class DemoDataConfiguration {
 					}
 				}
 
-				List<Job> jobs = processEngineConfiguration.getManagementService().createJobQuery().list();
+				List<Job> jobs = managementService.createJobQuery().list();
 				for (int i = 0; i < jobs.size() / 2; i++) {
 					processEngineConfiguration.getClock().setCurrentTime(jobs.get(i).getDuedate());
-					processEngineConfiguration.getManagementService().executeJob(jobs.get(i).getId());
+					managementService.executeJob(jobs.get(i).getId());
 				}
 
-				List<Task> tasks = processEngineConfiguration.getTaskService().createTaskQuery().list();
+				List<Task> tasks = taskService.createTaskQuery().list();
 				while (!tasks.isEmpty()) {
 					for (Task task : tasks) {
 
 						if (task.getAssignee() == null) {
 							String assignee = random.nextBoolean() ? "kermit" : "fozzie";
-							processEngineConfiguration.getTaskService().claim(task.getId(), assignee);
+							taskService.claim(task.getId(), assignee);
 						}
 
 						processEngineConfiguration.getClock().setCurrentTime(
 								new Date(task.getCreateTime().getTime() + random.nextInt(60 * 60 * 1000)));
 
-						processEngineConfiguration.getTaskService().complete(task.getId());
+						taskService.complete(task.getId());
 					}
 
-					tasks = processEngineConfiguration.getTaskService().createTaskQuery().list();
+					tasks = taskService.createTaskQuery().list();
 				}
 
 				processEngineConfiguration.getClock().reset();
@@ -318,12 +336,11 @@ public class DemoDataConfiguration {
 	}
 
 	protected void createModelData(String name, String description, String jsonFile) {
-		List<Model> modelList = processEngineConfiguration.getRepositoryService().createModelQuery()
-				.modelName("Demo model").list();
+		List<Model> modelList = repositoryService.createModelQuery().modelName("Demo model").list();
 
 		if (modelList == null || modelList.isEmpty()) {
 
-			Model model = processEngineConfiguration.getRepositoryService().newModel();
+			Model model = repositoryService.newModel();
 			model.setName(name);
 
 			ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
@@ -331,21 +348,19 @@ public class DemoDataConfiguration {
 			modelObjectNode.put("description", description);
 			model.setMetaInfo(modelObjectNode.toString());
 
-			processEngineConfiguration.getRepositoryService().saveModel(model);
+			repositoryService.saveModel(model);
 
 			try {
 				InputStream svgStream = this.getClass().getClassLoader()
 						.getResourceAsStream("org/activiti/explorer/demo/model/test.svg");
-				processEngineConfiguration.getRepositoryService().addModelEditorSourceExtra(model.getId(),
-						IOUtils.toByteArray(svgStream));
+				repositoryService.addModelEditorSourceExtra(model.getId(), IOUtils.toByteArray(svgStream));
 			} catch (Exception e) {
 				LOGGER.warn("Failed to read SVG", e);
 			}
 
 			try {
 				InputStream editorJsonStream = this.getClass().getClassLoader().getResourceAsStream(jsonFile);
-				processEngineConfiguration.getRepositoryService().addModelEditorSource(model.getId(),
-						IOUtils.toByteArray(editorJsonStream));
+				repositoryService.addModelEditorSource(model.getId(), IOUtils.toByteArray(editorJsonStream));
 			} catch (Exception e) {
 				LOGGER.warn("Failed to read editor JSON", e);
 			}
@@ -382,6 +397,14 @@ public class DemoDataConfiguration {
 
 	public void setCreateDemoReports(boolean createDemoReports) {
 		this.createDemoReports = createDemoReports;
+	}
+
+	public boolean isDeployDemoProcess() {
+		return deployDemoProcess;
+	}
+
+	public void setDeployDemoProcess(boolean deployDemoProcess) {
+		this.deployDemoProcess = deployDemoProcess;
 	}
 
 }
