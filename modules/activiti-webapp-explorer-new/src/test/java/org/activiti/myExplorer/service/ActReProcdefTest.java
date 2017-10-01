@@ -62,6 +62,10 @@ public class ActReProcdefTest {
 				.deploymentId(deployment.getId()).singleResult();
 		Assert.assertEquals("Real_1", processDefinition.getName());
 
+		MyBusinessModel mbmc = new MyBusinessModel();
+		mbmc.setBusinessId("business_real_1");
+		int i = myBusinessModelService.count(mbmc);
+		Assert.assertEquals(1, i);
 	}
 
 	@Test

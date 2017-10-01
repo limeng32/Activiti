@@ -38,6 +38,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.runtime.Job;
 import org.activiti.engine.task.Task;
+import org.activiti.myExplorer.web.ModelHelper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +76,9 @@ public class DemoDataConfiguration {
 	@Autowired
 	protected Environment environment;
 
+	@Autowired
+	private ModelHelper modelHelper;
+
 	private boolean createDemoUsers;
 
 	private boolean createDemoDefinitions;
@@ -88,7 +92,6 @@ public class DemoDataConfiguration {
 	@PostConstruct
 	public void init() throws FileNotFoundException {
 		if (isCreateDemoUsers()) {
-			System.out.println("1::" + deployDemoProcess);
 			LOGGER.info("Initializing demo groups");
 			initDemoGroups();
 			LOGGER.info("Initializing demo users");
@@ -118,9 +121,13 @@ public class DemoDataConfiguration {
 	}
 
 	protected void initDeployDemoProcess() throws FileNotFoundException {
-		repositoryService.createDeployment().addClasspathResource("diagrams/Real_1.bpmn20.xml").deploy();
-		// .addInputStream("Real_1.bpmn20.xml", new
-		// FileInputStream(filename)).deploy();
+		Deployment deployment = repositoryService.createDeployment().addClasspathResource("diagrams/Real_1.bpmn20.xml")
+				.name("Real_1").deploy();
+		Model model = repositoryService.newModel();
+		model.setDeploymentId(deployment.getId());
+		model.setName(deployment.getName());
+		repositoryService.saveModel(model);
+		modelHelper.saveMyBusinessModel(model, "business_real_1");
 	}
 
 	protected void initDemoGroups() {

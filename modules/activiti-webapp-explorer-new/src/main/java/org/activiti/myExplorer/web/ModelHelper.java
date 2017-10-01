@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.activiti.editor.constants.ModelDataJsonConstants;
 import org.activiti.engine.ActivitiException;
-import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Model;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.MyBusinessModel;
@@ -38,13 +38,13 @@ public class ModelHelper implements ModelFace {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private StandaloneProcessEngineConfiguration processEngineConfiguration;
+	private RepositoryService repositoryService;
 
 	@Override
 	public ObjectNode deal(String modelId) {
 		ObjectNode modelNode = null;
 
-		Model model = processEngineConfiguration.getRepositoryService().getModel(modelId);
+		Model model = repositoryService.getModel(modelId);
 
 		if (model != null) {
 			try {
@@ -65,9 +65,8 @@ public class ModelHelper implements ModelFace {
 					modelNode.put(ModelDataJsonConstants.MODEL_NAME, model.getName());
 				}
 				modelNode.put(ModelDataJsonConstants.MODEL_ID, model.getId());
-				ObjectNode editorJsonNode = (ObjectNode) objectMapper.readTree(new String(
-						processEngineConfiguration.getRepositoryService().getModelEditorSource(model.getId()),
-						"utf-8"));
+				ObjectNode editorJsonNode = (ObjectNode) objectMapper
+						.readTree(new String(repositoryService.getModelEditorSource(model.getId()), "utf-8"));
 				modelNode.put("model", editorJsonNode);
 
 			} catch (Exception e) {
@@ -82,7 +81,7 @@ public class ModelHelper implements ModelFace {
 	public void dealSave(String modelId, MultiValueMap<String, String> values) {
 		try {
 			String business = values.getFirst("business");
-			Model model = processEngineConfiguration.getRepositoryService().getModel(modelId);
+			Model model = repositoryService.getModel(modelId);
 
 			ObjectNode modelJson = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
 
@@ -91,10 +90,9 @@ public class ModelHelper implements ModelFace {
 			model.setMetaInfo(modelJson.toString());
 			model.setName(values.getFirst("name"));
 
-			processEngineConfiguration.getRepositoryService().saveModel(model);
+			repositoryService.saveModel(model);
 
-			processEngineConfiguration.getRepositoryService().addModelEditorSource(model.getId(),
-					values.getFirst("json_xml").getBytes("utf-8"));
+			repositoryService.addModelEditorSource(model.getId(), values.getFirst("json_xml").getBytes("utf-8"));
 
 			InputStream svgStream = new ByteArrayInputStream(values.getFirst("svg_xml").getBytes("utf-8"));
 			TranscoderInput input = new TranscoderInput(svgStream);
@@ -107,27 +105,11 @@ public class ModelHelper implements ModelFace {
 			// Do the transformation
 			transcoder.transcode(input, output);
 			final byte[] result = outStream.toByteArray();
-			processEngineConfiguration.getRepositoryService().addModelEditorSourceExtra(model.getId(), result);
+			repositoryService.addModelEditorSourceExtra(model.getId(), result);
 			outStream.close();
 
 			// Deal MyBusinessModel
-			MyBusinessModel mbm_ = new MyBusinessModel(), mbm2_ = new MyBusinessModel();
-			mbm_.setBusinessId(business);
-			Collection<MyBusinessModel> myBusinessModelC = myBusinessModelService.selectAll(mbm_);
-			for (MyBusinessModel t : myBusinessModelC) {
-				myBusinessModelService.delete(t);
-			}
-			ActReModel arm_ = new ActReModel();
-			arm_.setId(model.getId());
-			mbm2_.setActReModel(arm_);
-			Collection<MyBusinessModel> myBusinessModelC2 = myBusinessModelService.selectAll(mbm2_);
-			for (MyBusinessModel t : myBusinessModelC2) {
-				myBusinessModelService.delete(t);
-			}
-
-			ActReModel actReModel = new ActReModel(model);
-			mbm_.setActReModel(actReModel);
-			myBusinessModelService.insert(mbm_);
+			saveMyBusinessModel(model, business);
 		} catch (Exception e) {
 			LOGGER.error("Error saving model", e);
 			throw new ActivitiException("Error saving model", e);
@@ -135,4 +117,23 @@ public class ModelHelper implements ModelFace {
 
 	}
 
+	public void saveMyBusinessModel(Model model, String business) {
+		MyBusinessModel mbm_ = new MyBusinessModel(), mbm2_ = new MyBusinessModel();
+		mbm_.setBusinessId(business);
+		Collection<MyBusinessModel> myBusinessModelC = myBusinessModelService.selectAll(mbm_);
+		for (MyBusinessModel t : myBusinessModelC) {
+			myBusinessModelService.delete(t);
+		}
+		ActReModel arm_ = new ActReModel();
+		arm_.setId(model.getId());
+		mbm2_.setActReModel(arm_);
+		Collection<MyBusinessModel> myBusinessModelC2 = myBusinessModelService.selectAll(mbm2_);
+		for (MyBusinessModel t : myBusinessModelC2) {
+			myBusinessModelService.delete(t);
+		}
+
+		ActReModel actReModel = new ActReModel(model);
+		mbm_.setActReModel(actReModel);
+		myBusinessModelService.insert(mbm_);
+	}
 }
