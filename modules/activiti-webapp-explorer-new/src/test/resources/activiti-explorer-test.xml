@@ -17,7 +17,7 @@
        	http://www.springframework.org/schema/jdbc
        	http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
 
-	<import resource="classpath:activiti-explorer-service.xml" />
+	<import resource="classpath:activiti-explorer-fragment.xml" />
 
 	<!-- <context:component-scan base-package="org.activiti"> <context:exclude-filter 
 		type="annotation" expression="org.springframework.stereotype.Controller" 
@@ -70,11 +70,12 @@
 		<property name="createDemoReports" value="false" />
 	</bean>
 
-	<bean class="org.activiti.myExplorer.web.ModelHelper" id="modelHelper"></bean>
+	<bean class="org.activiti.myExplorer.web.ModelHelper" id="modelHelper" />
+	<bean class="org.activiti.myExplorer.service.CommonService" id="commonService" />
 	<bean class="org.activiti.myExplorer.service.ActReModelService"
-		id="actReModelService"></bean>
+		id="actReModelService" />
 	<bean class="org.activiti.myExplorer.service.ActReProcdefService"
-		id="actReProcdefService"></bean>
+		id="actReProcdefService" />
 	<bean class="org.activiti.myExplorer.service.MyBusinessModelService"
-		id="myBusinessModelService"></bean>
+		id="myBusinessModelService" />
 </beans>

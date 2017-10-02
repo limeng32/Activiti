@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
@@ -27,7 +26,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 @Service
-public class DeploymentService {
+public class CommonService {
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
@@ -194,4 +193,5 @@ public class DeploymentService {
 		}
 		return processInstReturn;
 	}
+	
 }

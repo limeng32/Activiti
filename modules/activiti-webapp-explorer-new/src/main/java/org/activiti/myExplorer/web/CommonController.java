@@ -20,7 +20,7 @@ import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
-import org.activiti.myExplorer.service.DeploymentService;
+import org.activiti.myExplorer.service.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class CommonController {
 	private ActReProcdefService actReProcdefService;
 
 	@Autowired
-	private DeploymentService deploymentService;
+	private CommonService commonService;
 
 	@Autowired
 	private StandaloneProcessEngineConfiguration processEngineConfiguration;
@@ -76,7 +76,7 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/getProcess")
 	public String getProcess(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "businessId") String businessId) {
-		Deployment deployment = deploymentService.getDeployment(businessId);
+		Deployment deployment = commonService.getDeployment(businessId);
 		if (deployment != null && deployment.getId() != null) {
 			ActReProcdef arp_ = new ActReProcdef();
 			arp_.setDeploymentId(deployment.getId());
@@ -92,13 +92,13 @@ public class CommonController {
 			@RequestParam(value = "dealRole", required = false) String dealRole,
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) String dataStr) {
-		ProcessInstReturn processInstReturn = deploymentService.justStart(businessId, dealRole, dealPerson, dataStr);
+		ProcessInstReturn processInstReturn = commonService.justStart(businessId, dealRole, dealPerson, dataStr);
 		if (RetCode.success.equals(processInstReturn.getRetCode()) && EndCode.no.equals(processInstReturn.getIsEnd())) {
 			if (processInstReturn.getExecutionReturn() != null && processInstReturn.getExecutionReturn().size() > 0) {
 				ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
 						.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 				String exeId = executionReturns[0].getExeId();
-				processInstReturn = deploymentService.flowOneStep(exeId, dealRole, dealPerson, dataStr);
+				processInstReturn = commonService.flowOneStep(exeId, dealRole, dealPerson, dataStr);
 			}
 		}
 		mm.addAttribute("_content", processInstReturn);
@@ -111,7 +111,7 @@ public class CommonController {
 			@RequestParam(value = "dealRole", required = false) String dealRole,
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) String dataStr) {
-		ProcessInstReturn processInstReturn = deploymentService.justStart(businessId, dealRole, dealPerson, dataStr);
+		ProcessInstReturn processInstReturn = commonService.justStart(businessId, dealRole, dealPerson, dataStr);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
@@ -122,7 +122,7 @@ public class CommonController {
 			@RequestParam(value = "dealRole", required = false) String dealRole,
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) String dataStr) {
-		ProcessInstReturn processInstReturn = deploymentService.flowOneStep(exeId, dealRole, dealPerson, dataStr);
+		ProcessInstReturn processInstReturn = commonService.flowOneStep(exeId, dealRole, dealPerson, dataStr);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
