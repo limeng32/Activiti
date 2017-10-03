@@ -2,9 +2,6 @@ package org.activiti.myExplorer.service;
 
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.identity.Group;
-import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
@@ -44,9 +41,6 @@ public class ActReProcdefTest {
 	private MyBusinessModelService myBusinessModelService;
 
 	@Autowired
-	private IdentityService identityService;
-
-	@Autowired
 	private RepositoryService repositoryService;
 
 	@Test
@@ -54,7 +48,7 @@ public class ActReProcdefTest {
 		Assert.assertNotNull(repositoryService);
 	}
 
-	// @Test
+	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/actReProcdefTest/testActReProcdef.result.xml")
@@ -63,7 +57,7 @@ public class ActReProcdefTest {
 		Assert.assertEquals("c", actReProcdef.getCategory());
 	}
 
-	// @Test
+	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessModel.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessModel.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/actReProcdefTest/testMyBusinessModel.result.xml")

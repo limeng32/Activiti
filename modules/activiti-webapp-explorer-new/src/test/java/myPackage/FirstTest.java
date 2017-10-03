@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class FirstTest {
 
-//	@Test
+	@Test
 	public void RuleTest1() {
 		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
 		kbuilder.add(ResourceFactory.newClassPathResource("rule/first.drl", FirstTest.class), ResourceType.DRL);

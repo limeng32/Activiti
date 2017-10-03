@@ -1,6 +1,9 @@
 package org.activiti.myExplorer.service;
 
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.Model;
+import org.activiti.myExplorer.web.ModelHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +34,20 @@ public class RestApiTest {
 	private CommonService commonService;
 
 	@Autowired
+	private ModelHelper modelHelper;
+
+	@Autowired
 	private RepositoryService repositoryService;
+
+	public void prepare() {
+		Deployment deployment = repositoryService.createDeployment().addClasspathResource("diagrams/Real_1.bpmn20.xml")
+				.name("Real_1").deploy();
+		Model model = repositoryService.newModel();
+		model.setDeploymentId(deployment.getId());
+		model.setName(deployment.getName());
+		repositoryService.saveModel(model);
+		modelHelper.saveMyBusinessModel(model, "business_real_1");
+	}
 
 	@Test
 	public void test() {
@@ -41,8 +57,9 @@ public class RestApiTest {
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testJustStart.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testJustStart.result.xml")
-	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testJustStart.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testJustStart.xml")
 	public void testJustStart() {
+		prepare();
 		commonService.justStart("business_real_1", null, null, null);
 	}
 }
