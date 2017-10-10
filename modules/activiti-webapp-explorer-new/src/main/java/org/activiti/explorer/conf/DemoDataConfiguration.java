@@ -15,6 +15,8 @@ package org.activiti.explorer.conf;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +25,13 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
+import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.IdentityService;
 import org.activiti.engine.ManagementService;
 import org.activiti.engine.RepositoryService;
@@ -38,6 +46,7 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.runtime.Job;
 import org.activiti.engine.task.Task;
+import org.activiti.explorer.util.XmlUtil;
 import org.activiti.myExplorer.web.ModelHelper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -120,13 +129,36 @@ public class DemoDataConfiguration {
 		}
 	}
 
-	protected void initDeployDemoProcess() throws FileNotFoundException {
+	public void initDeployDemoProcess() {
+
 		Deployment deployment = repositoryService.createDeployment().addClasspathResource("diagrams/Real_1.bpmn20.xml")
 				.name("Real_1").deploy();
 		Model model = repositoryService.newModel();
 		model.setDeploymentId(deployment.getId());
 		model.setName(deployment.getName());
+		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+		modelObjectNode.put("name", "Real_1");
+		modelObjectNode.put("revision", 1);
+		modelObjectNode.put("description", "");
+		model.setMetaInfo(modelObjectNode.toString());
 		repositoryService.saveModel(model);
+
+		XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
+		InputStream bpmnStream = repositoryService.getResourceAsStream(deployment.getId(),
+				"diagrams/Real_1.bpmn20.xml");
+		try {
+			InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
+			XMLStreamReader xtr = xif.createXMLStreamReader(in);
+			BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
+
+			BpmnJsonConverter converter = new BpmnJsonConverter();
+			ObjectNode modelNode = converter.convertToJson(bpmnModel);
+
+			repositoryService.addModelEditorSource(model.getId(), modelNode.toString().getBytes("utf-8"));
+		} catch (UnsupportedEncodingException | XMLStreamException e) {
+			e.printStackTrace();
+		}
+
 		modelHelper.saveMyBusinessModel(model, "business_real_1");
 	}
 
