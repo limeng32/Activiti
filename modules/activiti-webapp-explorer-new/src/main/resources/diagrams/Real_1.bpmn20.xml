@@ -6,11 +6,7 @@
         <activiti:formProperty id="isMain" name="main or sub" type="string"></activiti:formProperty>
       </extensionElements>
     </userTask>
-    <startEvent id="start_1" name="start_1">
-      <extensionElements>
-        <activiti:executionListener event="start" class="org.activiti.myExplorer.demo.listener.GroupListener2"></activiti:executionListener>
-      </extensionElements>
-    </startEvent>
+    <startEvent id="start_1" name="start_1"></startEvent>
     <exclusiveGateway id="exclusive_1" name="exclusive_1" default="sid-08BEF7CA-7E76-434D-8D3E-278B1154B84F"></exclusiveGateway>
     <sequenceFlow id="sid-B97F5C4E-919D-4F72-A5EF-5042BDAE94C7" sourceRef="start_1" targetRef="xiang_mu_jing_li_1"></sequenceFlow>
     <sequenceFlow id="sid-381C92CD-D4AC-41CD-A715-5E52DF2AEB04" sourceRef="xiang_mu_jing_li_1" targetRef="exclusive_1"></sequenceFlow>

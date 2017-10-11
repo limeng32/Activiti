@@ -5,5 +5,5 @@
 
 	<ACT_RU_EXECUTION ACT_ID_="xiang_mu_jing_li_1" />
 	<ACT_RU_TASK NAME_="xiang_mu_jing_li_1" TASK_DEF_KEY_="xiang_mu_jing_li_1" />
-	<ACT_RU_VARIABLE NAME_="siGroup" />
+	<ACT_RU_VARIABLE />
 </dataset>
