@@ -1,9 +1,9 @@
 package org.activiti.myExplorer.service;
 
 import org.activiti.engine.RepositoryService;
-import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.repository.Model;
 import org.activiti.explorer.conf.DemoDataConfiguration;
+import org.activiti.myExplorer.model.ExecutionReturn;
+import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.web.ModelHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class RestApiTest {
 
 	@Autowired
 	private DemoDataConfiguration demoDataConfiguration;
-	
+
 	@Autowired
 	private ModelHelper modelHelper;
 
@@ -60,4 +60,26 @@ public class RestApiTest {
 		prepare();
 		commonService.justStart("business_real_1", null, null, null);
 	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testFlow.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testFlow.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testFlow.xml")
+	public void testFlow() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.flowOneStep(ExecutionReturnA[0].getExeId(), null, "dean", "{form_data:{isMain:\"yes\"}}");
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testStart.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testStart.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testStart.xml")
+	public void testStart() {
+		prepare();
+		commonService.start("business_real_1", null, "dean", "{form_data:{isMain:\"yes\"}}");
+	}
+
 }

@@ -193,5 +193,17 @@ public class CommonService {
 		}
 		return processInstReturn;
 	}
-	
+
+	public ProcessInstReturn start(String businessId, String dealRole, String dealPerson, String dataStr) {
+		ProcessInstReturn processInstReturn = justStart(businessId, dealRole, dealPerson, dataStr);
+		if (RetCode.success.equals(processInstReturn.getRetCode()) && EndCode.no.equals(processInstReturn.getIsEnd())) {
+			if (processInstReturn.getExecutionReturn() != null && processInstReturn.getExecutionReturn().size() > 0) {
+				ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
+						.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+				String exeId = executionReturns[0].getExeId();
+				processInstReturn = flowOneStep(exeId, dealRole, dealPerson, dataStr);
+			}
+		}
+		return processInstReturn;
+	}
 }

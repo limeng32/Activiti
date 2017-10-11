@@ -92,15 +92,7 @@ public class CommonController {
 			@RequestParam(value = "dealRole", required = false) String dealRole,
 			@RequestParam(value = "dealPerson", required = false) String dealPerson,
 			@RequestParam(value = "formData", required = false) String dataStr) {
-		ProcessInstReturn processInstReturn = commonService.justStart(businessId, dealRole, dealPerson, dataStr);
-		if (RetCode.success.equals(processInstReturn.getRetCode()) && EndCode.no.equals(processInstReturn.getIsEnd())) {
-			if (processInstReturn.getExecutionReturn() != null && processInstReturn.getExecutionReturn().size() > 0) {
-				ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
-						.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-				String exeId = executionReturns[0].getExeId();
-				processInstReturn = commonService.flowOneStep(exeId, dealRole, dealPerson, dataStr);
-			}
-		}
+		ProcessInstReturn processInstReturn = commonService.start(businessId, dealRole, dealPerson, dataStr);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
