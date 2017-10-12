@@ -5,6 +5,6 @@
 
 	<ACT_RU_EXECUTION ACT_ID_="zong_yuan_1" />
 	<ACT_RU_TASK NAME_="zong_yuan_1" TASK_DEF_KEY_="zong_yuan_1"
-		SUSPENSION_STATE_="1" />
+		SUSPENSION_STATE_="2" />
 	<ACT_RU_VARIABLE NAME_="isMain" />
 </dataset>

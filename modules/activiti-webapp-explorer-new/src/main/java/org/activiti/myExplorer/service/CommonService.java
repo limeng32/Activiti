@@ -206,4 +206,85 @@ public class CommonService {
 		}
 		return processInstReturn;
 	}
+
+	public ProcessInstReturn suspend(String exeId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		processEngineConfiguration.getRuntimeService().suspendProcessInstanceById(execution.getProcessInstanceId());
+
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		}
+		return processInstReturn;
+	}
+
+	public ProcessInstReturn activate(String exeId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		processEngineConfiguration.getRuntimeService().activateProcessInstanceById(execution.getProcessInstanceId());
+
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		}
+		return processInstReturn;
+	}
+
+	public ProcessInstReturn terminate(String exeId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution = processEngineConfiguration.getRuntimeService().createExecutionQuery().executionId(exeId)
+				.singleResult();
+		processEngineConfiguration.getRuntimeService().deleteProcessInstance(execution.getProcessInstanceId(), "终止流程");
+
+		Collection<Execution> executionC = processEngineConfiguration.getRuntimeService().createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		}
+		return processInstReturn;
+	}
 }

@@ -82,4 +82,43 @@ public class RestApiTest {
 		commonService.start("business_real_1", null, "dean", "{form_data:{isMain:\"yes\"}}");
 	}
 
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
+	public void testSuspend() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.start("business_real_1", null, "dean",
+				"{form_data:{isMain:\"yes\"}}");
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.suspend(ExecutionReturnA[0].getExeId());
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.xml")
+	public void testActivate() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.start("business_real_1", null, "dean",
+				"{form_data:{isMain:\"yes\"}}");
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.suspend(ExecutionReturnA[0].getExeId());
+		commonService.activate(ExecutionReturnA[0].getExeId());
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.xml")
+	public void testTerminate() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.start("business_real_1", null, "dean",
+				"{form_data:{isMain:\"yes\"}}");
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.terminate(ExecutionReturnA[0].getExeId());
+	}
 }
