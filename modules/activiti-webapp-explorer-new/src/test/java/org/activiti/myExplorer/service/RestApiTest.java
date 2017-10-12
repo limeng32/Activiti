@@ -133,7 +133,7 @@ public class RestApiTest {
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
 	}
-	
+
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.result.xml")
@@ -145,5 +145,31 @@ public class RestApiTest {
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
 		commonService.receipt(ExecutionReturnA[0].getExeId(), "dean");
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testJump.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testJump.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testJump.xml")
+	public void testJump() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.jump(ExecutionReturnA[0].getExeId(), "zong_yuan_xu_1");
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testWithdraw.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testWithdraw.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testWithdraw.xml")
+	public void testWithdraw() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.jump(ExecutionReturnA[0].getExeId(), "zong_yuan_xu_1");
+		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
+		commonService.withdraw(ExecutionReturnA[0].getExeId(), ExecutionReturnA[0].getTaskId());
 	}
 }

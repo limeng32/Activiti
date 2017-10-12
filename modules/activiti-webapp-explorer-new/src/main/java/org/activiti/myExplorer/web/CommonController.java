@@ -1,17 +1,13 @@
 package org.activiti.myExplorer.web;
 
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.task.Task;
 import org.activiti.myExplorer.model.ProcessInstReturn;
-import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.service.ActReModelService;
@@ -142,9 +138,7 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/jump")
 	public String jump(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "activityKey") String activityKey) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		processEngineConfiguration.getTaskService().jump(task.getId(), activityKey, null);
+		ProcessInstReturn processInstReturn = commonService.jump(exeId, activityKey);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
@@ -152,36 +146,7 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/withdraw")
 	public String withdraw(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "taskId") String taskId) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		if (task != null && task.getId() != null) {
-			/* 判断taskId是否是task的上一环节 */
-			List<HistoricTaskInstance> htic = processEngineConfiguration.getHistoryService()
-					.createHistoricTaskInstanceQuery().executionId(exeId).orderByTaskId().asc().list();
-			HistoricTaskInstance lastTask = null;
-			for (int i = 1; i < htic.size(); i++) {
-				if (task.getId().equals(htic.get(i).getId())) {
-					lastTask = htic.get(i - 1);
-					break;
-				}
-			}
-			if (lastTask != null && lastTask.getId() != null && lastTask.getId().equals(taskId)) {
-				if (task.getAssignee() == null) {
-					processEngineConfiguration.getTaskService().withdraw(task.getId(), taskId, null);
-					processInstReturn.setRetCode(RetCode.success);
-					processInstReturn.setRetVal("1");
-				} else {
-					processInstReturn.setRetCode(RetCode.exception);
-					processInstReturn.setRetVal("任务已经被认领，无法撤回");
-				}
-			} else {
-				processInstReturn.setRetCode(RetCode.exception);
-				processInstReturn.setRetVal("无法撤回到id为 " + taskId + " 的任务");
-			}
-		} else {
-			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
-		}
+		ProcessInstReturn processInstReturn = commonService.withdraw(exeId, taskId);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
