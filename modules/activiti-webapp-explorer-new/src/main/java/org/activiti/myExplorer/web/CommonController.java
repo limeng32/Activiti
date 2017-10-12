@@ -189,23 +189,7 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/receipt")
 	public String receipt(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "dealPerson") String dealPerson) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		if (task != null && task.getId() != null) {
-			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
-				if (task.getAssignee() == null) {
-					processEngineConfiguration.getTaskService().claim(task.getId(), dealPerson);
-				}
-				processInstReturn.setRetCode(RetCode.success);
-				processInstReturn.setRetVal("1");
-			} else {
-				processInstReturn.setRetCode(RetCode.exception);
-				processInstReturn.setRetVal("任务已经被认领，无法再次认领");
-			}
-		} else {
-			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
-		}
+		ProcessInstReturn processInstReturn = commonService.receipt(exeId, dealPerson);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
@@ -213,23 +197,7 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/unreceipt")
 	public String unreceipt(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "dealPerson") String dealPerson) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		Task task = processEngineConfiguration.getTaskService().createTaskQuery().executionId(exeId).singleResult();
-		if (task != null && task.getId() != null) {
-			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
-				if (dealPerson.equals(task.getAssignee())) {
-					processEngineConfiguration.getTaskService().unclaim(task.getId());
-				}
-				processInstReturn.setRetCode(RetCode.success);
-				processInstReturn.setRetVal("1");
-			} else {
-				processInstReturn.setRetCode(RetCode.exception);
-				processInstReturn.setRetVal("无法取消，因为任务并非由" + dealPerson + "认领");
-			}
-		} else {
-			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
-		}
+		ProcessInstReturn processInstReturn = commonService.unreceipt(exeId, dealPerson);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}

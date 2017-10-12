@@ -22,13 +22,13 @@ import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
-import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
+import com.github.springtestdbunit.dataset.ReplacementDataSetLoader;;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "classpath:activiti-explorer-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
+@DbUnitConfiguration(dataSetLoader = ReplacementDataSetLoader.class, databaseConnection = { "dataSource" })
 public class RestApiTest {
 
 	@Autowired
@@ -120,5 +120,30 @@ public class RestApiTest {
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 		commonService.terminate(ExecutionReturnA[0].getExeId());
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testUnreceipt.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testUnreceipt.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testUnreceipt.xml")
+	public void testUnreceipt() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
+	}
+	
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.xml")
+	public void testReceipt() {
+		prepare();
+		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
+		commonService.receipt(ExecutionReturnA[0].getExeId(), "dean");
 	}
 }
