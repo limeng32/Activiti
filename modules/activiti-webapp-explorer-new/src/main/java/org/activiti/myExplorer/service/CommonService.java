@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.activiti.engine.ActivitiException;
+import org.activiti.engine.ActivitiObjectNotFoundException;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
@@ -222,8 +223,15 @@ public class CommonService {
 	public ProcessInstReturn suspend(String exeId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
-		runtimeService.suspendProcessInstanceById(execution.getProcessInstanceId());
-
+		try {
+			runtimeService.suspendProcessInstanceById(execution.getProcessInstanceId());
+		} catch (ActivitiObjectNotFoundException | NullPointerException e) {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("指定工作项不存在");
+			return processInstReturn;
+		} catch (ActivitiException e) {
+			/* 不做特别处理，即允许对已经挂起的工作项进行再次挂起 */
+		}
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
 				.processInstanceId(execution.getProcessInstanceId()).list();
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
@@ -248,8 +256,15 @@ public class CommonService {
 	public ProcessInstReturn activate(String exeId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
-		runtimeService.activateProcessInstanceById(execution.getProcessInstanceId());
-
+		try {
+			runtimeService.activateProcessInstanceById(execution.getProcessInstanceId());
+		} catch (ActivitiObjectNotFoundException | NullPointerException e) {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("指定工作项不存在");
+			return processInstReturn;
+		} catch (ActivitiException e) {
+			/* 不做特别处理，即允许对已经激活的工作项进行再次激活 */
+		}
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
 				.processInstanceId(execution.getProcessInstanceId()).list();
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
@@ -304,7 +319,17 @@ public class CommonService {
 		if (task != null && task.getId() != null) {
 			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
 				if (task.getAssignee() == null) {
-					taskService.claim(task.getId(), dealPerson);
+					try {
+						taskService.claim(task.getId(), dealPerson);
+					} catch (ActivitiObjectNotFoundException | NullPointerException e) {
+						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetVal("指定工作项不存在");
+						return processInstReturn;
+					} catch (ActivitiException e) {
+						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetVal("无法认领一个已经挂起的工作项");
+						return processInstReturn;
+					}
 				}
 				processInstReturn.setRetCode(RetCode.success);
 				processInstReturn.setRetVal("1");
@@ -351,7 +376,17 @@ public class CommonService {
 		if (task != null && task.getId() != null) {
 			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
 				if (dealPerson.equals(task.getAssignee())) {
-					taskService.unclaim(task.getId());
+					try {
+						taskService.unclaim(task.getId());
+					} catch (ActivitiObjectNotFoundException | NullPointerException e) {
+						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetVal("指定工作项不存在");
+						return processInstReturn;
+					} catch (ActivitiException e) {
+						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetVal("无法取消认领一个已经挂起的工作项");
+						return processInstReturn;
+					}
 				}
 				processInstReturn.setRetCode(RetCode.success);
 				processInstReturn.setRetVal("1");
