@@ -5,7 +5,8 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.persist.ActReModel;
@@ -37,7 +38,10 @@ public class CommonController {
 	private CommonService commonService;
 
 	@Autowired
-	private StandaloneProcessEngineConfiguration processEngineConfiguration;
+	private RuntimeService runtimeService;
+
+	@Autowired
+	private TaskService taskService;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -166,4 +170,5 @@ public class CommonController {
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
+
 }

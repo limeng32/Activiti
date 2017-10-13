@@ -40,9 +40,6 @@ import com.github.springtestdbunit.dataset.ReplacementDataSetLoader;;
 public class RestApiTest {
 
 	@Autowired
-	private CommonService commonService;
-
-	@Autowired
 	private DemoDataConfiguration demoDataConfiguration;
 
 	@Autowired
