@@ -23,7 +23,6 @@ import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
-import org.activiti.myExplorer.web.CommonController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +34,6 @@ public class CommonService {
 
 	@Autowired
 	private ActReProcdefService actReProcdefService;
-
-	@Autowired
-	private CommonController commonController;
 
 	@Autowired
 	private MyBusinessModelService myBusinessModelService;
@@ -302,8 +298,9 @@ public class CommonService {
 	}
 
 	public ProcessInstReturn receipt(String exeId, String dealPerson) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
+		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
+		ProcessInstReturn processInstReturn = makeProcessInstReturn(execution, task);
 		if (task != null && task.getId() != null) {
 			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
 				if (task.getAssignee() == null) {
@@ -319,12 +316,38 @@ public class CommonService {
 			processInstReturn.setRetCode(RetCode.exception);
 			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
 		}
+
+		return processInstReturn;
+	}
+
+	private ProcessInstReturn makeProcessInstReturn(Execution execution, Task task) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Collection<Execution> executionC = runtimeService.createExecutionQuery()
+				.processInstanceId(execution.getProcessInstanceId()).list();
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		if (executionC.size() > 0) {
+			for (Execution e : executionC) {
+				ExecutionReturn executionReturn = new ExecutionReturn(e);
+				Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
+				String[] actRole = getActRole(identityLinkC);
+				executionReturn.setTaskId(task.getId());
+				executionReturn.setActName(task.getName());
+				executionReturn.setActRole(actRole);
+				executionReturn.setIsEnd(EndCode.no);
+				executionReturnC.add(executionReturn);
+			}
+			processInstReturn.setExecutionReturn(executionReturnC);
+			processInstReturn.setIsEnd(EndCode.no);
+		} else {
+			processInstReturn.setIsEnd(EndCode.yes);
+		}
 		return processInstReturn;
 	}
 
 	public ProcessInstReturn unreceipt(String exeId, String dealPerson) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
+		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
+		ProcessInstReturn processInstReturn = makeProcessInstReturn(execution, task);
 		if (task != null && task.getId() != null) {
 			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
 				if (dealPerson.equals(task.getAssignee())) {

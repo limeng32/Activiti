@@ -177,8 +177,14 @@ public class RestApiTest {
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/unreceipt").param("dealPerson", "dean").param("exeId",
-				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
+		ModelAndView modelAndView2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/unreceipt")
+				.param("dealPerson", "dean").param("exeId", ExecutionReturnA[0].getExeId())).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn2 = (ProcessInstReturn) modelAndView2.getModelMap().get("_content");
+		ExecutionReturn[] ExecutionReturnA2 = processInstReturn2.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn2.getExecutionReturn().size()]);
+		Assert.assertEquals(ExecutionReturnA[0].getExeId(), ExecutionReturnA2[0].getExeId());
+		Assert.assertEquals(ExecutionReturnA[0].getTaskId(), ExecutionReturnA2[0].getTaskId());
 	}
 
 	@Test
@@ -195,8 +201,14 @@ public class RestApiTest {
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/unreceipt").param("dealPerson", "dean").param("exeId",
 				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/receipt").param("dealPerson", "dean").param("exeId",
-				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
+		ModelAndView modelAndView2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/receipt")
+				.param("dealPerson", "dean").param("exeId", ExecutionReturnA[0].getExeId())).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn2 = (ProcessInstReturn) modelAndView2.getModelMap().get("_content");
+		ExecutionReturn[] ExecutionReturnA2 = processInstReturn2.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn2.getExecutionReturn().size()]);
+		Assert.assertEquals(ExecutionReturnA[0].getExeId(), ExecutionReturnA2[0].getExeId());
+		Assert.assertEquals(ExecutionReturnA[0].getTaskId(), ExecutionReturnA2[0].getTaskId());
 	}
 
 	@Test
