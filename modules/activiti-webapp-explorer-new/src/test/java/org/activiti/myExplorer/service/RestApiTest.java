@@ -1,20 +1,5 @@
 package org.activiti.myExplorer.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.activiti.engine.RepositoryService;
 import org.activiti.explorer.conf.DemoDataConfiguration;
 import org.activiti.myExplorer.model.EndCode;
@@ -26,10 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -92,9 +75,8 @@ public class RestApiTest {
 	public void testJustStart() throws Exception {
 		prepare();
 		ModelAndView modelAndView = this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")
-						.contentType(MediaType.APPLICATION_JSON).content("{}").accept(MediaType.APPLICATION_JSON))
-				.andReturn().getModelAndView();
+				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
+				.getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(RetCode.success, processInstReturn.getRetCode());
 		Assert.assertEquals("1", processInstReturn.getRetVal());
@@ -105,179 +87,155 @@ public class RestApiTest {
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testFlow.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testFlow.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testFlow.xml")
-	public void testFlow() {
+	public void testFlow() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.flowOneStep(ExecutionReturnA[0].getExeId(), null, "dean", "{form_data:{isMain:\"yes\"}}");
+
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/flow").param("exeId", ExecutionReturnA[0].getExeId())
+						.param("formData", "{form_data:{isMain:\"yes\"}}").param("dealPerson", "dean"))
+				.andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testStart.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testStart.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testStart.xml")
-	public void testStart() {
+	public void testStart() throws Exception {
 		prepare();
-		commonService.start("business_real_1", null, "dean", "{form_data:{isMain:\"yes\"}}");
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
+						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+				.andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
-	public void testSuspend() {
+	public void testSuspend() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.start("business_real_1", null, "dean",
-				"{form_data:{isMain:\"yes\"}}");
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
+						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.suspend(ExecutionReturnA[0].getExeId());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", ExecutionReturnA[0].getExeId()))
+				.andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.xml")
-	public void testActivate() {
+	public void testActivate() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.start("business_real_1", null, "dean",
-				"{form_data:{isMain:\"yes\"}}");
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
+						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.suspend(ExecutionReturnA[0].getExeId());
-		commonService.activate(ExecutionReturnA[0].getExeId());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", ExecutionReturnA[0].getExeId()))
+				.andReturn().getModelAndView();
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/activate").param("exeId", ExecutionReturnA[0].getExeId()))
+				.andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.xml")
-	public void testTerminate() {
+	public void testTerminate() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.start("business_real_1", null, "dean",
-				"{form_data:{isMain:\"yes\"}}");
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
+						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.terminate(ExecutionReturnA[0].getExeId());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/terminate").param("exeId", ExecutionReturnA[0].getExeId()))
+				.andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testUnreceipt.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testUnreceipt.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testUnreceipt.xml")
-	public void testUnreceipt() {
+	public void testUnreceipt() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/unreceipt").param("dealPerson", "dean").param("exeId",
+				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testReceipt.xml")
-	public void testReceipt() {
+	public void testReceipt() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
-		commonService.receipt(ExecutionReturnA[0].getExeId(), "dean");
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/unreceipt").param("dealPerson", "dean").param("exeId",
+				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/receipt").param("dealPerson", "dean").param("exeId",
+				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testJump.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testJump.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testJump.xml")
-	public void testJump() {
+	public void testJump() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.jump(ExecutionReturnA[0].getExeId(), "zong_yuan_xu_1");
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/jump").param("activityKey", "zong_yuan_xu_1").param("exeId",
+				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
 	}
 
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testWithdraw.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testWithdraw.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testWithdraw.xml")
-	public void testWithdraw() {
+	public void testWithdraw() throws Exception {
 		prepare();
-		ProcessInstReturn processInstReturn = commonService.justStart("business_real_1", null, null, null);
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
+				.getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-		commonService.jump(ExecutionReturnA[0].getExeId(), "zong_yuan_xu_1");
-		commonService.unreceipt(ExecutionReturnA[0].getExeId(), "dean");
-		commonService.withdraw(ExecutionReturnA[0].getExeId(), ExecutionReturnA[0].getTaskId());
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/jump").param("activityKey", "zong_yuan_xu_1").param("exeId",
+				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/unreceipt").param("dealPerson", "dean").param("exeId",
+				ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/withdraw").param("taskId", ExecutionReturnA[0].getTaskId())
+				.param("exeId", ExecutionReturnA[0].getExeId())).andReturn().getModelAndView();
 	}
 
-	@Test
-	// @Ignore
-	public void getPurposeTest() throws ServletException, IOException {
-
-		String requestURI = "/autodeploy/getPurpose";
-		String localAddr = "10.0.209.59";
-		Integer localPort = 8080;
-		String httpMethod = "GET";
-
-		Map<String, String> mapWebArgs = new HashMap<>();
-		// mapWebArgs.put("argip", "10.124.131.78:30808");
-		// mapWebArgs.put("arglayerurl", "/webdataopts");
-
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		HttpSession session = mock(HttpSession.class);
-		when(request.getSession()).thenReturn(session);
-		Mockito.doNothing().when(request).setCharacterEncoding(Mockito.anyString());
-		HttpServletResponse response = mock(HttpServletResponse.class);
-		Mockito.doNothing().when(response).setContentType(Mockito.anyString());
-		Mockito.doNothing().when(response).setCharacterEncoding(Mockito.anyString());
-		Mockito.doNothing().when(response).setHeader(Mockito.anyString(), Mockito.anyString());
-
-		Map<String, String[]> hash = new HashMap<String, String[]>();
-		Vector<String> v = new Vector<>();
-		for (String tmpKey : mapWebArgs.keySet()) {
-			String tmpValue = mapWebArgs.get(tmpKey);
-			String[] tmpValueArr = new String[] { tmpValue };
-			hash.put(tmpKey, tmpValueArr);
-			v.addElement(tmpKey);
-			when(request.getParameter(tmpKey)).thenReturn(tmpValue);
-			String[] tmpStrArr = new String[] { tmpValue };
-			when(request.getParameterValues(tmpKey)).thenReturn(tmpStrArr);
-		}
-
-		when(request.getParameterNames()).thenReturn(v.elements());
-		when(request.getParameterMap()).thenReturn(hash);
-
-		when(request.getRequestURI()).thenReturn(requestURI);
-		when(request.getLocalAddr()).thenReturn(localAddr);
-		when(request.getLocalPort()).thenReturn(localPort);
-		when(request.getMethod()).thenReturn(httpMethod);
-
-		StringWriter writer = new StringWriter();
-		when(response.getWriter()).thenReturn(new PrintWriter(writer));
-
-	}
-
-	// @Test
-	// public void createIncotermSuccess() throws Exception {
-	// IncotermTo createdIncoterm = new IncotermTo();
-	// createdIncoterm.setId(new
-	// IncotermId(UUID.fromString("6305ff33-295e-11e5-ae37-54ee7534021a")));
-	// createdIncoterm.setCode("EXW");
-	// createdIncoterm.setDescription("code exw");
-	// createdIncoterm.setLocationQualifier(LocationQualifier.DEPARTURE);
-	//
-	// when(inventoryService.create(any(IncotermTo.class))).thenReturn(createdIncoterm);
-	//
-	// mockMvc.perform(post("/secured/resources/incoterms/create").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
-	// .content("{\"code\" : \"EXW\", \"description\" : \"code exw\",
-	// \"locationQualifier\" : \"DEPARTURE\"}".getBytes()))
-	// //.andDo(print())
-	// .andExpect(status().isOk())
-	// .andExpect(jsonPath("id.value").exists())
-	// .andExpect(jsonPath("id.value").value("6305ff33-295e-11e5-ae37-54ee7534021a"))
-	// .andExpect(jsonPath("code").value("EXW"));
-	// }
 }
