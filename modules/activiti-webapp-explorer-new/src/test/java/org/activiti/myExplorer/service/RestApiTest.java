@@ -127,6 +127,19 @@ public class RestApiTest {
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", ExecutionReturnA[0].getExeId()))
 				.andReturn().getModelAndView();
+
+		/* 对已经挂起的工作项继续挂起 */
+		ModelAndView modelAndView2 = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", ExecutionReturnA[0].getExeId()))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn2 = (ProcessInstReturn) modelAndView2.getModelMap().get("_content");
+		Assert.assertEquals(RetCode.success, processInstReturn2.getRetCode());
+
+		/* 挂起一个不存在的工作项 */
+		ModelAndView modelAndView3 = this.mockMvc.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", "0"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn3 = (ProcessInstReturn) modelAndView3.getModelMap().get("_content");
+		Assert.assertEquals(RetCode.exception, processInstReturn3.getRetCode());
 	}
 
 	@Test
@@ -146,6 +159,19 @@ public class RestApiTest {
 				.andReturn().getModelAndView();
 		this.mockMvc.perform(MockMvcRequestBuilders.get("/activate").param("exeId", ExecutionReturnA[0].getExeId()))
 				.andReturn().getModelAndView();
+
+		/* 对已经激活的工作项继续激活 */
+		ModelAndView modelAndView2 = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/activate").param("exeId", ExecutionReturnA[0].getExeId()))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn2 = (ProcessInstReturn) modelAndView2.getModelMap().get("_content");
+		Assert.assertEquals(RetCode.success, processInstReturn2.getRetCode());
+
+		/* 激活一个不存在的工作项 */
+		ModelAndView modelAndView3 = this.mockMvc.perform(MockMvcRequestBuilders.get("/activate").param("exeId", "0"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn3 = (ProcessInstReturn) modelAndView3.getModelMap().get("_content");
+		Assert.assertEquals(RetCode.exception, processInstReturn3.getRetCode());
 	}
 
 	@Test
