@@ -1,0 +1,10 @@
+{
+    "dbUrl": "${dbUrl}",
+    "dbUrl2": "${dbUrl2}",
+    "dbUser": "${dbUser}",
+    "dbPassword": "${dbPassword}",
+    "mailServerHost": "${mailServerHost}",
+    "mailServerPassword": "${mailServerPassword}",
+    "mailServerDefaultFrom": "${mailServerDefaultFrom}",
+    "mailServerUsername": "${mailServerUsername}"
+}
