@@ -1486,6 +1486,30 @@
 		},
 		{
 			"type": "node",
+			"id": "EventSubProcess2",
+			"title": "事件子流程2",
+			"description": "A event sub process scope",
+			"view": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<svg\n   xmlns=\"http://www.w3.org/2000/svg\"\n   xmlns:svg=\"http://www.w3.org/2000/svg\"\n   xmlns:oryx=\"http://www.b3mn.org/oryx\"\n   xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n   width=\"250\"\n   height=\"200\"\n   version=\"1.0\">\n  <defs></defs>\n  <oryx:magnets>\n  \t<oryx:magnet oryx:cx=\"0\" oryx:cy=\"80\" oryx:anchors=\"left\" />\n  \t<oryx:magnet oryx:cx=\"100\" oryx:cy=\"160\" oryx:anchors=\"bottom\" />\n  \t<oryx:magnet oryx:cx=\"200\" oryx:cy=\"80\" oryx:anchors=\"right\" />\n  \t<oryx:magnet oryx:cx=\"100\" oryx:cy=\"0\" oryx:anchors=\"top\" />\n  \t<oryx:magnet oryx:cx=\"100\" oryx:cy=\"80\" oryx:default=\"yes\" />\n  </oryx:magnets>\n  <g pointer-events=\"fill\" oryx:minimumSize=\"120 100\" oryx:maximumSize=\"\" >\n\t<rect id=\"text_frame\" oryx:anchors=\"bottom top right left\" x=\"0\" y=\"0\" width=\"190\" height=\"160\" rx=\"10\" ry=\"10\" stroke=\"none\" stroke-width=\"0\" fill=\"none\" />\n\t<rect id=\"bg_frame\" oryx:anchors=\"bottom top right left\" oryx:resize=\"vertical horizontal\" x=\"0\" y=\"0\" width=\"200\" height=\"160\" rx=\"10\" ry=\"10\" stroke=\"#bbbbbb\" stroke-width=\"1\" stroke-dasharray=\"2,2,2\" fill=\"#ffffff\" />\n    \t<text \n\t\t\tfont-size=\"12\" \n\t\t\tid=\"text_name\" \n\t\t\tx=\"8\" \n\t\t\ty=\"10\" \n\t\t\toryx:align=\"top left\"\n\t\t\toryx:fittoelem=\"text_frame\"\n\t\t\toryx:anchors=\"left top\" \n\t\t\tstroke=\"#373e48\">\n\t\t</text>\n    \t\n\t<g id=\"none\"></g>\n\t\n  </g>\n</svg>",
+			"icon": "activity/event.subprocess.png",
+			"groups": [
+				"结构"
+			],
+			"propertyPackages": [
+				"overrideidpackage",
+				"namepackage",
+				"documentationpackage",
+				"asynchronousdefinitionpackage",
+				"exclusivedefinitionpackage",
+				"executionlistenerspackage"
+			],
+			"hiddenPropertyPackages": [],
+			"roles": [
+				"Activity",
+				"all"
+			]
+		},
+		{
+			"type": "node",
 			"id": "CallActivity",
 			"title": "调用活动",
 			"description": "A call activity",
@@ -2313,12 +2337,24 @@
 					"from_task_event",
 					"to_task_event",
 					"EventSubProcess",
+					"EventSubProcess2",
 					"TextAnnotation",
 					"DataStore"
 				]
 			},
 			{
 				"role": "EventSubProcess",
+				"contains": [
+					"sequence_start",
+					"sequence_end",
+					"from_task_event",
+					"to_task_event",
+					"TextAnnotation",
+					"DataStore"
+				]
+			},
+			{
+				"role": "EventSubProcess2",
 				"contains": [
 					"sequence_start",
 					"sequence_end",
@@ -2340,6 +2376,7 @@
 					"sequence_start",
 					"sequence_end",
 					"EventSubProcess",
+					"EventSubProcess2",
 					"TextAnnotation",
 					"DataStore"
 				]
