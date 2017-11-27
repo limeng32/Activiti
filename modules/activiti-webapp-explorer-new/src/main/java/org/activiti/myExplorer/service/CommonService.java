@@ -324,7 +324,13 @@ public class CommonService {
 	public ProcessInstReturn receipt(String exeId, String dealPerson) {
 		Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
-		ProcessInstReturn processInstReturn = makeProcessInstReturn(execution, task);
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		if (execution == null) {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的流程实例");
+			return processInstReturn;
+		}
+		processInstReturn = makeProcessInstReturn(execution, task);
 		if (task != null && task.getId() != null) {
 			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
 				if (task.getAssignee() == null) {
@@ -381,7 +387,13 @@ public class CommonService {
 	public ProcessInstReturn unreceipt(String exeId, String dealPerson) {
 		Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
-		ProcessInstReturn processInstReturn = makeProcessInstReturn(execution, task);
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		if (execution == null) {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的流程实例");
+			return processInstReturn;
+		}
+		processInstReturn = makeProcessInstReturn(execution, task);
 		if (task != null && task.getId() != null) {
 			if (task.getAssignee() == null || dealPerson.equals(task.getAssignee())) {
 				if (dealPerson.equals(task.getAssignee())) {
