@@ -446,8 +446,10 @@ public class CommonService {
 			if (lastTask != null && lastTask.getId() != null && lastTask.getId().equals(taskId)) {
 				if (task.getAssignee() == null) {
 					taskService.withdraw(task.getId(), taskId, null);
+					Task newTask = taskService.createTaskQuery().executionId(exeId).singleResult();
 					processInstReturn.setRetCode(RetCode.success);
-					processInstReturn.setRetVal("1");
+					processInstReturn.setRetVal("已撤回到actName为 " + newTask.getName() + " ，exeId为 " + exeId + " ，taskId为 "
+							+ newTask.getId() + " 的环节");
 				} else {
 					processInstReturn.setRetCode(RetCode.exception);
 					processInstReturn.setRetVal("任务已经被认领，无法撤回");
