@@ -133,7 +133,7 @@ public class CommonService {
 		} else {
 			processInstReturn.setIsEnd(EndCode.yes);
 			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("流程无法启动");
+			processInstReturn.setRetVal("无法找到对应业务 " + businessId + " 的流程");
 		}
 
 		return processInstReturn;
@@ -141,6 +141,9 @@ public class CommonService {
 
 	public ProcessInstance justStartService(String businessId, String dealRole, String dealPerson, String dataStr) {
 		ActReProcdef actReProcdef = getActReProcdef(businessId);
+		if (actReProcdef == null) {
+			return null;
+		}
 		ProcessInstance pi = runtimeService.startProcessInstanceById(actReProcdef.getId());
 		return pi;
 	}
@@ -289,6 +292,12 @@ public class CommonService {
 	public ProcessInstReturn terminate(String exeId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
+		if (execution == null) {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("无法找到执行id为 " + exeId + " 的流程");
+			return processInstReturn;
+		}
 		runtimeService.deleteProcessInstance(execution.getProcessInstanceId(), "终止流程");
 
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
