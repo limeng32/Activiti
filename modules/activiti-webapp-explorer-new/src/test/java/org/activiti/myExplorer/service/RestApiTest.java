@@ -94,10 +94,9 @@ public class RestApiTest {
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 
-		this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/flow").param("exeId", ExecutionReturnA[0].getExeId())
-						.param("formData", "{form_data:{isMain:\"yes\"}}").param("dealPerson", "dean"))
-				.andReturn().getModelAndView();
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/flow").param("exeId", ExecutionReturnA[0].getExeId())
+				.param("formData", "{form_data:{isMain:\"yes\"}}").param("dealPerson", "dean")
+				.param("dealRole", "projectmanager")).andReturn().getModelAndView();
 	}
 
 	@Test
@@ -106,10 +105,26 @@ public class RestApiTest {
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testStart.xml")
 	public void testStart() throws Exception {
 		prepare();
-		this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
-						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+		this.mockMvc.perform(
+				MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1").param("dealPerson", "dean")
+						.param("formData", "{form_data:{isMain:\"yes\"}}").param("dealRole", "leader"))
 				.andReturn().getModelAndView();
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testStart2.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testStart2.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testStart2.xml")
+	public void testStart2() throws Exception {
+		prepare();
+		ModelAndView modelAndView = this.mockMvc.perform(
+				MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1").param("dealPerson", "dean")
+						.param("formData", "{form_data:{isMain:\"yes\"}}").param("dealRole", "wrongRole"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
+		Assert.assertEquals("角色 wrongRole 没有权限流转这个环节", processInstReturn.getRetVal());
 	}
 
 	@Test
@@ -118,9 +133,9 @@ public class RestApiTest {
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
 	public void testSuspend() throws Exception {
 		prepare();
-		ModelAndView modelAndView = this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
-						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+		ModelAndView modelAndView = this.mockMvc.perform(
+				MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1").param("dealPerson", "dean")
+						.param("dealRole", "projectmanager").param("formData", "{form_data:{isMain:\"yes\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
@@ -148,9 +163,9 @@ public class RestApiTest {
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testActivate.xml")
 	public void testActivate() throws Exception {
 		prepare();
-		ModelAndView modelAndView = this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
-						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+		ModelAndView modelAndView = this.mockMvc.perform(
+				MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1").param("dealPerson", "dean")
+						.param("dealRole", "projectmanager").param("formData", "{form_data:{isMain:\"yes\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
@@ -180,9 +195,9 @@ public class RestApiTest {
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testTerminate.xml")
 	public void testTerminate() throws Exception {
 		prepare();
-		ModelAndView modelAndView = this.mockMvc
-				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
-						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+		ModelAndView modelAndView = this.mockMvc.perform(
+				MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1").param("dealPerson", "dean")
+						.param("dealRole", "projectmanager").param("formData", "{form_data:{isMain:\"yes\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()

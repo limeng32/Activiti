@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.ActivitiObjectNotFoundException;
@@ -79,17 +80,19 @@ public class CommonService {
 	}
 
 	public String[] getActRole(Collection<IdentityLink> identityLinkC) {
-		Collection<String> collection = new LinkedHashSet<>();
+		Collection<String> collection = getActRoleAsMap(identityLinkC);
+		String[] ret = new String[collection.size()];
+		return collection.toArray(ret);
+	}
+
+	public Set<String> getActRoleAsMap(Collection<IdentityLink> identityLinkC) {
+		Set<String> collection = new LinkedHashSet<>();
 		for (IdentityLink identityLink : identityLinkC) {
 			if (identityLink.getGroupId() != null) {
 				collection.add(identityLink.getGroupId());
 			}
-			if (identityLink.getUserId() != null) {
-				collection.add(identityLink.getUserId());
-			}
 		}
-		String[] ret = new String[collection.size()];
-		return collection.toArray(ret);
+		return collection;
 	}
 
 	public ProcessInstReturn justStart(String businessId, String dealRole, String dealPerson, String dataStr) {
@@ -157,7 +160,18 @@ public class CommonService {
 				formData = jsonObj.getJSONObject("form_data");
 			}
 			Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
-
+			Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
+			Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
+			Set<String> actRoleSet = getActRoleAsMap(identityLinkC);
+			for (String e : actRoleSet) {
+				System.out.println("::" + e);
+			}
+			if (!actRoleSet.contains(dealRole)) {
+				processInstReturn.setIsEnd(EndCode.no);
+				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetVal("角色 " + dealRole + " 没有权限流转这个环节");
+				return processInstReturn;
+			}
 			if (execution != null) {
 				Task task_ = taskService.createTaskQuery().executionId(execution.getId()).singleResult();
 				if (task_ != null && dealPerson != null) {
@@ -179,12 +193,12 @@ public class CommonService {
 				Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
 				if (executionC.size() > 0) {
 					for (Execution e : executionC) {
-						Task task = taskService.createTaskQuery().executionId(e.getId()).singleResult();
-						Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
-						String[] actRole = getActRole(identityLinkC);
+						Task taskE = taskService.createTaskQuery().executionId(e.getId()).singleResult();
+						Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE.getId());
+						String[] actRole = getActRole(identityLinkCE);
 						ExecutionReturn executionReturn = new ExecutionReturn(e);
-						executionReturn.setTaskId(task.getId());
-						executionReturn.setActName(task.getName());
+						executionReturn.setTaskId(taskE.getId());
+						executionReturn.setActName(taskE.getName());
 						executionReturn.setActRole(actRole);
 						executionReturn.setIsEnd(EndCode.no);
 						executionReturnC.add(executionReturn);
