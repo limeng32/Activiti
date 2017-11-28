@@ -128,6 +128,22 @@ public class RestApiTest {
 	}
 
 	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testStart3.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testStart3.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testStart3.xml")
+	public void testStart3() throws Exception {
+		prepare();
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "business_real_1")
+						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
+		Assert.assertEquals("角色 null 没有权限流转这个环节", processInstReturn.getRetVal());
+	}
+
+	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.result.xml")
 	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApiTest/testSuspend.xml")
