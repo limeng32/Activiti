@@ -171,4 +171,11 @@ public class CommonController {
 		return UNIQUE_PATH;
 	}
 
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/message")
+	public String message(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "message") String message) {
+		ProcessInstReturn processInstReturn = commonService.message(exeId, message);
+		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
 }

@@ -455,4 +455,30 @@ public class CommonService {
 			processInstReturn.setRetVal("1");
 		}
 	}
+
+	public ProcessInstReturn message(String exeId, String message) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		Execution execution_ = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
+		try {
+			runtimeService.messageEventReceived(message, exeId);
+		} catch (ActivitiObjectNotFoundException e) {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("找不到exeId为 " + exeId + " 的执行对象");
+			return processInstReturn;
+		} catch (ActivitiException e2) {
+			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetVal("exeId为 " + exeId + " 的执行对象找不到名为 " + message + " 的消息");
+			return processInstReturn;
+		}
+		Execution execution = runtimeService.createExecutionQuery().executionId(execution_.getParentId())
+				.singleResult();
+		if (execution == null) {
+			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetVal("1");
+		} else {
+			loadProcessInstReturn(processInstReturn, execution.getProcessInstanceId(), null);
+		}
+		return processInstReturn;
+	}
 }
