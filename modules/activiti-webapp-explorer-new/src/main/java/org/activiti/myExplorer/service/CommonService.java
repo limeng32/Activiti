@@ -133,13 +133,15 @@ public class CommonService {
 			}
 			Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
 			Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
-			Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
-			Set<String> actRoleSet = getActRoleAsMap(identityLinkC);
-			if (!actRoleSet.contains(dealRole)) {
-				processInstReturn.setIsEnd(EndCode.no);
-				processInstReturn.setRetCode(RetCode.exception);
-				processInstReturn.setRetVal("角色 " + dealRole + " 没有权限流转这个环节");
-				return processInstReturn;
+			if (task != null) {
+				Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
+				Set<String> actRoleSet = getActRoleAsMap(identityLinkC);
+				if (!actRoleSet.contains(dealRole)) {
+					processInstReturn.setIsEnd(EndCode.no);
+					processInstReturn.setRetCode(RetCode.exception);
+					processInstReturn.setRetVal("角色 " + dealRole + " 没有权限流转这个环节");
+					return processInstReturn;
+				}
 			}
 			if (execution != null) {
 				Task task_ = taskService.createTaskQuery().executionId(execution.getId()).singleResult();
@@ -427,18 +429,20 @@ public class CommonService {
 		if (executionC.size() > 0) {
 			for (Execution e : executionC) {
 				Task taskE = taskService.createTaskQuery().executionId(e.getId()).singleResult();
-				Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE.getId());
-				String[] actRole = getActRole(identityLinkCE);
-				ExecutionReturn executionReturn = new ExecutionReturn(e);
-				executionReturn.setTaskId(taskE.getId());
-				executionReturn.setActName(taskE.getName());
-				executionReturn.setActRole(actRole);
-				executionReturn.setIsEnd(EndCode.no);
-				executionReturnC.add(executionReturn);
-				if (formData != null) {
-					for (Map.Entry<String, Object> ee : formData.entrySet()) {
-						taskService.setVariable(taskE.getId(), ee.getKey(), ee.getValue());
+				if (taskE != null) {
+					ExecutionReturn executionReturn = new ExecutionReturn(e);
+					Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE.getId());
+					String[] actRole = getActRole(identityLinkCE);
+					executionReturn.setTaskId(taskE.getId());
+					executionReturn.setActName(taskE.getName());
+					executionReturn.setActRole(actRole);
+					if (formData != null) {
+						for (Map.Entry<String, Object> ee : formData.entrySet()) {
+							taskService.setVariable(taskE.getId(), ee.getKey(), ee.getValue());
+						}
 					}
+					executionReturn.setIsEnd(EndCode.no);
+					executionReturnC.add(executionReturn);
 				}
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
