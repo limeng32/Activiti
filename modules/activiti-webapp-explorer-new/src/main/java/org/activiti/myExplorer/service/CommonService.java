@@ -160,7 +160,7 @@ public class CommonService {
 					}
 					taskService.complete(task_.getId());
 				}
-				loadProcessInstReturn(processInstReturn, execution.getProcessInstanceId(), null);
+				loadProcessInstReturn(processInstReturn, execution.getId(), null);
 			} else {
 				processInstReturn.setIsEnd(EndCode.yes);
 				processInstReturn.setRetCode(RetCode.exception);
@@ -412,12 +412,14 @@ public class CommonService {
 
 	public ProcessInstReturn withdraw(String taskId) {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		String exeId = historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult().getExecutionId();
+		HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().taskId(taskId)
+				.singleResult();
+		String exeId = historicTaskInstance.getExecutionId();
 		Task task = getDoneTaskByIdIteration(exeId);
 		if (task != null && task.getId() != null) {
 			/* 判断taskId是否是task的上一环节 */
 			List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery()
-					.processInstanceId(task.getProcessInstanceId()).orderByTaskId().asc().list();
+					.executionId(historicTaskInstance.getExecutionId()).orderByTaskId().asc().list();
 			HistoricTaskInstance lastTask = null;
 			for (int i = 1; i < htic.size(); i++) {
 				if (task.getId().equals(htic.get(i).getId())) {
@@ -429,7 +431,7 @@ public class CommonService {
 					|| (lastTask != null && lastTask.getId() != null && lastTask.getId().equals(taskId))) {
 				if (task.getAssignee() == null) {
 					taskService.withdraw(task.getId(), taskId, null);
-					loadProcessInstReturn(processInstReturn, task.getProcessInstanceId(), null);
+					loadProcessInstReturn(processInstReturn, task.getExecutionId(), null);
 				} else {
 					processInstReturn.setRetCode(RetCode.exception);
 					processInstReturn.setRetVal("任务已经被认领，无法撤回");
@@ -446,32 +448,64 @@ public class CommonService {
 	}
 
 	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, String pid, JSONObject formData) {
-		Collection<Execution> executionC = runtimeService.createExecutionQuery().processInstanceId(pid).list();
+		System.out.println("::"+pid);
+//		Collection<Execution> executionC = runtimeService.createExecutionQuery().processInstanceId(pid).list();
+		Collection<Execution> executionC = runtimeService.createExecutionQuery().executionId(pid).list();
+		if(executionC.size()==0){
+			System.out.println("1::"+pid);
+			executionC = runtimeService.createExecutionQuery().parentId(pid).list();
+		}
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
 		boolean softEnd = true;
 		if (executionC.size() > 0) {
-			for (Execution e : executionC) {
-				Task taskE = taskService.createTaskQuery().executionId(e.getId()).singleResult();
+			for (Execution e1 : executionC) {
+				Task taskE1 = taskService.createTaskQuery().executionId(e1.getId()).singleResult();
 
-				if (taskE != null) {
-					ExecutionReturn executionReturn = new ExecutionReturn(e);
-					Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE.getId());
+				if (taskE1 != null) {
+					ExecutionReturn executionReturn = new ExecutionReturn(e1);
+					Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE1.getId());
 					String[] actRole = getActRole(identityLinkCE);
-					executionReturn.setTaskId(taskE.getId());
-					executionReturn.setActName(taskE.getName());
+					executionReturn.setTaskId(taskE1.getId());
+					executionReturn.setActName(taskE1.getName());
 					executionReturn.setActRole(actRole);
 					if (formData != null) {
 						for (Map.Entry<String, Object> ee : formData.entrySet()) {
-							taskService.setVariable(taskE.getId(), ee.getKey(), ee.getValue());
+							taskService.setVariable(taskE1.getId(), ee.getKey(), ee.getValue());
 						}
 					}
-					if (!END.equals(taskE.getDescription())) {
+					if (!END.equals(taskE1.getDescription())) {
 						executionReturn.setIsEnd(EndCode.no);
 						softEnd = false;
 					} else {
 						executionReturn.setIsEnd(EndCode.yes);
 					}
 					executionReturnC.add(executionReturn);
+				}
+				else{
+					Collection<Execution> executionC1 = runtimeService.createExecutionQuery().parentId(pid).list();
+					for (Execution e : executionC1) {
+						Task taskE = taskService.createTaskQuery().executionId(e.getId()).singleResult();
+						if (taskE != null) {
+							ExecutionReturn executionReturn = new ExecutionReturn(e);
+							Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE.getId());
+							String[] actRole = getActRole(identityLinkCE);
+							executionReturn.setTaskId(taskE.getId());
+							executionReturn.setActName(taskE.getName());
+							executionReturn.setActRole(actRole);
+							if (formData != null) {
+								for (Map.Entry<String, Object> ee : formData.entrySet()) {
+									taskService.setVariable(taskE.getId(), ee.getKey(), ee.getValue());
+								}
+							}
+							if (!END.equals(taskE.getDescription())) {
+								executionReturn.setIsEnd(EndCode.no);
+								softEnd = false;
+							} else {
+								executionReturn.setIsEnd(EndCode.yes);
+							}
+							executionReturnC.add(executionReturn);
+						}
+					}
 				}
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
@@ -510,7 +544,7 @@ public class CommonService {
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {
-			loadProcessInstReturn(processInstReturn, execution.getProcessInstanceId(), null);
+			loadProcessInstReturn(processInstReturn, execution.getId(), null);
 		}
 		return processInstReturn;
 	}
