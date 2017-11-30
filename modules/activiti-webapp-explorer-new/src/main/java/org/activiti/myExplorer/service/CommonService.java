@@ -401,11 +401,11 @@ public class CommonService {
 		if (task != null) {
 			return task;
 		} else {
-			exeId = runtimeService.createExecutionQuery().parentId(exeId).singleResult().getId();
-			if (exeId == null) {
+			Execution execution = runtimeService.createExecutionQuery().parentId(exeId).singleResult();
+			if (execution == null || execution.getId() == null) {
 				return null;
 			} else {
-				return getDoneTaskByIdIteration(exeId);
+				return getDoneTaskByIdIteration(execution.getId());
 			}
 		}
 	}
@@ -416,8 +416,8 @@ public class CommonService {
 		Task task = getDoneTaskByIdIteration(exeId);
 		if (task != null && task.getId() != null) {
 			/* 判断taskId是否是task的上一环节 */
-			List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery().executionId(exeId)
-					.orderByTaskId().asc().list();
+			List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery()
+					.processInstanceId(task.getProcessInstanceId()).orderByTaskId().asc().list();
 			HistoricTaskInstance lastTask = null;
 			for (int i = 1; i < htic.size(); i++) {
 				if (task.getId().equals(htic.get(i).getId())) {
@@ -440,7 +440,7 @@ public class CommonService {
 			}
 		} else {
 			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
+			processInstReturn.setRetVal("无法找到taskId为 " + taskId + " 的任务");
 		}
 		return processInstReturn;
 	}
