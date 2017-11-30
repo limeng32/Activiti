@@ -392,17 +392,28 @@ public class CommonService {
 		return processInstReturn;
 	}
 
-	public ProcessInstReturn withdraw(String exeId, String taskId) {
-		ProcessInstReturn processInstReturn = new ProcessInstReturn();
-		String id = historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult().getExecutionId();
-		System.out.println("::" + exeId + " " + id);
-		exeId = id;
+	/*
+	 * 通过一个exeId寻找对应的task对象，如果不存在则在这个exeId对应的执行变量execution的子执行变量中寻找。
+	 * 重复这一过程，直到找到一个对象或者返回null。
+	 */
+	private Task getDoneTaskByIdIteration(String exeId) {
 		Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
-		if (task == null) {
+		if (task != null) {
+			return task;
+		} else {
 			exeId = runtimeService.createExecutionQuery().parentId(exeId).singleResult().getId();
-			task = taskService.createTaskQuery().executionId(exeId).singleResult();
+			if (exeId == null) {
+				return null;
+			} else {
+				return getDoneTaskByIdIteration(exeId);
+			}
 		}
-		System.out.println("2::" + exeId);
+	}
+
+	public ProcessInstReturn withdraw(String taskId) {
+		ProcessInstReturn processInstReturn = new ProcessInstReturn();
+		String exeId = historyService.createHistoricTaskInstanceQuery().taskId(taskId).singleResult().getExecutionId();
+		Task task = getDoneTaskByIdIteration(exeId);
 		if (task != null && task.getId() != null) {
 			/* 判断taskId是否是task的上一环节 */
 			List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery().executionId(exeId)
@@ -424,8 +435,6 @@ public class CommonService {
 					processInstReturn.setRetVal("任务已经被认领，无法撤回");
 				}
 			} else {
-				System.out.println("1::" + lastTask);
-				System.out.println("2::" + taskId);
 				processInstReturn.setRetCode(RetCode.exception);
 				processInstReturn.setRetVal("无法撤回到id为 " + taskId + " 的任务");
 			}

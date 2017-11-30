@@ -5,8 +5,6 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.persist.ActReModel;
@@ -36,12 +34,6 @@ public class CommonController {
 
 	@Autowired
 	private CommonService commonService;
-
-	@Autowired
-	private RuntimeService runtimeService;
-
-	@Autowired
-	private TaskService taskService;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -149,8 +141,8 @@ public class CommonController {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/withdraw")
 	public String withdraw(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "taskId") String taskId) {
-		ProcessInstReturn processInstReturn = commonService.withdraw(exeId, taskId);
+			@RequestParam(value = "taskId") String taskId) {
+		ProcessInstReturn processInstReturn = commonService.withdraw(taskId);
 		mm.addAttribute("_content", processInstReturn);
 		return UNIQUE_PATH;
 	}
