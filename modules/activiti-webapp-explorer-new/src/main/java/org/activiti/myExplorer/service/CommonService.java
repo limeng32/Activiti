@@ -396,7 +396,7 @@ public class CommonService {
 	 * 通过一个exeId寻找对应的task对象，如果不存在则在这个exeId对应的执行变量execution的子执行变量中寻找。
 	 * 重复这一过程，直到找到一个对象或者返回null。
 	 */
-	private Task getDoneTaskByIdIteration(String exeId) {
+	private Task getDoneTaskByExeIdIteration(String exeId) {
 		Task task = taskService.createTaskQuery().executionId(exeId).singleResult();
 		if (task != null) {
 			return task;
@@ -405,7 +405,7 @@ public class CommonService {
 			if (execution == null || execution.getId() == null) {
 				return null;
 			} else {
-				return getDoneTaskByIdIteration(execution.getId());
+				return getDoneTaskByExeIdIteration(execution.getId());
 			}
 		}
 	}
@@ -415,7 +415,7 @@ public class CommonService {
 		HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().taskId(taskId)
 				.singleResult();
 		String exeId = historicTaskInstance.getExecutionId();
-		Task task = getDoneTaskByIdIteration(exeId);
+		Task task = getDoneTaskByExeIdIteration(exeId);
 		if (task != null && task.getId() != null) {
 			/* 判断taskId是否是task的上一环节 */
 			List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery()
@@ -447,20 +447,33 @@ public class CommonService {
 		return processInstReturn;
 	}
 
-	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, String pid, JSONObject formData) {
-		System.out.println("::"+pid);
-//		Collection<Execution> executionC = runtimeService.createExecutionQuery().processInstanceId(pid).list();
-		Collection<Execution> executionC = runtimeService.createExecutionQuery().executionId(pid).list();
-		if(executionC.size()==0){
-			System.out.println("1::"+pid);
-			executionC = runtimeService.createExecutionQuery().parentId(pid).list();
+	/*
+	 * 通过一个processInstanceId寻找对应的execution对象，
+	 * 如果不存在则在这个processInstanceId对应的执行变量execution的子执行变量中寻找。
+	 * 重复这一过程，直到找到一个对象或者返回null。
+	 */
+	private Collection<Execution> getExecutionsByProcessInstanceIdIteration(String processInstanceId) {
+		Collection<Execution> executionC = runtimeService.createExecutionQuery().processInstanceId(processInstanceId)
+				.list();
+		if (!executionC.isEmpty()) {
+			return executionC;
+		} else {
+			Execution execution = runtimeService.createExecutionQuery().parentId(processInstanceId).singleResult();
+			if (execution == null || execution.getId() == null) {
+				return null;
+			} else {
+				return getExecutionsByProcessInstanceIdIteration(execution.getId());
+			}
 		}
+	}
+
+	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, String pid, JSONObject formData) {
+		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(pid);
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		boolean softEnd = true;
 		if (executionC.size() > 0) {
+			boolean softEnd = true;
 			for (Execution e1 : executionC) {
 				Task taskE1 = taskService.createTaskQuery().executionId(e1.getId()).singleResult();
-
 				if (taskE1 != null) {
 					ExecutionReturn executionReturn = new ExecutionReturn(e1);
 					Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE1.getId());
@@ -481,32 +494,6 @@ public class CommonService {
 					}
 					executionReturnC.add(executionReturn);
 				}
-				else{
-					Collection<Execution> executionC1 = runtimeService.createExecutionQuery().parentId(pid).list();
-					for (Execution e : executionC1) {
-						Task taskE = taskService.createTaskQuery().executionId(e.getId()).singleResult();
-						if (taskE != null) {
-							ExecutionReturn executionReturn = new ExecutionReturn(e);
-							Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE.getId());
-							String[] actRole = getActRole(identityLinkCE);
-							executionReturn.setTaskId(taskE.getId());
-							executionReturn.setActName(taskE.getName());
-							executionReturn.setActRole(actRole);
-							if (formData != null) {
-								for (Map.Entry<String, Object> ee : formData.entrySet()) {
-									taskService.setVariable(taskE.getId(), ee.getKey(), ee.getValue());
-								}
-							}
-							if (!END.equals(taskE.getDescription())) {
-								executionReturn.setIsEnd(EndCode.no);
-								softEnd = false;
-							} else {
-								executionReturn.setIsEnd(EndCode.yes);
-							}
-							executionReturnC.add(executionReturn);
-						}
-					}
-				}
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
 			if (softEnd) {
@@ -519,7 +506,7 @@ public class CommonService {
 		} else {
 			processInstReturn.setIsEnd(EndCode.yes);
 			processInstReturn.setRetCode(RetCode.success);
-			processInstReturn.setRetVal("1");
+			processInstReturn.setRetVal("2");
 		}
 	}
 
