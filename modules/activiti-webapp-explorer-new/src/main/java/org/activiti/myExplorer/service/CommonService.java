@@ -454,16 +454,17 @@ public class CommonService {
 	 * 如果不存在则在这个processInstanceId对应的执行变量execution的子执行变量中寻找。
 	 * 重复这一过程，直到找到一个对象或者返回null。
 	 */
-	private Collection<Execution> getExecutionsByProcessInstanceIdIteration(String processInstanceId) {
-		Collection<Execution> executionC = runtimeService.createExecutionQuery().executionId(processInstanceId).list();
+	private Collection<Execution> getExecutionsByProcessInstanceIdIteration(Execution execution) {
+		Collection<Execution> executionC = runtimeService.createExecutionQuery().executionId(execution.getId()).list();
 		if (!executionC.isEmpty()) {
 			return executionC;
 		} else {
-			Execution execution = runtimeService.createExecutionQuery().parentId(processInstanceId).singleResult();
-			if (execution == null || execution.getId() == null) {
+			Execution execution_ = runtimeService.createExecutionQuery().executionId(execution.getProcessInstanceId())
+					.singleResult();
+			if (execution_ == null || execution_.getId() == null) {
 				return null;
 			} else {
-				return getExecutionsByProcessInstanceIdIteration(execution.getProcessInstanceId());
+				return getExecutionsByProcessInstanceIdIteration(execution_);
 			}
 		}
 	}
@@ -519,10 +520,7 @@ public class CommonService {
 
 	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, Execution execution, JSONObject formData) {
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(execution.getId());
-		if (executionC == null) {
-			executionC = getExecutionsByProcessInstanceIdIteration(execution.getProcessInstanceId());
-		}
+		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(execution);
 		dealTasksByExecutionIteration(processInstReturn, executionC, executionReturnC, formData);
 	}
 
