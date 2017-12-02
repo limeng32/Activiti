@@ -106,7 +106,7 @@ public class CommonService {
 		}
 		ProcessInstance pi = justStartService(businessId, dealRole, dealPerson, dataStr);
 		if (pi != null) {
-			loadProcessInstReturn(processInstReturn, pi.getId(), formData);
+			loadProcessInstReturn(processInstReturn, pi, formData);
 		} else {
 			processInstReturn.setIsEnd(EndCode.yes);
 			processInstReturn.setRetCode(RetCode.exception);
@@ -160,7 +160,7 @@ public class CommonService {
 					}
 					taskService.complete(task_.getId());
 				}
-				loadProcessInstReturn(processInstReturn, execution.getId(), null);
+				loadProcessInstReturn(processInstReturn, execution, null);
 			} else {
 				processInstReturn.setIsEnd(EndCode.yes);
 				processInstReturn.setRetCode(RetCode.exception);
@@ -431,7 +431,9 @@ public class CommonService {
 					|| (lastTask != null && lastTask.getId() != null && lastTask.getId().equals(taskId))) {
 				if (task.getAssignee() == null) {
 					taskService.withdraw(task.getId(), taskId, null);
-					loadProcessInstReturn(processInstReturn, task.getExecutionId(), null);
+					Execution execution = runtimeService.createExecutionQuery().executionId(task.getExecutionId())
+							.singleResult();
+					loadProcessInstReturn(processInstReturn, execution, null);
 				} else {
 					processInstReturn.setRetCode(RetCode.exception);
 					processInstReturn.setRetVal("任务已经被认领，无法撤回");
@@ -461,7 +463,7 @@ public class CommonService {
 			if (execution == null || execution.getId() == null) {
 				return null;
 			} else {
-				return getExecutionsByProcessInstanceIdIteration(execution.getId());
+				return getExecutionsByProcessInstanceIdIteration(execution.getProcessInstanceId());
 			}
 		}
 	}
@@ -511,13 +513,16 @@ public class CommonService {
 		} else {
 			processInstReturn.setIsEnd(EndCode.yes);
 			processInstReturn.setRetCode(RetCode.success);
-			processInstReturn.setRetVal("2");
+			processInstReturn.setRetVal("1");
 		}
 	}
 
-	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, String pid, JSONObject formData) {
+	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, Execution execution, JSONObject formData) {
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(pid);
+		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(execution.getId());
+		if (executionC == null) {
+			executionC = getExecutionsByProcessInstanceIdIteration(execution.getProcessInstanceId());
+		}
 		dealTasksByExecutionIteration(processInstReturn, executionC, executionReturnC, formData);
 	}
 
@@ -542,7 +547,7 @@ public class CommonService {
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {
-			loadProcessInstReturn(processInstReturn, execution.getId(), null);
+			loadProcessInstReturn(processInstReturn, execution, null);
 		}
 		return processInstReturn;
 	}
