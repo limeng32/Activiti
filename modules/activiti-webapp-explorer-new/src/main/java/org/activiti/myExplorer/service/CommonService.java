@@ -453,8 +453,7 @@ public class CommonService {
 	 * 重复这一过程，直到找到一个对象或者返回null。
 	 */
 	private Collection<Execution> getExecutionsByProcessInstanceIdIteration(String processInstanceId) {
-		Collection<Execution> executionC = runtimeService.createExecutionQuery().processInstanceId(processInstanceId)
-				.list();
+		Collection<Execution> executionC = runtimeService.createExecutionQuery().executionId(processInstanceId).list();
 		if (!executionC.isEmpty()) {
 			return executionC;
 		} else {
@@ -467,13 +466,13 @@ public class CommonService {
 		}
 	}
 
-	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, String pid, JSONObject formData) {
-		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(pid);
-		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		if (executionC.size() > 0) {
+	private void dealTasksByExecutionIteration(ProcessInstReturn processInstReturn, Collection<Execution> executionC,
+			Collection<ExecutionReturn> executionReturnC, JSONObject formData) {
+		if ((executionC != null) && (!executionC.isEmpty())) {
 			boolean softEnd = true;
 			for (Execution e1 : executionC) {
 				Task taskE1 = taskService.createTaskQuery().executionId(e1.getId()).singleResult();
+
 				if (taskE1 != null) {
 					ExecutionReturn executionReturn = new ExecutionReturn(e1);
 					Collection<IdentityLink> identityLinkCE = taskService.getIdentityLinksForTask(taskE1.getId());
@@ -493,6 +492,12 @@ public class CommonService {
 						executionReturn.setIsEnd(EndCode.yes);
 					}
 					executionReturnC.add(executionReturn);
+				} else {
+					Collection<Execution> executionC1 = runtimeService.createExecutionQuery().parentId(e1.getId())
+							.list();
+					if ((executionC1 != null) && (!executionC1.isEmpty())) {
+						dealTasksByExecutionIteration(processInstReturn, executionC1, executionReturnC, formData);
+					}
 				}
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
@@ -508,6 +513,12 @@ public class CommonService {
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("2");
 		}
+	}
+
+	private void loadProcessInstReturn(ProcessInstReturn processInstReturn, String pid, JSONObject formData) {
+		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
+		Collection<Execution> executionC = getExecutionsByProcessInstanceIdIteration(pid);
+		dealTasksByExecutionIteration(processInstReturn, executionC, executionReturnC, formData);
 	}
 
 	public ProcessInstReturn message(String exeId, String message) {
