@@ -162,6 +162,38 @@ public class DemoDataConfiguration {
 		modelHelper.saveMyBusinessModel(model, "business_real_1");
 	}
 
+	public void initDeployDemoProcess2() {
+
+		Deployment deployment = repositoryService.createDeployment().addClasspathResource("diagrams/ttt.bpmn20.xml")
+				.name("ttt").deploy();
+		Model model = repositoryService.newModel();
+		model.setDeploymentId(deployment.getId());
+		model.setName(deployment.getName());
+		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+		modelObjectNode.put("name", "ttt");
+		modelObjectNode.put("revision", 1);
+		modelObjectNode.put("description", "");
+		model.setMetaInfo(modelObjectNode.toString());
+		repositoryService.saveModel(model);
+
+		XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
+		InputStream bpmnStream = repositoryService.getResourceAsStream(deployment.getId(), "diagrams/ttt.bpmn20.xml");
+		try {
+			InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
+			XMLStreamReader xtr = xif.createXMLStreamReader(in);
+			BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
+
+			BpmnJsonConverter converter = new BpmnJsonConverter();
+			ObjectNode modelNode = converter.convertToJson(bpmnModel);
+
+			repositoryService.addModelEditorSource(model.getId(), modelNode.toString().getBytes("utf-8"));
+		} catch (UnsupportedEncodingException | XMLStreamException e) {
+			e.printStackTrace();
+		}
+
+		modelHelper.saveMyBusinessModel(model, "ttt");
+	}
+
 	protected void initDemoGroups() {
 		String[] assignmentGroups = new String[] { "major", "deputymajor", "manager", "tmo", "finance", "dean",
 				"co-dean", "btmo", "bfinance", "leader", "projectmanager" };
