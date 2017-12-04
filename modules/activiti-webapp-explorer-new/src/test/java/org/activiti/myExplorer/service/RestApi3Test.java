@@ -80,4 +80,54 @@ public class RestApi3Test {
 		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
 	}
 
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApi3Test/testFlow.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApi3Test/testFlow.xml")
+	public void testFlow() throws Exception {
+		prepare();
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "testMessage").param("dealRole", "e")
+						.param("dealPerson", "dean").param("formData", "{form_data:{ou:\"1\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/flow")
+				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
+				.andReturn().getModelAndView();
+		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApi3Test/testMessage.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApi3Test/testMessage.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApi3Test/testMessage.xml")
+	public void testMessage() throws Exception {
+		prepare();
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "testMessage").param("dealRole", "e")
+						.param("dealPerson", "dean").param("formData", "{form_data:{ou:\"1\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/flow")
+				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
+				.andReturn().getModelAndView();
+		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+
+		ExecutionReturn[] ExecutionReturnB = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/message")
+				.param("exeId", ExecutionReturnB[0].getExeId()).param("message", "finish")).andReturn()
+				.getModelAndView();
+		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+	}
 }
