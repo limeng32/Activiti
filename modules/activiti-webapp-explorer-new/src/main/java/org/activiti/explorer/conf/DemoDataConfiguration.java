@@ -130,54 +130,25 @@ public class DemoDataConfiguration {
 	}
 
 	public void initDeployDemoProcess() {
-
-		Deployment deployment = repositoryService.createDeployment().addClasspathResource("diagrams/Real_1.bpmn20.xml")
-				.name("Real_1").deploy();
-		Model model = repositoryService.newModel();
-		model.setDeploymentId(deployment.getId());
-		model.setName(deployment.getName());
-		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
-		modelObjectNode.put("name", "Real_1");
-		modelObjectNode.put("revision", 1);
-		modelObjectNode.put("description", "");
-		model.setMetaInfo(modelObjectNode.toString());
-		repositoryService.saveModel(model);
-
-		XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
-		InputStream bpmnStream = repositoryService.getResourceAsStream(deployment.getId(),
-				"diagrams/Real_1.bpmn20.xml");
-		try {
-			InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
-			XMLStreamReader xtr = xif.createXMLStreamReader(in);
-			BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
-
-			BpmnJsonConverter converter = new BpmnJsonConverter();
-			ObjectNode modelNode = converter.convertToJson(bpmnModel);
-
-			repositoryService.addModelEditorSource(model.getId(), modelNode.toString().getBytes("utf-8"));
-		} catch (UnsupportedEncodingException | XMLStreamException e) {
-			e.printStackTrace();
-		}
-
-		modelHelper.saveMyBusinessModel(model, "business_real_1");
+		initDeployDemoProcess("diagrams/Real_1.bpmn20.xml", "Real_1", "business_real_1");
 	}
 
-	public void initDeployDemoProcess2() {
+	public void initDeployDemoProcess(String path, String deploymentName, String modelName) {
 
-		Deployment deployment = repositoryService.createDeployment().addClasspathResource("diagrams/ttt.bpmn20.xml")
-				.name("ttt").deploy();
+		Deployment deployment = repositoryService.createDeployment().addClasspathResource(path).name(deploymentName)
+				.deploy();
 		Model model = repositoryService.newModel();
 		model.setDeploymentId(deployment.getId());
 		model.setName(deployment.getName());
 		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
-		modelObjectNode.put("name", "ttt");
+		modelObjectNode.put("name", deploymentName);
 		modelObjectNode.put("revision", 1);
 		modelObjectNode.put("description", "");
 		model.setMetaInfo(modelObjectNode.toString());
 		repositoryService.saveModel(model);
 
 		XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
-		InputStream bpmnStream = repositoryService.getResourceAsStream(deployment.getId(), "diagrams/ttt.bpmn20.xml");
+		InputStream bpmnStream = repositoryService.getResourceAsStream(deployment.getId(), path);
 		try {
 			InputStreamReader in = new InputStreamReader(bpmnStream, "UTF-8");
 			XMLStreamReader xtr = xif.createXMLStreamReader(in);
@@ -191,7 +162,7 @@ public class DemoDataConfiguration {
 			e.printStackTrace();
 		}
 
-		modelHelper.saveMyBusinessModel(model, "ttt");
+		modelHelper.saveMyBusinessModel(model, modelName);
 	}
 
 	protected void initDemoGroups() {

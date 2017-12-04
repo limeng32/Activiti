@@ -1,0 +1,9 @@
+<dataset>
+	<ACT_RE_DEPLOYMENT NAME_="testMessage" />
+	<ACT_RE_MODEL NAME_="testMessage" />
+	<ACT_RE_PROCDEF NAME_="testMessage" KEY_="testMessage" />
+
+	<ACT_RU_EXECUTION ACT_ID_="t0" />
+	<ACT_RU_TASK NAME_="t0" TASK_DEF_KEY_="t0" />
+	<ACT_RU_VARIABLE />
+</dataset>

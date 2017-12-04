@@ -57,7 +57,7 @@ public class RestApi2Test {
 	}
 
 	public void prepare() {
-		demoDataConfiguration.initDeployDemoProcess2();
+		demoDataConfiguration.initDeployDemoProcess("diagrams/ttt.bpmn20.xml", "ttt", "ttt");
 	}
 
 	@Test
