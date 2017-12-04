@@ -488,17 +488,18 @@ public class CommonService {
 							taskService.setVariable(taskE1.getId(), ee.getKey(), ee.getValue());
 						}
 					}
-					if (!END.equals(taskE1.getDescription())) {
+					if (END.equals(taskE1.getDescription())) {
+						executionReturn.setIsEnd(EndCode.yes);
+					} else {
 						executionReturn.setIsEnd(EndCode.no);
 						softEnd = false;
-					} else {
-						executionReturn.setIsEnd(EndCode.yes);
 					}
 					executionReturnC.add(executionReturn);
 				} else {
 					Collection<Execution> executionC1 = runtimeService.createExecutionQuery().parentId(e1.getId())
 							.list();
 					if ((executionC1 != null) && (!executionC1.isEmpty())) {
+						softEnd = false;
 						dealTasksByExecutionIteration(processInstReturn, executionC1, executionReturnC, formData);
 					}
 				}

@@ -104,12 +104,16 @@ public class RestApi2Test {
 		ModelAndView modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/start").param("businessId", "ttt")
 				.param("dealRole", "e").param("dealPerson", "dean")).andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/flow")
 				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
 				.andReturn().getModelAndView();
+
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
 		ExecutionReturn[] ExecutionReturnB = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
 
@@ -118,6 +122,7 @@ public class RestApi2Test {
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(0, processInstReturn.getExecutionReturn().size());
+		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
 
 		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/flow")
 				.param("exeId", ExecutionReturnB[1].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
@@ -125,5 +130,6 @@ public class RestApi2Test {
 		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/flow")
 				.param("exeId", ExecutionReturnB[1].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
 				.andReturn().getModelAndView();
+		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
 	}
 }
