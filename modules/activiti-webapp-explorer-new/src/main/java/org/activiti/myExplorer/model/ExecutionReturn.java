@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.activiti.engine.runtime.Execution;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class ExecutionReturn implements Serializable {
 
 	public ExecutionReturn() {
@@ -31,6 +33,9 @@ public class ExecutionReturn implements Serializable {
 	private EndCode isEnd;
 
 	private String taskId;
+
+	@JSONField(serialize = false)
+	private boolean isSoftEnd;
 
 	public String getExeId() {
 		return exeId;
@@ -78,6 +83,14 @@ public class ExecutionReturn implements Serializable {
 
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
+	}
+
+	public boolean isSoftEnd() {
+		return isSoftEnd;
+	}
+
+	public void setSoftEnd(boolean isSoftEnd) {
+		this.isSoftEnd = isSoftEnd;
 	}
 
 }

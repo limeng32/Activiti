@@ -472,7 +472,6 @@ public class CommonService {
 	private void dealTasksByExecutionIteration(ProcessInstReturn processInstReturn, Collection<Execution> executionC,
 			Collection<ExecutionReturn> executionReturnC, JSONObject formData) {
 		if ((executionC != null) && (!executionC.isEmpty())) {
-			boolean softEnd = true;
 			for (Execution e1 : executionC) {
 				Task taskE1 = taskService.createTaskQuery().executionId(e1.getId()).singleResult();
 
@@ -489,23 +488,29 @@ public class CommonService {
 						}
 					}
 					if (END.equals(taskE1.getDescription())) {
+						executionReturn.setSoftEnd(true);
 						executionReturn.setIsEnd(EndCode.yes);
 					} else {
 						executionReturn.setIsEnd(EndCode.no);
-						softEnd = false;
 					}
 					executionReturnC.add(executionReturn);
 				} else {
 					Collection<Execution> executionC1 = runtimeService.createExecutionQuery().parentId(e1.getId())
 							.list();
 					if ((executionC1 != null) && (!executionC1.isEmpty())) {
-						softEnd = false;
 						dealTasksByExecutionIteration(processInstReturn, executionC1, executionReturnC, formData);
 					}
 				}
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
-			if (softEnd) {
+			boolean b = false;
+			for (ExecutionReturn executionReturn : executionReturnC) {
+				if (executionReturn.isSoftEnd()) {
+					b = true;
+					break;
+				}
+			}
+			if (b) {
 				processInstReturn.setIsEnd(EndCode.yes);
 			} else {
 				processInstReturn.setIsEnd(EndCode.no);
