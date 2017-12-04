@@ -130,4 +130,32 @@ public class RestApi3Test {
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
 	}
+
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/restApi3Test/testWithdraw.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/restApi3Test/testWithdraw.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/restApi3Test/testWithdraw.xml")
+	public void testWithdraw() throws Exception {
+		prepare();
+		ModelAndView modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/start").param("businessId", "testMessage").param("dealRole", "e")
+						.param("dealPerson", "dean").param("formData", "{form_data:{ou:\"1\"}}"))
+				.andReturn().getModelAndView();
+		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+
+		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
+				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/flow")
+				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
+				.andReturn().getModelAndView();
+		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+
+		modelAndView = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/withdraw").param("taskId", ExecutionReturnA[0].getTaskId()))
+				.andReturn().getModelAndView();
+		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+	}
 }
