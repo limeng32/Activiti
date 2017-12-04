@@ -503,14 +503,16 @@ public class CommonService {
 				}
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
-			boolean b = false;
+			boolean softEnd = false;
 			for (ExecutionReturn executionReturn : executionReturnC) {
 				if (executionReturn.isSoftEnd()) {
-					b = true;
+					softEnd = true;
+				} else {
+					softEnd = false;
 					break;
 				}
 			}
-			if (b) {
+			if (softEnd) {
 				processInstReturn.setIsEnd(EndCode.yes);
 			} else {
 				processInstReturn.setIsEnd(EndCode.no);
