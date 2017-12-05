@@ -157,5 +157,11 @@ public class RestApi3Test {
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+
+		/* 增加一个错误的taskId的撤回操作 */
+		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/withdraw").param("taskId", "000000"))
+				.andReturn().getModelAndView();
+		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
+		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
 	}
 }

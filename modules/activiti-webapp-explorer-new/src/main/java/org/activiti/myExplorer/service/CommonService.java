@@ -414,37 +414,42 @@ public class CommonService {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		HistoricTaskInstance historicTaskInstance = historyService.createHistoricTaskInstanceQuery().taskId(taskId)
 				.singleResult();
-		String exeId = historicTaskInstance.getExecutionId();
-		Task task = getDoneTaskByExeIdIteration(exeId);
-		if (task != null && task.getId() != null) {
-			/* 判断taskId是否是task的上一环节 */
-			List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery()
-					.executionId(historicTaskInstance.getExecutionId()).orderByTaskId().asc().list();
-			HistoricTaskInstance lastTask = null;
-			for (int i = 1; i < htic.size(); i++) {
-				if (task.getId().equals(htic.get(i).getId())) {
-					lastTask = htic.get(i - 1);
-					break;
+		if (historicTaskInstance != null && historicTaskInstance.getExecutionId() != null) {
+			String exeId = historicTaskInstance.getExecutionId();
+			Task task = getDoneTaskByExeIdIteration(exeId);
+			if (task != null && task.getId() != null && task.getExecutionId() != null) {
+				/* 判断taskId是否是task的上一环节 */
+				List<HistoricTaskInstance> htic = historyService.createHistoricTaskInstanceQuery()
+						.executionId(historicTaskInstance.getExecutionId()).orderByTaskId().asc().list();
+				HistoricTaskInstance lastTask = null;
+				for (int i = 1; i < htic.size(); i++) {
+					if (task.getId().equals(htic.get(i).getId())) {
+						lastTask = htic.get(i - 1);
+						break;
+					}
 				}
-			}
-			if ((lastTask == null)
-					|| (lastTask != null && lastTask.getId() != null && lastTask.getId().equals(taskId))) {
-				if (task.getAssignee() == null) {
-					taskService.withdraw(task.getId(), taskId, null);
-					Execution execution = runtimeService.createExecutionQuery().executionId(task.getExecutionId())
-							.singleResult();
-					loadProcessInstReturn(processInstReturn, execution, null);
+				if ((lastTask == null)
+						|| (lastTask != null && lastTask.getId() != null && lastTask.getId().equals(taskId))) {
+					if (task.getAssignee() == null) {
+						taskService.withdraw(task.getId(), taskId, null);
+						Execution execution = runtimeService.createExecutionQuery().executionId(task.getExecutionId())
+								.singleResult();
+						loadProcessInstReturn(processInstReturn, execution, null);
+					} else {
+						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetVal("任务已经被认领，无法撤回");
+					}
 				} else {
 					processInstReturn.setRetCode(RetCode.exception);
-					processInstReturn.setRetVal("任务已经被认领，无法撤回");
+					processInstReturn.setRetVal("无法撤回到id为 " + taskId + " 的任务");
 				}
 			} else {
 				processInstReturn.setRetCode(RetCode.exception);
-				processInstReturn.setRetVal("无法撤回到id为 " + taskId + " 的任务");
+				processInstReturn.setRetVal("无法找到taskId为 " + taskId + " 的任务");
 			}
 		} else {
 			processInstReturn.setRetCode(RetCode.exception);
-			processInstReturn.setRetVal("无法找到taskId为 " + taskId + " 的任务");
+			processInstReturn.setRetVal("无法找到taskId为 " + taskId + " 的历史记录，或找到的历史记录中 exeId 不存在");
 		}
 		return processInstReturn;
 	}
