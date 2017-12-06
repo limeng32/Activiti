@@ -8,6 +8,13 @@ import org.activiti.engine.delegate.JavaDelegate;
 import org.activiti.engine.delegate.TaskListener;
 import org.activiti.myExplorer.demo.model.SIGroup;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 public class GroupListener implements TaskListener, JavaDelegate, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -15,18 +22,16 @@ public class GroupListener implements TaskListener, JavaDelegate, Serializable {
 	private SIGroup siGroup = new SIGroup();
 
 	public GroupListener() {
-
+		// Make sonarqube happy
 	}
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
-		System.out.println("::"+siGroup);
 		execution.setVariable("siGroup", siGroup);
 	}
 
 	@Override
 	public void notify(DelegateTask delegateTask) {
-		// TODO Auto-generated method stub
 		delegateTask.addCandidateGroup(siGroup.getProjectmanager());
 	}
 

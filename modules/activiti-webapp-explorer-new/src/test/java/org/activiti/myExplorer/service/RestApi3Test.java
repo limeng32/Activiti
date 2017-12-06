@@ -77,7 +77,7 @@ public class RestApi3Test {
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(RetCode.success, processInstReturn.getRetCode());
 		Assert.assertEquals("1", processInstReturn.getRetVal());
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class RestApi3Test {
 						.param("dealPerson", "dean").param("formData", "{form_data:{ou:\"1\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
@@ -98,7 +98,7 @@ public class RestApi3Test {
 				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.YES, processInstReturn.getIsEnd());
 	}
 
 	@Test
@@ -112,7 +112,7 @@ public class RestApi3Test {
 						.param("dealPerson", "dean").param("formData", "{form_data:{ou:\"1\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
@@ -120,7 +120,7 @@ public class RestApi3Test {
 				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.YES, processInstReturn.getIsEnd());
 
 		ExecutionReturn[] ExecutionReturnB = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
@@ -128,7 +128,7 @@ public class RestApi3Test {
 				.param("exeId", ExecutionReturnB[0].getExeId()).param("message", "finish")).andReturn()
 				.getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.YES, processInstReturn.getIsEnd());
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class RestApi3Test {
 						.param("dealPerson", "dean").param("formData", "{form_data:{ou:\"1\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 
 		ExecutionReturn[] ExecutionReturnA = processInstReturn.getExecutionReturn()
 				.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
@@ -150,13 +150,13 @@ public class RestApi3Test {
 				.param("exeId", ExecutionReturnA[0].getExeId()).param("dealPerson", "dean").param("dealRole", "e"))
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.yes, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.YES, processInstReturn.getIsEnd());
 
 		modelAndView = this.mockMvc
 				.perform(MockMvcRequestBuilders.get("/withdraw").param("taskId", ExecutionReturnA[0].getTaskId()))
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 
 		/* 增加一个错误的taskId的撤回操作 */
 		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/withdraw").param("taskId", "000000"))

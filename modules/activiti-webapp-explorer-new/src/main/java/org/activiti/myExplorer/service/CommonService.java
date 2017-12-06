@@ -108,7 +108,7 @@ public class CommonService {
 		if (pi != null) {
 			loadProcessInstReturn(processInstReturn, pi, formData);
 		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.exception);
 			processInstReturn.setRetVal("无法找到对应业务 " + businessId + " 的流程");
 		}
@@ -139,7 +139,7 @@ public class CommonService {
 				Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
 				Set<String> actRoleSet = getActRoleAsMap(identityLinkC);
 				if (!actRoleSet.contains(dealRole)) {
-					processInstReturn.setIsEnd(EndCode.no);
+					processInstReturn.setIsEnd(EndCode.NO);
 					processInstReturn.setRetCode(RetCode.exception);
 					processInstReturn.setRetVal("角色 " + dealRole + " 没有权限流转这个环节");
 					return processInstReturn;
@@ -162,7 +162,7 @@ public class CommonService {
 				}
 				loadProcessInstReturn(processInstReturn, execution, null);
 			} else {
-				processInstReturn.setIsEnd(EndCode.yes);
+				processInstReturn.setIsEnd(EndCode.YES);
 				processInstReturn.setRetCode(RetCode.exception);
 				processInstReturn.setRetVal("流程无法流转到下一步");
 			}
@@ -175,7 +175,7 @@ public class CommonService {
 
 	public ProcessInstReturn start(String businessId, String dealRole, String dealPerson, String dataStr) {
 		ProcessInstReturn processInstReturn = justStart(businessId, dealRole, dealPerson, dataStr);
-		if (RetCode.success.equals(processInstReturn.getRetCode()) && EndCode.no.equals(processInstReturn.getIsEnd())) {
+		if (RetCode.success.equals(processInstReturn.getRetCode()) && EndCode.NO.equals(processInstReturn.getIsEnd())) {
 			if (processInstReturn.getExecutionReturn() != null && processInstReturn.getExecutionReturn().size() > 0) {
 				ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
 						.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
@@ -204,15 +204,15 @@ public class CommonService {
 		if (executionC.size() > 0) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
-				executionReturn.setIsEnd(EndCode.no);
+				executionReturn.setIsEnd(EndCode.NO);
 				executionReturnC.add(executionReturn);
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
-			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setIsEnd(EndCode.NO);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		}
@@ -237,15 +237,15 @@ public class CommonService {
 		if (executionC.size() > 0) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
-				executionReturn.setIsEnd(EndCode.no);
+				executionReturn.setIsEnd(EndCode.NO);
 				executionReturnC.add(executionReturn);
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
-			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setIsEnd(EndCode.NO);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		}
@@ -256,7 +256,7 @@ public class CommonService {
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
 		if (execution == null) {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.exception);
 			processInstReturn.setRetVal("无法找到执行id为 " + exeId + " 的流程");
 			return processInstReturn;
@@ -269,15 +269,15 @@ public class CommonService {
 		if (executionC.size() > 0) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
-				executionReturn.setIsEnd(EndCode.no);
+				executionReturn.setIsEnd(EndCode.NO);
 				executionReturnC.add(executionReturn);
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
-			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setIsEnd(EndCode.NO);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		}
@@ -336,13 +336,13 @@ public class CommonService {
 				executionReturn.setTaskId(task.getId());
 				executionReturn.setActName(task.getName());
 				executionReturn.setActRole(actRole);
-				executionReturn.setIsEnd(EndCode.no);
+				executionReturn.setIsEnd(EndCode.NO);
 				executionReturnC.add(executionReturn);
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
-			processInstReturn.setIsEnd(EndCode.no);
+			processInstReturn.setIsEnd(EndCode.NO);
 		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 		}
 		return processInstReturn;
 	}
@@ -494,9 +494,9 @@ public class CommonService {
 					}
 					if (END.equals(taskE1.getDescription())) {
 						executionReturn.setSoftEnd(true);
-						executionReturn.setIsEnd(EndCode.yes);
+						executionReturn.setIsEnd(EndCode.YES);
 					} else {
-						executionReturn.setIsEnd(EndCode.no);
+						executionReturn.setIsEnd(EndCode.NO);
 					}
 					executionReturnC.add(executionReturn);
 				} else {
@@ -518,14 +518,14 @@ public class CommonService {
 				}
 			}
 			if (softEnd) {
-				processInstReturn.setIsEnd(EndCode.yes);
+				processInstReturn.setIsEnd(EndCode.YES);
 			} else {
-				processInstReturn.setIsEnd(EndCode.no);
+				processInstReturn.setIsEnd(EndCode.NO);
 			}
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		}
@@ -554,7 +554,7 @@ public class CommonService {
 		Execution execution = runtimeService.createExecutionQuery().executionId(execution_.getParentId())
 				.singleResult();
 		if (execution == null) {
-			processInstReturn.setIsEnd(EndCode.yes);
+			processInstReturn.setIsEnd(EndCode.YES);
 			processInstReturn.setRetCode(RetCode.success);
 			processInstReturn.setRetVal("1");
 		} else {

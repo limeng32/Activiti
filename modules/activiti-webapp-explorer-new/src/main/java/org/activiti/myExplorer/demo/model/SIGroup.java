@@ -2,6 +2,13 @@ package org.activiti.myExplorer.demo.model;
 
 import java.io.Serializable;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 public class SIGroup implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -22,7 +29,7 @@ public class SIGroup implements Serializable {
 
 	private String dean = "dean";
 
-	private String co_dean = "co-dean";
+	private String coDean = "co-dean";
 
 	private String btmo = "btmo";
 
@@ -92,12 +99,12 @@ public class SIGroup implements Serializable {
 		this.dean = dean;
 	}
 
-	public String getCo_dean() {
-		return co_dean;
+	public String getCoDean() {
+		return coDean;
 	}
 
-	public void setCo_dean(String co_dean) {
-		this.co_dean = co_dean;
+	public void setCoDean(String coDean) {
+		this.coDean = coDean;
 	}
 
 	public String getBtmo() {

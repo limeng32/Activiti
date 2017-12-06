@@ -77,7 +77,7 @@ public class RestApiTest {
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(RetCode.success, processInstReturn.getRetCode());
 		Assert.assertEquals("1", processInstReturn.getRetVal());
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 	}
 
 	@Test
@@ -122,7 +122,7 @@ public class RestApiTest {
 						.param("formData", "{form_data:{isMain:\"yes\"}}").param("dealRole", "wrongRole"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
 		Assert.assertEquals("角色 wrongRole 没有权限流转这个环节", processInstReturn.getRetVal());
 	}
@@ -138,7 +138,7 @@ public class RestApiTest {
 						.param("dealPerson", "dean").param("formData", "{form_data:{isMain:\"yes\"}}"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(EndCode.no, processInstReturn.getIsEnd());
+		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
 		Assert.assertEquals("角色 null 没有权限流转这个环节", processInstReturn.getRetVal());
 	}
