@@ -9,6 +9,13 @@ import org.apache.ibatis.type.JdbcType;
 import indi.mybatis.flying.annotations.FieldMapperAnnotation;
 import indi.mybatis.flying.annotations.TableMapperAnnotation;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 @TableMapperAnnotation(tableName = "ACT_RE_MODEL")
 public class ActReModel extends PojoSupport<ActReModel> implements Serializable {
 
@@ -127,19 +134,18 @@ public class ActReModel extends PojoSupport<ActReModel> implements Serializable 
 	public void removeMyBusinessModel(MyBusinessModel oldMyBusinessModel) {
 		if (oldMyBusinessModel == null)
 			return;
-		if (this.myBusinessModel != null)
-			if (this.myBusinessModel.contains(oldMyBusinessModel)) {
-				for (MyBusinessModel temp : this.myBusinessModel) {
-					if (oldMyBusinessModel.equals(temp)) {
-						if (temp != oldMyBusinessModel) {
-							temp.setActReModel((ActReModel) null);
-						}
-						break;
+		if (this.myBusinessModel != null || this.myBusinessModel.contains(oldMyBusinessModel)) {
+			for (MyBusinessModel temp : this.myBusinessModel) {
+				if (oldMyBusinessModel.equals(temp)) {
+					if (temp != oldMyBusinessModel) {
+						temp.setActReModel((ActReModel) null);
 					}
+					break;
 				}
-				this.myBusinessModel.remove(oldMyBusinessModel);
-				oldMyBusinessModel.setActReModel((ActReModel) null);
 			}
+			this.myBusinessModel.remove(oldMyBusinessModel);
+			oldMyBusinessModel.setActReModel((ActReModel) null);
+		}
 	}
 
 	public void removeAllMyBusinessModel() {

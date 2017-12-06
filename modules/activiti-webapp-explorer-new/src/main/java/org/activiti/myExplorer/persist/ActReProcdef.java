@@ -8,6 +8,13 @@ import org.apache.ibatis.type.JdbcType;
 import indi.mybatis.flying.annotations.FieldMapperAnnotation;
 import indi.mybatis.flying.annotations.TableMapperAnnotation;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 @TableMapperAnnotation(tableName = "ACT_RE_PROCDEF")
 public class ActReProcdef extends PojoSupport<ActReProcdef> implements Serializable {
 

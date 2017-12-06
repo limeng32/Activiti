@@ -8,6 +8,13 @@ import org.activiti.myExplorer.pojoHelper.ServiceSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 @Service
 public class ActReProcdefService extends ServiceSupport<ActReProcdef> implements ActReProcdefMapper {
 

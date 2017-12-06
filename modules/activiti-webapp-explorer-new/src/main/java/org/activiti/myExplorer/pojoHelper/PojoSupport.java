@@ -4,11 +4,17 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
-
-public abstract class PojoSupport<T extends PojoSupport<T>> implements PojoFace<T> {
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
+public abstract class PojoSupport<T extends PojoSupport<T>> implements PojoFace {
 
 	@Override
-	abstract public Object getId();
+	public abstract Object getId();
 
 	@Override
 	@JSONField(serialize = false)
@@ -18,9 +24,9 @@ public abstract class PojoSupport<T extends PojoSupport<T>> implements PojoFace<
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
+		final int PRIME = 31;
 		int result = 1;
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		result = PRIME * result + ((getId() == null) ? 0 : getId().hashCode());
 		return result;
 	}
 
