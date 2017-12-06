@@ -26,6 +26,13 @@ import org.springframework.util.MultiValueMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 @Service
 public class ModelHelper implements ModelFace {
 
@@ -49,12 +56,12 @@ public class ModelHelper implements ModelFace {
 		if (model != null) {
 			try {
 				if (StringUtils.isNotEmpty(model.getMetaInfo())) {
-					ActReModel actReModel_ = new ActReModel();
-					actReModel_.setId(modelId);
-					actReModel_.setTenantId(null);
-					MyBusinessModel myBusinessModel_ = new MyBusinessModel();
-					myBusinessModel_.setActReModel(actReModel_);
-					MyBusinessModel myBusinessModel = myBusinessModelService.selectOne(myBusinessModel_);
+					ActReModel actReModel = new ActReModel();
+					actReModel.setId(modelId);
+					actReModel.setTenantId(null);
+					MyBusinessModel myBusinessModelC = new MyBusinessModel();
+					myBusinessModelC.setActReModel(actReModel);
+					MyBusinessModel myBusinessModel = myBusinessModelService.selectOne(myBusinessModelC);
 
 					modelNode = (ObjectNode) objectMapper.readTree(model.getMetaInfo());
 					if (myBusinessModel != null) {
@@ -118,22 +125,23 @@ public class ModelHelper implements ModelFace {
 	}
 
 	public void saveMyBusinessModel(Model model, String business) {
-		MyBusinessModel mbm_ = new MyBusinessModel(), mbm2_ = new MyBusinessModel();
-		mbm_.setBusinessId(business);
-		Collection<MyBusinessModel> myBusinessModelC = myBusinessModelService.selectAll(mbm_);
+		MyBusinessModel mbm = new MyBusinessModel();
+		MyBusinessModel mbm2 = new MyBusinessModel();
+		mbm.setBusinessId(business);
+		Collection<MyBusinessModel> myBusinessModelC = myBusinessModelService.selectAll(mbm);
 		for (MyBusinessModel t : myBusinessModelC) {
 			myBusinessModelService.delete(t);
 		}
-		ActReModel arm_ = new ActReModel();
-		arm_.setId(model.getId());
-		mbm2_.setActReModel(arm_);
-		Collection<MyBusinessModel> myBusinessModelC2 = myBusinessModelService.selectAll(mbm2_);
+		ActReModel arm = new ActReModel();
+		arm.setId(model.getId());
+		mbm2.setActReModel(arm);
+		Collection<MyBusinessModel> myBusinessModelC2 = myBusinessModelService.selectAll(mbm2);
 		for (MyBusinessModel t : myBusinessModelC2) {
 			myBusinessModelService.delete(t);
 		}
 
 		ActReModel actReModel = new ActReModel(model);
-		mbm_.setActReModel(actReModel);
-		myBusinessModelService.insert(mbm_);
+		mbm.setActReModel(actReModel);
+		myBusinessModelService.insert(mbm);
 	}
 }

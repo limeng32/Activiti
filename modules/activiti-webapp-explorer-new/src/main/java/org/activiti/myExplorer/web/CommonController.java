@@ -21,6 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 @Controller
 public class CommonController {
 
@@ -43,8 +50,6 @@ public class CommonController {
 		ac.setName("Mail Task  1");
 		Collection<ActReModel> c = actReModelService.selectAll(ac);
 		for (ActReModel temp : c) {
-			System.out.println("!" + temp.getMetaInfo() + "!" + temp.getName() + "!" + temp.getVersion() + "!"
-					+ temp.getLastUpdateTime());
 			mm.addAttribute("_content", temp);
 		}
 		return UNIQUE_PATH;
@@ -66,9 +71,9 @@ public class CommonController {
 			@RequestParam(value = "businessId") String businessId) {
 		Deployment deployment = commonService.getDeployment(businessId);
 		if (deployment != null && deployment.getId() != null) {
-			ActReProcdef arp_ = new ActReProcdef();
-			arp_.setDeploymentId(deployment.getId());
-			ActReProcdef actReProcdef = actReProcdefService.selectOne(arp_);
+			ActReProcdef arp = new ActReProcdef();
+			arp.setDeploymentId(deployment.getId());
+			ActReProcdef actReProcdef = actReProcdefService.selectOne(arp);
 			mm.addAttribute("_content", actReProcdef);
 		}
 		return UNIQUE_PATH;
