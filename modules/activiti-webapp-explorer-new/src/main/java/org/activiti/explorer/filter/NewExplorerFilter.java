@@ -15,6 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.explorer.Constants;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 public class NewExplorerFilter implements Filter {
 
 	private List<String> ignoreList = new ArrayList<String>();
@@ -34,7 +41,7 @@ public class NewExplorerFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String path = req.getRequestURI().substring(req.getContextPath().length());
-		int indexSlash = path.indexOf("/", 1);
+		int indexSlash = path.indexOf('/', 1);
 		String firstPart = null;
 		if (indexSlash > 0) {
 			firstPart = path.substring(0, indexSlash);
@@ -61,6 +68,7 @@ public class NewExplorerFilter implements Filter {
 
 	@Override
 	public void destroy() {
+		// Just make sonarqube happy
 	}
 
 }

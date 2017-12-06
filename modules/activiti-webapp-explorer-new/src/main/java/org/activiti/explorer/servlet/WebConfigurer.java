@@ -14,13 +14,17 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
- * Configuration of web application with Servlet 3.0 APIs.
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
  */
 public class WebConfigurer implements ServletContextListener {
 	
   private final Logger log = LoggerFactory.getLogger(WebConfigurer.class);
 
-  public AnnotationConfigWebApplicationContext context;
+  private AnnotationConfigWebApplicationContext context;
   
   public void setContext(AnnotationConfigWebApplicationContext context) {
     this.context = context;

@@ -58,7 +58,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * @author Joram Barrez
+ * @author Joram Barrez,李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
  */
 public class DemoDataConfiguration {
 
@@ -159,7 +163,7 @@ public class DemoDataConfiguration {
 
 			repositoryService.addModelEditorSource(model.getId(), modelNode.toString().getBytes("utf-8"));
 		} catch (UnsupportedEncodingException | XMLStreamException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 
 		modelHelper.saveMyBusinessModel(model, modelName);
@@ -298,7 +302,7 @@ public class DemoDataConfiguration {
 				if (processEngineConfiguration.isAsyncExecutorEnabled()
 						&& processEngineConfiguration.getAsyncExecutor() != null) {
 					processEngineConfiguration.getAsyncExecutor().shutdown();
-				} else if (processEngineConfiguration.isAsyncExecutorEnabled() == false
+				} else if (!processEngineConfiguration.isAsyncExecutorEnabled()
 						&& processEngineConfiguration.getJobExecutor() != null) {
 					processEngineConfiguration.getJobExecutor().shutdown();
 				}
@@ -362,7 +366,7 @@ public class DemoDataConfiguration {
 				if (processEngineConfiguration.isAsyncExecutorEnabled()
 						&& processEngineConfiguration.getAsyncExecutor() != null) {
 					processEngineConfiguration.getAsyncExecutor().start();
-				} else if (processEngineConfiguration.isAsyncExecutorEnabled() == false
+				} else if (!processEngineConfiguration.isAsyncExecutorEnabled()
 						&& processEngineConfiguration.getJobExecutor() != null) {
 					processEngineConfiguration.getJobExecutor().start();
 				}
