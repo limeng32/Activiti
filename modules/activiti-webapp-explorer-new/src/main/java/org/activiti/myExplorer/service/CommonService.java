@@ -31,6 +31,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 @Service
 public class CommonService {
 
@@ -55,16 +62,15 @@ public class CommonService {
 	public static final String END = "end";
 
 	public Deployment getDeployment(String businessId) {
-		MyBusinessModel mbm_ = new MyBusinessModel();
-		mbm_.setBusinessId(businessId);
-		MyBusinessModel myBusinessModel = myBusinessModelService.selectOne(mbm_);
+		MyBusinessModel mbm = new MyBusinessModel();
+		mbm.setBusinessId(businessId);
+		MyBusinessModel myBusinessModel = myBusinessModelService.selectOne(mbm);
 		if (myBusinessModel != null && myBusinessModel.getActReModel() != null) {
 			List<Deployment> deploymentC = repositoryService.createDeploymentQuery()
 					.deploymentName(myBusinessModel.getActReModel().getName()).orderByDeploymentId().desc()
 					.listPage(0, 1);
-			if (deploymentC.size() > 0) {
-				Deployment deployment = deploymentC.get(0);
-				return deployment;
+			if (!deploymentC.isEmpty()) {
+				return deploymentC.get(0);
 			}
 		}
 		return null;
@@ -73,10 +79,9 @@ public class CommonService {
 	public ActReProcdef getActReProcdef(String businessId) {
 		Deployment deployment = getDeployment(businessId);
 		if (deployment != null && deployment.getId() != null) {
-			ActReProcdef arp_ = new ActReProcdef();
-			arp_.setDeploymentId(deployment.getId());
-			ActReProcdef actReProcdef = actReProcdefService.selectOne(arp_);
-			return actReProcdef;
+			ActReProcdef arp = new ActReProcdef();
+			arp.setDeploymentId(deployment.getId());
+			return actReProcdefService.selectOne(arp);
 		}
 		return null;
 	}
@@ -121,8 +126,7 @@ public class CommonService {
 		if (actReProcdef == null) {
 			return null;
 		}
-		ProcessInstance pi = runtimeService.startProcessInstanceById(actReProcdef.getId());
-		return pi;
+		return runtimeService.startProcessInstanceById(actReProcdef.getId());
 	}
 
 	public ProcessInstReturn flowOneStep(String exeId, String dealRole, String dealPerson, String dataStr) {
@@ -146,19 +150,19 @@ public class CommonService {
 				}
 			}
 			if (execution != null) {
-				Task task_ = taskService.createTaskQuery().executionId(execution.getId()).singleResult();
-				if (task_ != null && dealPerson != null) {
-					if (task_.getAssignee() == null) {
-						taskService.claim(task_.getId(), dealPerson);
+				Task task2 = taskService.createTaskQuery().executionId(execution.getId()).singleResult();
+				if (task2 != null && dealPerson != null) {
+					if (task2.getAssignee() == null) {
+						taskService.claim(task2.getId(), dealPerson);
 					} else {
-						taskService.claim(task_.getId(), task_.getAssignee());
+						taskService.claim(task2.getId(), task2.getAssignee());
 					}
 					if (formData != null) {
 						for (Map.Entry<String, Object> ee : formData.entrySet()) {
-							taskService.setVariable(task_.getId(), ee.getKey(), ee.getValue());
+							taskService.setVariable(task2.getId(), ee.getKey(), ee.getValue());
 						}
 					}
-					taskService.complete(task_.getId());
+					taskService.complete(task2.getId());
 				}
 				loadProcessInstReturn(processInstReturn, execution, null);
 			} else {
@@ -175,13 +179,13 @@ public class CommonService {
 
 	public ProcessInstReturn start(String businessId, String dealRole, String dealPerson, String dataStr) {
 		ProcessInstReturn processInstReturn = justStart(businessId, dealRole, dealPerson, dataStr);
-		if (RetCode.SUCCESS.equals(processInstReturn.getRetCode()) && EndCode.NO.equals(processInstReturn.getIsEnd())) {
-			if (processInstReturn.getExecutionReturn() != null && processInstReturn.getExecutionReturn().size() > 0) {
-				ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
-						.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
-				String exeId = executionReturns[0].getExeId();
-				processInstReturn = flowOneStep(exeId, dealRole, dealPerson, dataStr);
-			}
+		if (RetCode.SUCCESS.equals(processInstReturn.getRetCode()) && EndCode.NO.equals(processInstReturn.getIsEnd())
+				&& processInstReturn.getExecutionReturn() != null
+				&& !processInstReturn.getExecutionReturn().isEmpty()) {
+			ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
+					.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
+			String exeId = executionReturns[0].getExeId();
+			processInstReturn = flowOneStep(exeId, dealRole, dealPerson, dataStr);
 		}
 		return processInstReturn;
 	}
@@ -201,7 +205,7 @@ public class CommonService {
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
 				.processInstanceId(execution.getProcessInstanceId()).list();
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		if (executionC.size() > 0) {
+		if (!executionC.isEmpty()) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
 				executionReturn.setIsEnd(EndCode.NO);
@@ -234,7 +238,7 @@ public class CommonService {
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
 				.processInstanceId(execution.getProcessInstanceId()).list();
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		if (executionC.size() > 0) {
+		if (!executionC.isEmpty()) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
 				executionReturn.setIsEnd(EndCode.NO);
@@ -266,7 +270,7 @@ public class CommonService {
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
 				.processInstanceId(execution.getProcessInstanceId()).list();
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		if (executionC.size() > 0) {
+		if (!executionC.isEmpty()) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
 				executionReturn.setIsEnd(EndCode.NO);
@@ -328,7 +332,7 @@ public class CommonService {
 		Collection<Execution> executionC = runtimeService.createExecutionQuery()
 				.processInstanceId(execution.getProcessInstanceId()).list();
 		Collection<ExecutionReturn> executionReturnC = new ArrayList<>();
-		if (executionC.size() > 0) {
+		if (!executionC.isEmpty()) {
 			for (Execution e : executionC) {
 				ExecutionReturn executionReturn = new ExecutionReturn(e);
 				Collection<IdentityLink> identityLinkC = taskService.getIdentityLinksForTask(task.getId());
