@@ -75,7 +75,7 @@ public class RestApi3Test {
 				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "testMessage")).andReturn()
 				.getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.success, processInstReturn.getRetCode());
+		Assert.assertEquals(RetCode.SUCCESS, processInstReturn.getRetCode());
 		Assert.assertEquals("1", processInstReturn.getRetVal());
 		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 	}
@@ -162,6 +162,6 @@ public class RestApi3Test {
 		modelAndView = this.mockMvc.perform(MockMvcRequestBuilders.get("/withdraw").param("taskId", "000000"))
 				.andReturn().getModelAndView();
 		processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
+		Assert.assertEquals(RetCode.EXCEPTION, processInstReturn.getRetCode());
 	}
 }

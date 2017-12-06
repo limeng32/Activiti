@@ -5,6 +5,13 @@ import java.util.Collection;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+/**
+ * @author 李萌
+ * @date 2017年11月6日 上午11:15:04
+ * @Email limeng32@chinaunicom.cn
+ * @version
+ * @since JDK 1.8
+ */
 public class ProcessInstReturn implements Serializable {
 
 	private static final long serialVersionUID = 1L;

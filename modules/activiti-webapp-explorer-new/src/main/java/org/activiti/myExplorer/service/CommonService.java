@@ -109,7 +109,7 @@ public class CommonService {
 			loadProcessInstReturn(processInstReturn, pi, formData);
 		} else {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到对应业务 " + businessId + " 的流程");
 		}
 
@@ -140,7 +140,7 @@ public class CommonService {
 				Set<String> actRoleSet = getActRoleAsMap(identityLinkC);
 				if (!actRoleSet.contains(dealRole)) {
 					processInstReturn.setIsEnd(EndCode.NO);
-					processInstReturn.setRetCode(RetCode.exception);
+					processInstReturn.setRetCode(RetCode.EXCEPTION);
 					processInstReturn.setRetVal("角色 " + dealRole + " 没有权限流转这个环节");
 					return processInstReturn;
 				}
@@ -163,11 +163,11 @@ public class CommonService {
 				loadProcessInstReturn(processInstReturn, execution, null);
 			} else {
 				processInstReturn.setIsEnd(EndCode.YES);
-				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetCode(RetCode.EXCEPTION);
 				processInstReturn.setRetVal("流程无法流转到下一步");
 			}
 		} catch (ActivitiException e) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal(e.getMessage());
 		}
 		return processInstReturn;
@@ -175,7 +175,7 @@ public class CommonService {
 
 	public ProcessInstReturn start(String businessId, String dealRole, String dealPerson, String dataStr) {
 		ProcessInstReturn processInstReturn = justStart(businessId, dealRole, dealPerson, dataStr);
-		if (RetCode.success.equals(processInstReturn.getRetCode()) && EndCode.NO.equals(processInstReturn.getIsEnd())) {
+		if (RetCode.SUCCESS.equals(processInstReturn.getRetCode()) && EndCode.NO.equals(processInstReturn.getIsEnd())) {
 			if (processInstReturn.getExecutionReturn() != null && processInstReturn.getExecutionReturn().size() > 0) {
 				ExecutionReturn[] executionReturns = processInstReturn.getExecutionReturn()
 						.toArray(new ExecutionReturn[processInstReturn.getExecutionReturn().size()]);
@@ -192,7 +192,7 @@ public class CommonService {
 		try {
 			runtimeService.suspendProcessInstanceById(execution.getProcessInstanceId());
 		} catch (ActivitiObjectNotFoundException | NullPointerException e) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("指定工作项不存在");
 			return processInstReturn;
 		} catch (ActivitiException e) {
@@ -209,11 +209,11 @@ public class CommonService {
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
 			processInstReturn.setIsEnd(EndCode.NO);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		} else {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		}
 		return processInstReturn;
@@ -225,7 +225,7 @@ public class CommonService {
 		try {
 			runtimeService.activateProcessInstanceById(execution.getProcessInstanceId());
 		} catch (ActivitiObjectNotFoundException | NullPointerException e) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("指定工作项不存在");
 			return processInstReturn;
 		} catch (ActivitiException e) {
@@ -242,11 +242,11 @@ public class CommonService {
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
 			processInstReturn.setIsEnd(EndCode.NO);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		} else {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		}
 		return processInstReturn;
@@ -257,7 +257,7 @@ public class CommonService {
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
 		if (execution == null) {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到执行id为 " + exeId + " 的流程");
 			return processInstReturn;
 		}
@@ -274,11 +274,11 @@ public class CommonService {
 			}
 			processInstReturn.setExecutionReturn(executionReturnC);
 			processInstReturn.setIsEnd(EndCode.NO);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		} else {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		}
 		return processInstReturn;
@@ -289,7 +289,7 @@ public class CommonService {
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		if (execution == null) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的流程实例");
 			return processInstReturn;
 		}
@@ -300,23 +300,23 @@ public class CommonService {
 					try {
 						taskService.claim(task.getId(), dealPerson);
 					} catch (ActivitiObjectNotFoundException | NullPointerException e) {
-						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetCode(RetCode.EXCEPTION);
 						processInstReturn.setRetVal("指定工作项不存在");
 						return processInstReturn;
 					} catch (ActivitiException e) {
-						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetCode(RetCode.EXCEPTION);
 						processInstReturn.setRetVal("无法认领一个已经挂起的工作项");
 						return processInstReturn;
 					}
 				}
-				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetCode(RetCode.SUCCESS);
 				processInstReturn.setRetVal("1");
 			} else {
-				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetCode(RetCode.EXCEPTION);
 				processInstReturn.setRetVal("任务已经被认领，无法再次认领");
 			}
 		} else {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
 		}
 
@@ -352,7 +352,7 @@ public class CommonService {
 		Execution execution = runtimeService.createExecutionQuery().executionId(exeId).singleResult();
 		ProcessInstReturn processInstReturn = new ProcessInstReturn();
 		if (execution == null) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的流程实例");
 			return processInstReturn;
 		}
@@ -363,23 +363,23 @@ public class CommonService {
 					try {
 						taskService.unclaim(task.getId());
 					} catch (ActivitiObjectNotFoundException | NullPointerException e) {
-						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetCode(RetCode.EXCEPTION);
 						processInstReturn.setRetVal("指定工作项不存在");
 						return processInstReturn;
 					} catch (ActivitiException e) {
-						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetCode(RetCode.EXCEPTION);
 						processInstReturn.setRetVal("无法取消认领一个已经挂起的工作项");
 						return processInstReturn;
 					}
 				}
-				processInstReturn.setRetCode(RetCode.success);
+				processInstReturn.setRetCode(RetCode.SUCCESS);
 				processInstReturn.setRetVal("1");
 			} else {
-				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetCode(RetCode.EXCEPTION);
 				processInstReturn.setRetVal("无法取消，因为任务并非由" + dealPerson + "认领");
 			}
 		} else {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到exeId为 " + exeId + " 的任务");
 		}
 		return processInstReturn;
@@ -436,19 +436,19 @@ public class CommonService {
 								.singleResult();
 						loadProcessInstReturn(processInstReturn, execution, null);
 					} else {
-						processInstReturn.setRetCode(RetCode.exception);
+						processInstReturn.setRetCode(RetCode.EXCEPTION);
 						processInstReturn.setRetVal("任务已经被认领，无法撤回");
 					}
 				} else {
-					processInstReturn.setRetCode(RetCode.exception);
+					processInstReturn.setRetCode(RetCode.EXCEPTION);
 					processInstReturn.setRetVal("无法撤回到id为 " + taskId + " 的任务");
 				}
 			} else {
-				processInstReturn.setRetCode(RetCode.exception);
+				processInstReturn.setRetCode(RetCode.EXCEPTION);
 				processInstReturn.setRetVal("无法找到taskId为 " + taskId + " 的任务");
 			}
 		} else {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("无法找到taskId为 " + taskId + " 的历史记录，或找到的历史记录中 exeId 不存在");
 		}
 		return processInstReturn;
@@ -522,11 +522,11 @@ public class CommonService {
 			} else {
 				processInstReturn.setIsEnd(EndCode.NO);
 			}
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		} else {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		}
 	}
@@ -543,11 +543,11 @@ public class CommonService {
 		try {
 			runtimeService.messageEventReceived(message, exeId);
 		} catch (ActivitiObjectNotFoundException e) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("找不到exeId为 " + exeId + " 的执行对象");
 			return processInstReturn;
 		} catch (ActivitiException e2) {
-			processInstReturn.setRetCode(RetCode.exception);
+			processInstReturn.setRetCode(RetCode.EXCEPTION);
 			processInstReturn.setRetVal("exeId为 " + exeId + " 的执行对象找不到名为 " + message + " 的消息");
 			return processInstReturn;
 		}
@@ -555,7 +555,7 @@ public class CommonService {
 				.singleResult();
 		if (execution == null) {
 			processInstReturn.setIsEnd(EndCode.YES);
-			processInstReturn.setRetCode(RetCode.success);
+			processInstReturn.setRetCode(RetCode.SUCCESS);
 			processInstReturn.setRetVal("1");
 		} else {
 			loadProcessInstReturn(processInstReturn, execution, null);

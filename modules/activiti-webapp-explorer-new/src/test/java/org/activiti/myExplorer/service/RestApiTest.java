@@ -75,7 +75,7 @@ public class RestApiTest {
 				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "business_real_1")).andReturn()
 				.getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.success, processInstReturn.getRetCode());
+		Assert.assertEquals(RetCode.SUCCESS, processInstReturn.getRetCode());
 		Assert.assertEquals("1", processInstReturn.getRetVal());
 		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 	}
@@ -123,7 +123,7 @@ public class RestApiTest {
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
-		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
+		Assert.assertEquals(RetCode.EXCEPTION, processInstReturn.getRetCode());
 		Assert.assertEquals("角色 wrongRole 没有权限流转这个环节", processInstReturn.getRetVal());
 	}
 
@@ -139,7 +139,7 @@ public class RestApiTest {
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
 		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
-		Assert.assertEquals(RetCode.exception, processInstReturn.getRetCode());
+		Assert.assertEquals(RetCode.EXCEPTION, processInstReturn.getRetCode());
 		Assert.assertEquals("角色 null 没有权限流转这个环节", processInstReturn.getRetVal());
 	}
 
@@ -164,13 +164,13 @@ public class RestApiTest {
 				.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", ExecutionReturnA[0].getExeId()))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn2 = (ProcessInstReturn) modelAndView2.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.success, processInstReturn2.getRetCode());
+		Assert.assertEquals(RetCode.SUCCESS, processInstReturn2.getRetCode());
 
 		/* 挂起一个不存在的工作项 */
 		ModelAndView modelAndView3 = this.mockMvc.perform(MockMvcRequestBuilders.get("/suspend").param("exeId", "0"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn3 = (ProcessInstReturn) modelAndView3.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.exception, processInstReturn3.getRetCode());
+		Assert.assertEquals(RetCode.EXCEPTION, processInstReturn3.getRetCode());
 	}
 
 	@Test
@@ -196,13 +196,13 @@ public class RestApiTest {
 				.perform(MockMvcRequestBuilders.get("/activate").param("exeId", ExecutionReturnA[0].getExeId()))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn2 = (ProcessInstReturn) modelAndView2.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.success, processInstReturn2.getRetCode());
+		Assert.assertEquals(RetCode.SUCCESS, processInstReturn2.getRetCode());
 
 		/* 激活一个不存在的工作项 */
 		ModelAndView modelAndView3 = this.mockMvc.perform(MockMvcRequestBuilders.get("/activate").param("exeId", "0"))
 				.andReturn().getModelAndView();
 		ProcessInstReturn processInstReturn3 = (ProcessInstReturn) modelAndView3.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.exception, processInstReturn3.getRetCode());
+		Assert.assertEquals(RetCode.EXCEPTION, processInstReturn3.getRetCode());
 	}
 
 	@Test

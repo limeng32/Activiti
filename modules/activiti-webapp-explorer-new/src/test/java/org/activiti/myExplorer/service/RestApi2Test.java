@@ -75,7 +75,7 @@ public class RestApi2Test {
 				.perform(MockMvcRequestBuilders.get("/justStart").param("businessId", "ttt")).andReturn()
 				.getModelAndView();
 		ProcessInstReturn processInstReturn = (ProcessInstReturn) modelAndView.getModelMap().get("_content");
-		Assert.assertEquals(RetCode.success, processInstReturn.getRetCode());
+		Assert.assertEquals(RetCode.SUCCESS, processInstReturn.getRetCode());
 		Assert.assertEquals("1", processInstReturn.getRetVal());
 		Assert.assertEquals(EndCode.NO, processInstReturn.getIsEnd());
 	}
