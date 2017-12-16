@@ -250,6 +250,18 @@
 		<profile>
 			<activation>
 				<property>
+					<name>TEST</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<id>test</id>
+			<properties>
+				<dbUrl>jdbc:mysql://10.0.209.148:3306/activiti_test?useUnicode=true</dbUrl>
+			</properties>
+		</profile>
+		<profile>
+			<activation>
+				<property>
 					<name>UAT</name>
 					<value>true</value>
 				</property>
