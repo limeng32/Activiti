@@ -134,7 +134,7 @@ public class ActReModel extends PojoSupport<ActReModel> implements Serializable 
 	public void removeMyBusinessModel(MyBusinessModel oldMyBusinessModel) {
 		if (oldMyBusinessModel == null)
 			return;
-		if (this.myBusinessModel != null || this.myBusinessModel.contains(oldMyBusinessModel)) {
+		if (this.myBusinessModel != null && this.myBusinessModel.contains(oldMyBusinessModel)) {
 			for (MyBusinessModel temp : this.myBusinessModel) {
 				if (oldMyBusinessModel.equals(temp)) {
 					if (temp != oldMyBusinessModel) {
