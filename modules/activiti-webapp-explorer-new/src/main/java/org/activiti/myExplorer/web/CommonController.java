@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.web;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,8 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
+import org.activiti.myExplorer.persist.ProcessReturn;
+import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
 import org.activiti.myExplorer.service.CommonService;
@@ -173,6 +176,30 @@ public class CommonController {
 			@RequestParam(value = "exeId") String exeId, @RequestParam(value = "message") String message) {
 		ProcessInstReturn processInstReturn = commonService.message(exeId, message);
 		mm.addAttribute("_content", processInstReturn);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
+	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
+		mm.addAttribute("_content", new User());
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list")
+	public String fakeList(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "count") int count) {
+		ProcessReturn p1 = new ProcessReturn("fake-list-0", new User(), "ADSASD");
+		ProcessReturn p2 = new ProcessReturn("fake-list-1", new User(), "项目管理2");
+		ProcessReturn p3 = new ProcessReturn("fake-list-2", new User(), "Manual_task_1");
+		ProcessReturn p4 = new ProcessReturn("fake-list-3", new User(), "Real_task_1");
+		ProcessReturn p5 = new ProcessReturn("fake-list-4", new User(), "Service_task_1");
+		Collection<ProcessReturn> c = new ArrayList<>();
+		c.add(p1);
+		c.add(p2);
+		c.add(p3);
+		c.add(p4);
+		c.add(p5);
+		mm.addAttribute("_content", c);
 		return UNIQUE_PATH;
 	}
 }
