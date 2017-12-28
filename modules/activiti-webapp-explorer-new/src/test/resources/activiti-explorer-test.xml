@@ -78,5 +78,8 @@
 		id="actReProcdefService" />
 	<bean class="org.activiti.myExplorer.service.MyBusinessModelService"
 		id="myBusinessModelService" />
+	<bean class="org.activiti.myExplorer.service.ProcessReturnService"
+		id="processReturnService" />
+	<bean class="org.activiti.myExplorer.service.UserService" id="userService" />
 	<bean class="org.activiti.myExplorer.web.CommonController" id="commonController" />
 </beans>

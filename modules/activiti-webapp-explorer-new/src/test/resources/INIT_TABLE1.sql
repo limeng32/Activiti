@@ -222,3 +222,22 @@ create table MY_BUSINESS_MODEL (
     BUSINESS_ID varchar(64),
     primary key (ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS USER;
+create table USER (
+    ID int not null,
+    NAME varchar(64),
+    AVATAR varchar(512),
+    USERID varchar(64),
+    NOTIFYCOUNT int,
+    primary key (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS PROCESSRETURN;
+create table PROCESSRETURN (
+    ID int not null,
+    TITLE varchar(64),
+    LOGO varchar(512),
+    OWNER_ID int,
+    primary key (ID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

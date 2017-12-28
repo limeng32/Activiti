@@ -1,6 +1,5 @@
 package org.activiti.myExplorer.service;
 
-import org.activiti.engine.IdentityService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
