@@ -1,12 +1,12 @@
 package org.activiti.myExplorer.web;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.repository.Deployment;
+import org.activiti.myExplorer.condition.ProcessReturnCondition;
 import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
@@ -15,6 +15,8 @@ import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
 import org.activiti.myExplorer.service.CommonService;
+import org.activiti.myExplorer.service.ProcessReturnService;
+import org.activiti.myExplorer.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import indi.mybatis.flying.pagination.Page;
+import indi.mybatis.flying.pagination.PageParam;
 
 /**
  * @author 李萌
@@ -44,6 +49,12 @@ public class CommonController {
 
 	@Autowired
 	private CommonService commonService;
+
+	@Autowired
+	private ProcessReturnService processReturnService;
+
+	@Autowired
+	private UserService userService;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -181,49 +192,30 @@ public class CommonController {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
 	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
-		mm.addAttribute("_content", new User());
+		User user = userService.select(1);
+		mm.addAttribute("_content", user);
 		return UNIQUE_PATH;
 	}
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list")
 	public String fakeList(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
-		User user = new User();
-		ProcessReturn p1 = new ProcessReturn("1", "ADSASD");
-		ProcessReturn p2 = new ProcessReturn("2", "项目管理2");
-		ProcessReturn p3 = new ProcessReturn("3", "Manual_task_1");
-		ProcessReturn p4 = new ProcessReturn("6", "Real_task_1");
-		ProcessReturn p5 = new ProcessReturn("7", "Service_task_1");
-		p1.setOwner(user);
-		p2.setOwner(user);
-		p3.setOwner(user);
-		p4.setOwner(user);
-		p5.setOwner(user);
-		Collection<ProcessReturn> c = new ArrayList<>();
-		c.add(p1);
-		c.add(p2);
-		c.add(p3);
-		c.add(p4);
-		c.add(p5);
-		mm.addAttribute("_content", c);
+		ProcessReturnCondition pc = new ProcessReturnCondition();
+		pc.setLimiter(new PageParam(count < 1 ? 1 : count, 5));
+		Collection<ProcessReturn> c = processReturnService.selectAll(pc);
+		Page<ProcessReturn> p = new Page<>(c, pc.getLimiter());
+		mm.addAttribute("_content", p);
 		return UNIQUE_PATH;
 	}
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list2")
 	public String fakeList2(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
-		ProcessReturn p1 = new ProcessReturn("1", "ADSASD");
-		ProcessReturn p2 = new ProcessReturn("2", "项目管理2");
-		ProcessReturn p3 = new ProcessReturn("3", "Manual_task_1");
-		ProcessReturn p4 = new ProcessReturn("6", "Real_task_1");
-		ProcessReturn p5 = new ProcessReturn("7", "Service_task_1");
-		Collection<ProcessReturn> c = new ArrayList<>();
-		c.add(p1);
-		c.add(p2);
-		c.add(p3);
-		c.add(p4);
-		c.add(p5);
-		mm.addAttribute("_content", c);
+		ProcessReturnCondition pc = new ProcessReturnCondition();
+		pc.setLimiter(new PageParam(1, 5));
+		Collection<ProcessReturn> c = processReturnService.selectAll(pc);
+		Page<ProcessReturn> p = new Page<>(c, pc.getLimiter());
+		mm.addAttribute("_content", p);
 		return UNIQUE_PATH;
 	}
 }

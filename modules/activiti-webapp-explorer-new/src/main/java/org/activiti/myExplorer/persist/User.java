@@ -13,23 +13,35 @@ public class User extends PojoSupport<User> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	public User() {
+
+	}
+
+	public User(String id, String name, String avatar, String userid, Integer notifyCount) {
+		this.id = id;
+		this.name = name;
+		this.avatar = avatar;
+		this.userid = userid;
+		this.notifyCount = notifyCount;
+	}
+
 	@FieldMapperAnnotation(dbFieldName = "ID", jdbcType = JdbcType.VARCHAR, isUniqueKey = true)
 	private String id;
 
 	@FieldMapperAnnotation(dbFieldName = "NAME", jdbcType = JdbcType.VARCHAR)
-	//wfadmin
+	// wfadmin
 	private String name;
 
 	@FieldMapperAnnotation(dbFieldName = "AVATAR", jdbcType = JdbcType.VARCHAR)
-	//https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png
+	// https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png
 	private String avatar;
 
 	@FieldMapperAnnotation(dbFieldName = "USERID", jdbcType = JdbcType.VARCHAR)
-	//00000001
+	// 00000001
 	private String userid;
 
 	@FieldMapperAnnotation(dbFieldName = "NOTIFYCOUNT", jdbcType = JdbcType.INTEGER)
-	//12
+	// 12
 	private Integer notifyCount;
 
 	private java.util.Collection<ProcessReturn> processReturn;

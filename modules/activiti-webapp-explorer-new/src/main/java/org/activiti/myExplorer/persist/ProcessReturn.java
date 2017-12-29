@@ -38,7 +38,7 @@ public class ProcessReturn extends PojoSupport<ProcessReturn> implements Seriali
 	private String title;
 
 	@FieldMapperAnnotation(dbFieldName = "LOGO", jdbcType = JdbcType.VARCHAR)
-	private String logo = "https://gw.alipayobjects.com/zos/rmsportal/zOsKZmFRdUtvpqCImOVY.png";
+	private String logo;
 
 	public String getId() {
 		return id;

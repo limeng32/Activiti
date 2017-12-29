@@ -1,5 +1,7 @@
 package org.activiti.myExplorer.service;
 
+import java.util.Collection;
+
 import org.activiti.engine.RepositoryService;
 import org.activiti.myExplorer.persist.ProcessReturn;
 import org.junit.Assert;
@@ -47,5 +49,14 @@ public class ProcessReturnTest {
 		ProcessReturn processReturn = processReturnService.select(1);
 		Assert.assertEquals("t", processReturn.getTitle());
 		Assert.assertEquals("n", processReturn.getOwner().getName());
+	}
+	
+	@Test
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/processReturnTest/testProcessReturn2.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/processReturnTest/testProcessReturn2.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/processReturnTest/testProcessReturn2.result.xml")
+	public void testProcessReturn2() {
+		Collection<ProcessReturn> processReturns = processReturnService.selectAll(new ProcessReturn());
+		Assert.assertEquals(1, processReturns.size());
 	}
 }
