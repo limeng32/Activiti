@@ -225,7 +225,7 @@ create table MY_BUSINESS_MODEL (
 
 DROP TABLE IF EXISTS USER;
 create table USER (
-    ID int not null,
+    ID varchar(64) not null,
     NAME varchar(64),
     AVATAR varchar(512),
     USERID varchar(64),
@@ -235,7 +235,7 @@ create table USER (
 
 DROP TABLE IF EXISTS PROCESSRETURN;
 create table PROCESSRETURN (
-    ID int not null,
+    ID varchar(64) not null,
     TITLE varchar(64),
     LOGO varchar(512),
     OWNER_ID int,

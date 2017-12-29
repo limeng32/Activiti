@@ -40,11 +40,12 @@ public class ProcessReturnTest {
 	}
 
 	@Test
-	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/userTest/testProcessReturn.xml")
-	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/userTest/testProcessReturn.result.xml")
-	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/userTest/testProcessReturn.result.xml")
+	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/processReturnTest/testProcessReturn.xml")
+	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/processReturnTest/testProcessReturn.result.xml")
+	@DatabaseTearDown(type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/processReturnTest/testProcessReturn.result.xml")
 	public void testProcessReturn() {
 		ProcessReturn processReturn = processReturnService.select(1);
 		Assert.assertEquals("t", processReturn.getTitle());
+		Assert.assertEquals("n", processReturn.getOwner().getName());
 	}
 }

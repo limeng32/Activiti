@@ -13,20 +13,24 @@ public class User extends PojoSupport<User> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@FieldMapperAnnotation(dbFieldName = "ID", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
-	private Integer id;
+	@FieldMapperAnnotation(dbFieldName = "ID", jdbcType = JdbcType.VARCHAR, isUniqueKey = true)
+	private String id;
 
 	@FieldMapperAnnotation(dbFieldName = "NAME", jdbcType = JdbcType.VARCHAR)
-	private String name = "wfadmin";
+	//wfadmin
+	private String name;
 
 	@FieldMapperAnnotation(dbFieldName = "AVATAR", jdbcType = JdbcType.VARCHAR)
-	private String avatar = "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png";
+	//https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png
+	private String avatar;
 
 	@FieldMapperAnnotation(dbFieldName = "USERID", jdbcType = JdbcType.VARCHAR)
-	private String userid = "00000001";
+	//00000001
+	private String userid;
 
 	@FieldMapperAnnotation(dbFieldName = "NOTIFYCOUNT", jdbcType = JdbcType.INTEGER)
-	private Integer notifyCount = 12;
+	//12
+	private Integer notifyCount;
 
 	private java.util.Collection<ProcessReturn> processReturn;
 
@@ -62,11 +66,11 @@ public class User extends PojoSupport<User> implements Serializable {
 		this.notifyCount = notifyCount;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

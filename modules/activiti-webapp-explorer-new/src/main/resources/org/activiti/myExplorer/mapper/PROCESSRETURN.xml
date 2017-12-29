@@ -21,6 +21,9 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
 		flying:insert
+		<selectKey keyProperty="id" resultType="String" order="BEFORE">
+			select replace(${sql.uuid}, '-', '')
+		</selectKey>
 	</insert>
 
 	<update id="update">

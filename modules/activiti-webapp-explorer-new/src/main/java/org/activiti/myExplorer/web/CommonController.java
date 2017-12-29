@@ -189,11 +189,11 @@ public class CommonController {
 	public String fakeList(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
 		User user = new User();
-		ProcessReturn p1 = new ProcessReturn(1, "ADSASD");
-		ProcessReturn p2 = new ProcessReturn(2, "项目管理2");
-		ProcessReturn p3 = new ProcessReturn(3, "Manual_task_1");
-		ProcessReturn p4 = new ProcessReturn(6, "Real_task_1");
-		ProcessReturn p5 = new ProcessReturn(7, "Service_task_1");
+		ProcessReturn p1 = new ProcessReturn("1", "ADSASD");
+		ProcessReturn p2 = new ProcessReturn("2", "项目管理2");
+		ProcessReturn p3 = new ProcessReturn("3", "Manual_task_1");
+		ProcessReturn p4 = new ProcessReturn("6", "Real_task_1");
+		ProcessReturn p5 = new ProcessReturn("7", "Service_task_1");
 		p1.setOwner(user);
 		p2.setOwner(user);
 		p3.setOwner(user);
@@ -212,11 +212,11 @@ public class CommonController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list2")
 	public String fakeList2(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
-		ProcessReturn p1 = new ProcessReturn(1, "ADSASD");
-		ProcessReturn p2 = new ProcessReturn(2, "项目管理2");
-		ProcessReturn p3 = new ProcessReturn(3, "Manual_task_1");
-		ProcessReturn p4 = new ProcessReturn(6, "Real_task_1");
-		ProcessReturn p5 = new ProcessReturn(7, "Service_task_1");
+		ProcessReturn p1 = new ProcessReturn("1", "ADSASD");
+		ProcessReturn p2 = new ProcessReturn("2", "项目管理2");
+		ProcessReturn p3 = new ProcessReturn("3", "Manual_task_1");
+		ProcessReturn p4 = new ProcessReturn("6", "Real_task_1");
+		ProcessReturn p5 = new ProcessReturn("7", "Service_task_1");
 		Collection<ProcessReturn> c = new ArrayList<>();
 		c.add(p1);
 		c.add(p2);
