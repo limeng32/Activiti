@@ -6,17 +6,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.repository.Deployment;
-import org.activiti.myExplorer.condition.ProcessReturnCondition;
 import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
-import org.activiti.myExplorer.persist.ProcessReturn;
-import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ActReModelService;
 import org.activiti.myExplorer.service.ActReProcdefService;
 import org.activiti.myExplorer.service.CommonService;
-import org.activiti.myExplorer.service.ProcessReturnService;
-import org.activiti.myExplorer.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +20,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import indi.mybatis.flying.pagination.Page;
-import indi.mybatis.flying.pagination.PageParam;
 
 /**
  * @author 李萌
@@ -49,12 +41,6 @@ public class CommonController {
 
 	@Autowired
 	private CommonService commonService;
-
-	@Autowired
-	private ProcessReturnService processReturnService;
-
-	@Autowired
-	private UserService userService;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -190,32 +176,4 @@ public class CommonController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
-	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
-		User user = userService.select(1);
-		mm.addAttribute("_content", user);
-		return UNIQUE_PATH;
-	}
-
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list")
-	public String fakeList(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "count") int count) {
-		ProcessReturnCondition pc = new ProcessReturnCondition();
-		pc.setLimiter(new PageParam(count < 1 ? 1 : count, 5));
-		Collection<ProcessReturn> c = processReturnService.selectAll(pc);
-		Page<ProcessReturn> p = new Page<>(c, pc.getLimiter());
-		mm.addAttribute("_content", p);
-		return UNIQUE_PATH;
-	}
-
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list2")
-	public String fakeList2(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "count") int count) {
-		ProcessReturnCondition pc = new ProcessReturnCondition();
-		pc.setLimiter(new PageParam(1, 5));
-		Collection<ProcessReturn> c = processReturnService.selectAll(pc);
-		Page<ProcessReturn> p = new Page<>(c, pc.getLimiter());
-		mm.addAttribute("_content", p);
-		return UNIQUE_PATH;
-	}
 }
