@@ -39,6 +39,8 @@ import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.task.IdentityLinkType;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 
 /**
  * @author Tom Baeyens
@@ -172,6 +174,7 @@ public class ProcessDefinitionEntity extends ProcessDefinitionImpl implements Pr
     }
   }
   
+  @JSONField(serialize = false)
   public List<IdentityLinkEntity> getIdentityLinks() {
     if (!isIdentityLinksInitialized) {
       definitionIdentityLinkEntities = Context

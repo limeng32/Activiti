@@ -25,6 +25,8 @@ import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.db.PersistentObject;
 import org.activiti.engine.repository.Deployment;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 
 /**
  * @author Tom Baeyens
@@ -37,6 +39,7 @@ public class DeploymentEntity implements Serializable, Deployment, PersistentObj
   protected String name;
   protected String category;
   protected String tenantId = ProcessEngineConfiguration.NO_TENANT_ID;
+  @JSONField(serialize = false)
   protected Map<String, ResourceEntity> resources;
   protected Date deploymentTime;
   protected boolean isNew;

@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
 import org.activiti.myExplorer.model.PageInfo;
 import org.activiti.myExplorer.persist.ProcessReturn;
@@ -36,6 +38,9 @@ public class RepositoryController {
 	@Autowired
 	private RepositoryService repositoryService;
 
+	@Autowired
+	private RuntimeService runtimeService;
+
 	public static final String UNIQUE_PATH = "__unique_path";
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
@@ -61,11 +66,25 @@ public class RepositoryController {
 			@RequestParam(value = "count") int count) {
 		count = count > 0 ? count - 1 : count;
 		int first = count * 5;
-		int pageNo = count + 1;
 		List<Model> l = repositoryService.createModelQuery().listPage(first, 5);
 		int c = (int) (repositoryService.createModelQuery().count());
 		int maxPageNum = c / 5;
+		int pageNo = count + 1;
 		PageInfo<Model> pi = new PageInfo<>(l, pageNo, maxPageNum, c);
+		mm.addAttribute("_content", pi);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/s/listDeployed")
+	public String listDeployed(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "count") int count) {
+		count = count > 0 ? count - 1 : count;
+		int first = count * 5;
+		List<ProcessDefinition> l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first, 5);
+		int c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion().count());
+		int maxPageNum = c / 5;
+		int pageNo = count + 1;
+		PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c);
 		mm.addAttribute("_content", pi);
 		return UNIQUE_PATH;
 	}

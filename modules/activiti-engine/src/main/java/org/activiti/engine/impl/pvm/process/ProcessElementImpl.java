@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.activiti.engine.impl.pvm.PvmProcessElement;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 
 /** common properties for process definition, activity and transition 
  * including event listeners.
@@ -30,6 +32,7 @@ public class ProcessElementImpl implements PvmProcessElement {
   private static final long serialVersionUID = 1L;
   
   protected String id;
+  @JSONField(serialize = false)
   protected ProcessDefinitionImpl processDefinition;
   protected Map<String, Object> properties;
   
