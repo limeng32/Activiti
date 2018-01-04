@@ -59,7 +59,7 @@ public class NewExplorerFilter implements Filter {
 			}
 
 			chain.doFilter(request, response); // Goes to default servlet.
-		} else if ("/wfservice".equals(firstPart)) {
+		} else if ("/wfservice".equals(firstPart) || "/s".equals(firstPart)) {
 			chain.doFilter(request, response);
 		} else {
 			request.getRequestDispatcher("/ui" + path).forward(request, response);

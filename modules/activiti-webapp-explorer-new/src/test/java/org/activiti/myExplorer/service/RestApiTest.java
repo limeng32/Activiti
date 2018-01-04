@@ -6,7 +6,7 @@ import org.activiti.myExplorer.model.EndCode;
 import org.activiti.myExplorer.model.ExecutionReturn;
 import org.activiti.myExplorer.model.ProcessInstReturn;
 import org.activiti.myExplorer.model.RetCode;
-import org.activiti.myExplorer.web.CommonController;
+import org.activiti.myExplorer.web.CommonExternalController;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class RestApiTest {
 	private RepositoryService repositoryService;
 
 	@Autowired
-	private CommonController commonController;
+	private CommonExternalController commonController;
 
 	private MockMvc mockMvc;
 

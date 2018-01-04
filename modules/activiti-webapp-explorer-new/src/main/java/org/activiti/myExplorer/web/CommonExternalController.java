@@ -29,9 +29,9 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since JDK 1.8
  */
 @Controller
-public class CommonController {
+public class CommonExternalController {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(CommonController.class);
+	protected static final Logger LOGGER = LoggerFactory.getLogger(CommonExternalController.class);
 
 	@Autowired
 	private ActReModelService actReModelService;

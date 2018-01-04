@@ -27,7 +27,7 @@ import indi.mybatis.flying.pagination.Page;
 import indi.mybatis.flying.pagination.PageParam;
 
 @Controller
-public class RepositoryController {
+public class RepositoryInternalController {
 
 	@Autowired
 	private ProcessReturnService processReturnService;
@@ -61,7 +61,7 @@ public class RepositoryController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/s/listDesigning")
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDesigning")
 	public String listDesigning(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
 		count = count > 0 ? count - 1 : count;
@@ -75,7 +75,7 @@ public class RepositoryController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/s/listDeployed")
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDeployed")
 	public String listDeployed(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
 		count = count > 0 ? count - 1 : count;

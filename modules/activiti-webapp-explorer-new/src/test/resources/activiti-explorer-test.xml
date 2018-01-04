@@ -81,5 +81,6 @@
 	<bean class="org.activiti.myExplorer.service.ProcessReturnService"
 		id="processReturnService" />
 	<bean class="org.activiti.myExplorer.service.UserService" id="userService" />
-	<bean class="org.activiti.myExplorer.web.CommonController" id="commonController" />
+	<bean class="org.activiti.myExplorer.web.CommonExternalController"
+		id="commonController" />
 </beans>

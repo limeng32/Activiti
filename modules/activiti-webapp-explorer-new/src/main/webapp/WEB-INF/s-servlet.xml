@@ -15,7 +15,7 @@
 
 
 	<context:component-scan base-package="org.activiti.myExplorer.*"
-		use-default-filters="false" resource-pattern="**/*ExternalController.class">
+		use-default-filters="false" resource-pattern="**/*InternalController.class">
 		<context:include-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
