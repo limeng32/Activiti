@@ -6,6 +6,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.activiti.bpmn.converter.BpmnXMLConverter;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
@@ -25,6 +28,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import indi.mybatis.flying.pagination.Page;
 import indi.mybatis.flying.pagination.PageParam;
@@ -97,8 +103,8 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listStart")
-	public String start(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/doStart")
+	public String doStart(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "id") String id) {
 		CommonReturn cr = null;
 		try {
@@ -106,6 +112,28 @@ public class RepositoryInternalController {
 			cr = new CommonReturn(RetCode.SUCCESS, "流程 " + id + " 已启动了一个实例");
 		} catch (Exception e) {
 			cr = new CommonReturn(RetCode.EXCEPTION, "流程 " + id + " 启动时发生异常：" + e.getMessage());
+		}
+		mm.addAttribute("_content", cr);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/doDeploy")
+	public String doDeploy(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) {
+		Model model = repositoryService.getModel(id);
+		ObjectNode modelNode = null;
+		CommonReturn cr = null;
+		try {
+			modelNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(id));
+			BpmnModel bpmnMode = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+			byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnMode);
+
+			String processName = model.getName() + ".bpmn20.xml";
+			repositoryService.createDeployment().name(model.getName()).addString(processName, new String(bpmnBytes))
+					.deploy();
+			cr = new CommonReturn(RetCode.SUCCESS, "流程 " + model.getName() + " 已经部署");
+		} catch (Exception e) {
+			cr = new CommonReturn(RetCode.EXCEPTION, "ID 为 " + id + " 的流程部署时发生异常：" + e.getMessage());
 		}
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
