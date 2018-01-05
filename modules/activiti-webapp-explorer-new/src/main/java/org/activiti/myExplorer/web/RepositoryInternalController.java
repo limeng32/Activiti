@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
@@ -83,6 +84,11 @@ public class RepositoryInternalController {
 		count = count > 0 ? count - 1 : count;
 		int first = count * 5;
 		List<ProcessDefinition> l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first, 5);
+		for (ProcessDefinition p : l) {
+			Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(p.getDeploymentId())
+					.singleResult();
+			p.setDeployment(deployment);
+		}
 		int c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion().count());
 		int maxPageNum = c / 5;
 		int pageNo = count + 1;
