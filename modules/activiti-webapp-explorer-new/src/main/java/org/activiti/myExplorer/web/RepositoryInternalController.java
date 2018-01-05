@@ -11,7 +11,9 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
+import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.PageInfo;
+import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.ProcessReturn;
 import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ProcessReturnService;
@@ -86,6 +88,20 @@ public class RepositoryInternalController {
 		int pageNo = count + 1;
 		PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c);
 		mm.addAttribute("_content", pi);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listStart")
+	public String start(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) {
+		CommonReturn cr = null;
+		try {
+			runtimeService.startProcessInstanceById(id);
+			cr = new CommonReturn(RetCode.SUCCESS, "流程 " + id + " 已启动了一个实例");
+		} catch (Exception e) {
+			cr = new CommonReturn(RetCode.EXCEPTION, "流程 " + id + " 启动时发生异常：" + e.getMessage());
+		}
+		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
 	}
 }
