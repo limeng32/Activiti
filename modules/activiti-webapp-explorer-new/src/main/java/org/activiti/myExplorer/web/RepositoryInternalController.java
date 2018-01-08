@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.web;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -163,6 +164,23 @@ public class RepositoryInternalController {
 				stream.flush();
 			}
 		} catch (Exception e) {
+			// make sonar happy
+		}
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDevelopedImg")
+	public void listDevelopedImg(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "id") String id) {
+		response.setContentType("image/png");
+		try (InputStream is = repositoryService.getProcessDiagram(id);
+				OutputStream stream = response.getOutputStream();) {
+			byte[] b = new byte[2048];
+			int length = 0;
+			while ((length = is.read(b)) > 0) {
+				stream.write(b, 0, length);
+			}
+			stream.flush();
+		} catch (IOException e) {
 			// make sonar happy
 		}
 	}
