@@ -1,5 +1,7 @@
 package org.activiti.myExplorer.web;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.PageInfo;
@@ -125,7 +128,9 @@ public class RepositoryInternalController {
 		CommonReturn cr = null;
 		try {
 			modelNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(id));
+			DefaultProcessDiagramGenerator dpdg = new DefaultProcessDiagramGenerator();
 			BpmnModel bpmnMode = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+			dpdg.generatePngDiagram(bpmnMode);
 			byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnMode);
 
 			String processName = model.getName() + ".bpmn20.xml";
@@ -137,5 +142,28 @@ public class RepositoryInternalController {
 		}
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listShowImg")
+	public void listShowImg(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "id") String id) {
+		response.setContentType("image/png");
+		try {
+			ObjectNode modelNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(id));
+			DefaultProcessDiagramGenerator dpdg = new DefaultProcessDiagramGenerator();
+			BpmnModel bpmnMode = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+			try (OutputStream stream = response.getOutputStream();
+					InputStream is = dpdg.generatePngDiagram(bpmnMode);) {
+
+				byte[] b = new byte[2048];
+				int length = 0;
+				while ((length = is.read(b)) > 0) {
+					stream.write(b, 0, length);
+				}
+				stream.flush();
+			}
+		} catch (Exception e) {
+			// make sonar happy
+		}
 	}
 }

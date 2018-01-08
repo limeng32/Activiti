@@ -1,3 +1,4 @@
+package org.activiti.rest.diagram.services;
 /* Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,7 +12,7 @@
  * limitations under the License.
  */
 
-package org.activiti.rest.diagram.services;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
