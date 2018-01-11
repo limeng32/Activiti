@@ -59,7 +59,6 @@ public class MultiSchemaMultiTenantProcessDefinitionCache implements DeploymentC
   public void add(String id, ProcessDefinitionEntity object) {
     DeploymentCache<ProcessDefinitionEntity> tenantDeploymentCache = getDeploymentCacheForCurrentTenant();
     tenantDeploymentCache.add(id, object);
-    System.out.println("AAP");
   }
 
   @Override
