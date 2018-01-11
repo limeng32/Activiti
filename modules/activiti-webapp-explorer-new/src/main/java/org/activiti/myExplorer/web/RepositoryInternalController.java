@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.web;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,12 +27,14 @@ import org.activiti.myExplorer.persist.ProcessReturn;
 import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ProcessReturnService;
 import org.activiti.myExplorer.service.UserService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -183,5 +186,20 @@ public class RepositoryInternalController {
 		} catch (IOException e) {
 			// make sonar happy
 		}
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/uploadProcessFile")
+	public String uploadProcessFile(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "Filedata", required = false) MultipartFile file, ModelMap mm) throws IOException {
+		System.out.println("a");
+		if (!file.isEmpty()) {
+			String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
+			System.out.println("b::"+realPath);
+			FileUtils.copyInputStreamToFile(file.getInputStream(), new File(realPath, file.getOriginalFilename()));
+		} else {
+
+		}
+		mm.addAttribute("_content", "aa");
+		return UNIQUE_PATH;
 	}
 }
