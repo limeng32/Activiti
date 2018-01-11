@@ -1,14 +1,20 @@
 package org.activiti.myExplorer.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
@@ -18,6 +24,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.explorer.util.XmlUtil;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
 import org.activiti.myExplorer.model.CommonReturn;
@@ -28,6 +35,7 @@ import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ProcessReturnService;
 import org.activiti.myExplorer.service.UserService;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -191,11 +199,56 @@ public class RepositoryInternalController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/uploadProcessFile")
 	public String uploadProcessFile(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "Filedata", required = false) MultipartFile file, ModelMap mm) throws IOException {
-		System.out.println("a");
 		if (!file.isEmpty()) {
 			String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
-			System.out.println("b::"+realPath);
-			FileUtils.copyInputStreamToFile(file.getInputStream(), new File(realPath, file.getOriginalFilename()));
+			System.out.println("b::" + realPath);
+			File newFile = new File(realPath, file.getOriginalFilename());
+			FileUtils.copyInputStreamToFile(file.getInputStream(), newFile);
+
+			if (file.getOriginalFilename().endsWith(".bpmn20.xml") || file.getOriginalFilename().endsWith(".bpmn")) {
+				XMLStreamReader xtr = null;
+				try (ByteArrayOutputStream outputStream = null;) {
+					XMLInputFactory xif = XmlUtil.createSafeXmlInputFactory();
+					InputStreamReader in = new InputStreamReader(new FileInputStream(newFile), "UTF-8");
+					xtr = xif.createXMLStreamReader(in);
+				} catch (XMLStreamException e) {
+					// Auto-generated catch block
+				}
+				BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
+
+				if (bpmnModel.getMainProcess() == null || bpmnModel.getMainProcess().getId() == null) {
+				} else {
+
+					if (bpmnModel.getLocationMap().isEmpty()) {
+					} else {
+
+						String processName = null;
+						if (StringUtils.isNotEmpty(bpmnModel.getMainProcess().getName())) {
+							processName = bpmnModel.getMainProcess().getName();
+						} else {
+							processName = bpmnModel.getMainProcess().getId();
+						}
+
+						Model modelData = repositoryService.newModel();
+						ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+						modelObjectNode.put("name", processName);
+						modelObjectNode.put("revision", 1);
+						modelData.setMetaInfo(modelObjectNode.toString());
+						modelData.setName(processName);
+
+						repositoryService.saveModel(modelData);
+
+						BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+						ObjectNode editorNode = jsonConverter.convertToJson(bpmnModel);
+
+						repositoryService.addModelEditorSource(modelData.getId(),
+								editorNode.toString().getBytes("utf-8"));
+					}
+				}
+				System.out.println("2::");
+			} else {
+				System.out.println("3::");
+			}
 		} else {
 
 		}
