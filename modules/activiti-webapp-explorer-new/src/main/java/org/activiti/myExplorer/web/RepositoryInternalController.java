@@ -199,9 +199,9 @@ public class RepositoryInternalController {
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/uploadProcessFile")
 	public String uploadProcessFile(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "Filedata", required = false) MultipartFile file, ModelMap mm) throws IOException {
+		CommonReturn cr = null;
 		if (!file.isEmpty()) {
 			String realPath = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
-			System.out.println("b::" + realPath);
 			File newFile = new File(realPath, file.getOriginalFilename());
 			FileUtils.copyInputStreamToFile(file.getInputStream(), newFile);
 
@@ -216,43 +216,39 @@ public class RepositoryInternalController {
 				}
 				BpmnModel bpmnModel = new BpmnXMLConverter().convertToBpmnModel(xtr);
 
-				if (bpmnModel.getMainProcess() == null || bpmnModel.getMainProcess().getId() == null) {
+				if (bpmnModel.getMainProcess() == null || bpmnModel.getMainProcess().getId() == null
+						|| bpmnModel.getLocationMap().isEmpty()) {
+					cr = new CommonReturn(RetCode.EXCEPTION, "流程文件无法被解析");
 				} else {
-
-					if (bpmnModel.getLocationMap().isEmpty()) {
+					String processName = null;
+					if (StringUtils.isNotEmpty(bpmnModel.getMainProcess().getName())) {
+						processName = bpmnModel.getMainProcess().getName();
 					} else {
-
-						String processName = null;
-						if (StringUtils.isNotEmpty(bpmnModel.getMainProcess().getName())) {
-							processName = bpmnModel.getMainProcess().getName();
-						} else {
-							processName = bpmnModel.getMainProcess().getId();
-						}
-
-						Model modelData = repositoryService.newModel();
-						ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
-						modelObjectNode.put("name", processName);
-						modelObjectNode.put("revision", 1);
-						modelData.setMetaInfo(modelObjectNode.toString());
-						modelData.setName(processName);
-
-						repositoryService.saveModel(modelData);
-
-						BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
-						ObjectNode editorNode = jsonConverter.convertToJson(bpmnModel);
-
-						repositoryService.addModelEditorSource(modelData.getId(),
-								editorNode.toString().getBytes("utf-8"));
+						processName = bpmnModel.getMainProcess().getId();
 					}
+
+					Model modelData = repositoryService.newModel();
+					ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+					modelObjectNode.put("name", processName);
+					modelObjectNode.put("revision", 1);
+					modelData.setMetaInfo(modelObjectNode.toString());
+					modelData.setName(processName);
+
+					repositoryService.saveModel(modelData);
+
+					BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+					ObjectNode editorNode = jsonConverter.convertToJson(bpmnModel);
+
+					repositoryService.addModelEditorSource(modelData.getId(), editorNode.toString().getBytes("utf-8"));
+					cr = new CommonReturn(RetCode.SUCCESS, file.getOriginalFilename() + " 文件导入完成");
 				}
-				System.out.println("2::");
 			} else {
-				System.out.println("3::");
+				cr = new CommonReturn(RetCode.EXCEPTION, "只有 .bpmn 文件和 .bpmn20.xml 文件才能被导入");
 			}
 		} else {
-
+			cr = new CommonReturn(RetCode.ERROR, "检测到上传文件为空");
 		}
-		mm.addAttribute("_content", "aa");
+		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
 	}
 }
