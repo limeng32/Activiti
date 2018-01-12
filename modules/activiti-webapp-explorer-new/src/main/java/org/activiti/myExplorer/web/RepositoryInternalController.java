@@ -196,7 +196,7 @@ public class RepositoryInternalController {
 		}
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/uploadProcessFile")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/uploadProcessFile")
 	public String uploadProcessFile(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "Filedata", required = false) MultipartFile file, ModelMap mm) throws IOException {
 		CommonReturn cr = null;
@@ -249,6 +249,29 @@ public class RepositoryInternalController {
 			cr = new CommonReturn(RetCode.ERROR, "检测到上传文件为空");
 		}
 		mm.addAttribute("_content", cr);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/copyProcess")
+	public String copyProcess(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) {
+		System.out.println("::" + id);
+		Model model = repositoryService.getModel(id);
+		Model newModelData = repositoryService.newModel();
+		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+		modelObjectNode.put("name", "asd");
+		String description = null;
+		description = "qwe";
+		modelObjectNode.put("description", description);
+		newModelData.setMetaInfo(modelObjectNode.toString());
+		newModelData.setName("zxc");
+
+		repositoryService.saveModel(newModelData);
+
+		repositoryService.addModelEditorSource(newModelData.getId(),
+				repositoryService.getModelEditorSource(model.getId()));
+		repositoryService.addModelEditorSourceExtra(newModelData.getId(),
+				repositoryService.getModelEditorSourceExtra(model.getId()));
 		return UNIQUE_PATH;
 	}
 }
