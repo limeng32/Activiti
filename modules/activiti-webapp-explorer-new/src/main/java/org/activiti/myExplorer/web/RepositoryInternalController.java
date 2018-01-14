@@ -254,24 +254,28 @@ public class RepositoryInternalController {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/copyProcess")
 	public String copyProcess(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "id") String id) {
-		System.out.println("::" + id);
+			@RequestParam(value = "id") String id, @RequestParam(value = "name") String name,
+			@RequestParam(value = "description") String description) {
+		CommonReturn cr = null;
 		Model model = repositoryService.getModel(id);
-		Model newModelData = repositoryService.newModel();
-		ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
-		modelObjectNode.put("name", "asd");
-		String description = null;
-		description = "qwe";
-		modelObjectNode.put("description", description);
-		newModelData.setMetaInfo(modelObjectNode.toString());
-		newModelData.setName("zxc");
+		if (model == null) {
+			cr = new CommonReturn(RetCode.EXCEPTION, "找不到指定模型");
+		} else {
+			Model newModelData = repositoryService.newModel();
+			ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+			modelObjectNode.put("name", name);
+			modelObjectNode.put("description", description);
+			newModelData.setMetaInfo(modelObjectNode.toString());
+			newModelData.setName(name);
+			repositoryService.saveModel(newModelData);
 
-		repositoryService.saveModel(newModelData);
-
-		repositoryService.addModelEditorSource(newModelData.getId(),
-				repositoryService.getModelEditorSource(model.getId()));
-		repositoryService.addModelEditorSourceExtra(newModelData.getId(),
-				repositoryService.getModelEditorSourceExtra(model.getId()));
+			repositoryService.addModelEditorSource(newModelData.getId(),
+					repositoryService.getModelEditorSource(model.getId()));
+			repositoryService.addModelEditorSourceExtra(newModelData.getId(),
+					repositoryService.getModelEditorSourceExtra(model.getId()));
+			cr = new CommonReturn(RetCode.SUCCESS, model.getName() + " 模型复制完成，新名称为 " + name);
+		}
+		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
 	}
 }
