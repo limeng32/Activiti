@@ -148,9 +148,9 @@ public class RepositoryInternalController {
 			String processName = model.getName() + ".bpmn20.xml";
 			repositoryService.createDeployment().name(model.getName()).addString(processName, new String(bpmnBytes))
 					.deploy();
-			cr = new CommonReturn(RetCode.SUCCESS, "流程 " + model.getName() + " 已经部署");
+			cr = new CommonReturn(RetCode.SUCCESS, "流程模型 " + model.getName() + " 已经部署");
 		} catch (Exception e) {
-			cr = new CommonReturn(RetCode.EXCEPTION, "ID 为 " + id + " 的流程部署时发生异常：" + e.getMessage());
+			cr = new CommonReturn(RetCode.EXCEPTION, "ID 为 " + id + " 的流程模型部署时发生异常：" + e.getMessage());
 		}
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
@@ -218,7 +218,7 @@ public class RepositoryInternalController {
 
 				if (bpmnModel.getMainProcess() == null || bpmnModel.getMainProcess().getId() == null
 						|| bpmnModel.getLocationMap().isEmpty()) {
-					cr = new CommonReturn(RetCode.EXCEPTION, "流程文件无法被解析");
+					cr = new CommonReturn(RetCode.EXCEPTION, "流程模型文件无法被解析");
 				} else {
 					String processName = null;
 					if (StringUtils.isNotEmpty(bpmnModel.getMainProcess().getName())) {
@@ -274,6 +274,25 @@ public class RepositoryInternalController {
 			repositoryService.addModelEditorSourceExtra(newModelData.getId(),
 					repositoryService.getModelEditorSourceExtra(model.getId()));
 			cr = new CommonReturn(RetCode.SUCCESS, model.getName() + " 模型复制完成，新名称为 " + name);
+		}
+		mm.addAttribute("_content", cr);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/deleteModel")
+	public String deleteModel(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) {
+		CommonReturn cr = null;
+		Model model = repositoryService.getModel(id);
+		if (model == null) {
+			cr = new CommonReturn(RetCode.EXCEPTION, "找不到指定模型");
+		} else {
+			try {
+				repositoryService.deleteModel(id);
+				cr = new CommonReturn(RetCode.SUCCESS, model.getName() + " 模型已被删除");
+			} catch (Exception e) {
+				cr = new CommonReturn(RetCode.EXCEPTION, "ID 为 " + id + " 的流程模型部署时发生异常：" + e.getMessage());
+			}
 		}
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
