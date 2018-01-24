@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.web;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +26,8 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.explorer.ExplorerApp;
+import org.activiti.explorer.ui.process.simple.editor.SimpleTableEditorConstants;
 import org.activiti.explorer.util.XmlUtil;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
@@ -34,6 +38,8 @@ import org.activiti.myExplorer.persist.ProcessReturn;
 import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ProcessReturnService;
 import org.activiti.myExplorer.service.UserService;
+import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
+import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -296,5 +303,43 @@ public class RepositoryInternalController {
 		}
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/exportModel")
+	public void exportModel(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) throws IOException, UnsupportedEncodingException {
+		byte[] bpmnBytes = null;
+		String filename = null;
+		Model modelData = repositoryService.getModel(id);
+		if (SimpleTableEditorConstants.TABLE_EDITOR_CATEGORY.equals(modelData.getCategory())) {
+			WorkflowDefinition workflowDefinition = ExplorerApp.get().getSimpleWorkflowJsonConverter()
+					.readWorkflowDefinition(repositoryService.getModelEditorSource(modelData.getId()));
+
+			filename = workflowDefinition.getName();
+			WorkflowDefinitionConversion conversion = ExplorerApp.get().getWorkflowDefinitionConversionFactory()
+					.createWorkflowDefinitionConversion(workflowDefinition);
+			bpmnBytes = conversion.getBpmn20Xml().getBytes("utf-8");
+		} else {
+			JsonNode editorNode = new ObjectMapper()
+					.readTree(repositoryService.getModelEditorSource(modelData.getId()));
+			BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+			BpmnModel model = jsonConverter.convertToBpmnModel(editorNode);
+			filename = model.getMainProcess().getId() + ".bpmn20.xml";
+			bpmnBytes = new BpmnXMLConverter().convertToXML(model);
+		}
+		response.setContentType("application/x-msdownload");
+		/* 因为模型名称肯定是英文和数字，不需要进行转码 */
+		response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+		try (ByteArrayInputStream is = new ByteArrayInputStream(bpmnBytes);
+				OutputStream stream = response.getOutputStream();) {
+			byte[] b = new byte[2048];
+			int length = 0;
+			while ((length = is.read(b)) > 0) {
+				stream.write(b, 0, length);
+			}
+			stream.flush();
+		} catch (IOException e) {
+			// make sonar happy
+		}
 	}
 }
