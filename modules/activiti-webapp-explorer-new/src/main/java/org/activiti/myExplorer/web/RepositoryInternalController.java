@@ -94,33 +94,36 @@ public class RepositoryInternalController {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDesigning")
 	public String listDesigning(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "count") int count) {
+			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize) {
 		count = count > 0 ? count - 1 : count;
-		int first = count * 5;
-		List<Model> l = repositoryService.createModelQuery().listPage(first, 5);
+		pageSize = pageSize == 0 ? 5 : pageSize;
+		int first = count * pageSize;
+		List<Model> l = repositoryService.createModelQuery().listPage(first, pageSize);
 		int c = (int) (repositoryService.createModelQuery().count());
-		int maxPageNum = c / 5;
+		int maxPageNum = c / pageSize;
 		int pageNo = count + 1;
-		PageInfo<Model> pi = new PageInfo<>(l, pageNo, maxPageNum, c);
+		PageInfo<Model> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
 		mm.addAttribute("_content", pi);
 		return UNIQUE_PATH;
 	}
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDeployed")
 	public String listDeployed(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "count") int count) {
+			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize) {
 		count = count > 0 ? count - 1 : count;
-		int first = count * 5;
-		List<ProcessDefinition> l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first, 5);
+		pageSize = pageSize == 0 ? 5 : pageSize;
+		int first = count * pageSize;
+		List<ProcessDefinition> l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first,
+				pageSize);
 		for (ProcessDefinition p : l) {
 			Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(p.getDeploymentId())
 					.singleResult();
 			p.setDeployment(deployment);
 		}
 		int c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion().count());
-		int maxPageNum = c / 5;
+		int maxPageNum = c / pageSize;
 		int pageNo = count + 1;
-		PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c);
+		PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
 		mm.addAttribute("_content", pi);
 		return UNIQUE_PATH;
 	}

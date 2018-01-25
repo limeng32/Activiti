@@ -12,11 +12,14 @@ public class PageInfo<T> {
 
 	private Collection<T> pageItems;
 
-	public PageInfo(Collection<T> items, int pageNo, int maxPageNum, int totalCount) {
+	private int pageSize;
+
+	public PageInfo(Collection<T> items, int pageNo, int maxPageNum, int totalCount, int pageSize) {
 		pageItems = items;
 		this.pageNo = pageNo;
 		this.maxPageNum = maxPageNum;
 		this.totalCount = totalCount;
+		this.pageSize = pageSize;
 	}
 
 	public int getPageNo() {
@@ -49,6 +52,14 @@ public class PageInfo<T> {
 
 	public void setPageItems(Collection<T> pageItems) {
 		this.pageItems = pageItems;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
 	}
 
 }
