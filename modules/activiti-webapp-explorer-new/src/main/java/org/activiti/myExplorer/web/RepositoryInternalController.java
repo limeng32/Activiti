@@ -92,14 +92,33 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
+	private static String handleLikeValue(String parameter) {
+		if (parameter.indexOf("%") > -1) {
+			parameter = parameter.replaceAll("%", "\\\\%");
+		}
+		if (parameter.indexOf("_") > -1) {
+			parameter = parameter.replaceAll("_", "\\\\_");
+		}
+		return new StringBuffer("%").append(parameter).append("%").toString();
+	}
+
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDesigning")
 	public String listDesigning(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize) {
+			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize,
+			@RequestParam(value = "name", required = false) String name) {
 		count = count > 0 ? count - 1 : count;
 		pageSize = pageSize == 0 ? 5 : pageSize;
 		int first = count * pageSize;
-		List<Model> l = repositoryService.createModelQuery().listPage(first, pageSize);
-		int c = (int) (repositoryService.createModelQuery().count());
+		List<Model> l = null;
+		int c = 0;
+		if (name == null || "".equals(name)) {
+			l = repositoryService.createModelQuery().listPage(first, pageSize);
+			c = (int) (repositoryService.createModelQuery().count());
+		} else {
+			name = handleLikeValue(name);
+			l = repositoryService.createModelQuery().modelNameLike(name).listPage(first, pageSize);
+			c = (int) (repositoryService.createModelQuery().modelNameLike(name).count());
+		}
 		int maxPageNum = c / pageSize;
 		int pageNo = count + 1;
 		PageInfo<Model> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
