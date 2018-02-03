@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -109,7 +108,7 @@ public class RepositoryInternalController {
 		count = count > 0 ? count - 1 : count;
 		pageSize = pageSize == 0 ? 5 : pageSize;
 		int first = count * pageSize;
-		List<Model> l = null;
+		Collection<Model> l = null;
 		int c = 0;
 		if (name == null || "".equals(name)) {
 			l = repositoryService.createModelQuery().listPage(first, pageSize);
@@ -128,18 +127,28 @@ public class RepositoryInternalController {
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDeployed")
 	public String listDeployed(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize) {
+			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize,
+			@RequestParam(value = "name", required = false) String name) {
 		count = count > 0 ? count - 1 : count;
 		pageSize = pageSize == 0 ? 5 : pageSize;
 		int first = count * pageSize;
-		List<ProcessDefinition> l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first,
-				pageSize);
+		Collection<ProcessDefinition> l = null;
+		int c = 0;
+		if (name == null || "".equals(name)) {
+			l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first, pageSize);
+			c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion().count());
+		} else {
+			name = handleLikeValue(name);
+			l = repositoryService.createProcessDefinitionQuery().processDefinitionKeyLike(name).latestVersion()
+					.listPage(first, pageSize);
+			c = (int) (repositoryService.createProcessDefinitionQuery().processDefinitionKeyLike(name).latestVersion()
+					.count());
+		}
 		for (ProcessDefinition p : l) {
 			Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(p.getDeploymentId())
 					.singleResult();
 			p.setDeployment(deployment);
 		}
-		int c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion().count());
 		int maxPageNum = c / pageSize;
 		int pageNo = count + 1;
 		PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
