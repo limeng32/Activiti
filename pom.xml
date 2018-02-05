@@ -636,6 +636,7 @@
     <module>modules/activiti-explorer</module>
     <module>modules/activiti-webapp-explorer-new</module>
     <module>modules/activiti-modeler</module>
+    <module>modules/activiti-account</module>
   </modules>
 
   <build>
@@ -949,6 +950,7 @@
         <module>modules/activiti-jmx</module>
         <module>tooling/archetypes/activiti-archetype-unittest</module>
         <module>modules/activiti-webapp-explorer-new</module>
+        <module>modules/activiti-account</module>
       </modules>
 	<build>
 		<plugins>
