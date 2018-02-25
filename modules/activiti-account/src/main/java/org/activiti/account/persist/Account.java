@@ -17,7 +17,7 @@ import indi.mybatis.flying.statics.OpLockType;
 public class Account extends PojoSupport<Account> implements Serializable, AccountFace {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * 主键，以UUID方式保存
 	 * 
@@ -76,8 +76,64 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 	private Integer opLock;
 
 	@Override
-	public Object getId() {
-		return null;
+	public String getId() {
+		return id;
+	}
+
+	public java.lang.String getName() {
+		return name;
+	}
+
+	public void setName(java.lang.String name) {
+		this.name = name;
+	}
+
+	public java.lang.String getEmail() {
+		return email;
+	}
+
+	public void setEmail(java.lang.String email) {
+		this.email = email;
+	}
+
+	public java.lang.String getPassword() {
+		return password;
+	}
+
+	public void setPassword(java.lang.String password) {
+		this.password = password;
+	}
+
+	public Boolean getActivated() {
+		return activated;
+	}
+
+	public void setActivated(Boolean activated) {
+		this.activated = activated;
+	}
+
+	public AccountStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(AccountStatus status) {
+		this.status = status;
+	}
+
+	public java.lang.String getActivateValue() {
+		return activateValue;
+	}
+
+	public void setActivateValue(java.lang.String activateValue) {
+		this.activateValue = activateValue;
+	}
+
+	public Integer getOpLock() {
+		return opLock;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }
