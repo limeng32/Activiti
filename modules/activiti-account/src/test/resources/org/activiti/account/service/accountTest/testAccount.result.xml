@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<account NAME="alice" EMAIL="a@l.c" />
+	<account NAME="bob" EMAIL="b@l.c" />
+	<account NAME="carl" EMAIL="c@l.c" />
+</dataset>

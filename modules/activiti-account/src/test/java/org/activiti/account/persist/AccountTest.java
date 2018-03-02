@@ -1,7 +1,10 @@
 package org.activiti.account.persist;
 
+import java.util.Collection;
+
 import javax.sql.DataSource;
 
+import org.activiti.account.service.AccountService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +16,12 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.github.springtestdbunit.annotation.DatabaseTearDown;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -26,9 +34,32 @@ public class AccountTest {
 	@Autowired
 	private DataSource dataSourceAccount;
 
+	@Autowired
+	private AccountService accountService;
+
 	@Test
 	public void test() {
 		Assert.assertNotNull(dataSourceAccount);
+		Assert.assertNotNull(accountService);
 	}
 
+	@Test
+	@DatabaseSetup(connection = "dataSourceAccount", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/accountTest/testAccount.xml")
+	@ExpectedDatabase(connection = "dataSourceAccount", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/accountTest/testAccount.result.xml")
+	@DatabaseTearDown(connection = "dataSourceAccount", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/accountTest/testAccount.result.xml")
+	public void testAccount() {
+		Assert.assertNotNull(accountService);
+		Account a = new Account();
+		a.setName("alice");
+		Collection<Account> accountC = accountService.selectAll(a);
+		Assert.assertEquals(1, accountC.size());
+
+		Account account = accountService.selectOne(a);
+		Assert.assertEquals("a@l.c", account.getEmail());
+
+		Account a2 = new Account();
+		a2.setName("carl");
+		a2.setEmail("c@l.c");
+		accountService.insert(a2);
+	}
 }
