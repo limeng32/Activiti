@@ -668,16 +668,16 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.7.1</version>
-				<configuration>
-					<failIfNoTests>false</failIfNoTests>
-					<trimStackTrace>false</trimStackTrace>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-					<excludes>
-						<exclude>**/*TestCase.java</exclude>
-					</excludes>
-					<runOrder>alphabetical</runOrder>
-				</configuration>
+				<version>2.12.4</version>
+				<executions>
+					<execution>
+						<id>default-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>

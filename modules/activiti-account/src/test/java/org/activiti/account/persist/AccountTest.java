@@ -57,6 +57,11 @@ public class AccountTest {
 		Account account = accountService.selectOne(a);
 		Assert.assertEquals("a@l.c", account.getEmail());
 
+		account.setEmail("a2@l.c");
+		Assert.assertEquals("1", account.getId());
+		int i = accountService.update(account);
+		Assert.assertEquals(1, i);
+		
 		Account a2 = new Account();
 		a2.setName("carl");
 		a2.setEmail("c@l.c");
