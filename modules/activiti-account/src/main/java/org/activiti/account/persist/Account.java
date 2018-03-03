@@ -1,8 +1,10 @@
 package org.activiti.account.persist;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import org.activiti.account.face.AccountFace;
+import org.activiti.account.face.AccountRoleFace;
 import org.activiti.account.statics.AccountStatus;
 import org.activiti.myExplorer.pojoHelper.PojoSupport;
 import org.apache.ibatis.type.JdbcType;
@@ -75,6 +77,8 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 	@JSONField(serialize = false)
 	private Integer opLock;
 
+	private Collection<AccountRoleFace> accountRole;
+
 	@Override
 	public String getId() {
 		return id;
@@ -136,4 +140,74 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 		this.id = id;
 	}
 
+	public java.util.Collection<AccountRoleFace> getAccountRole() {
+		if (accountRole == null)
+			accountRole = new java.util.LinkedHashSet<AccountRoleFace>();
+		return accountRole;
+	}
+
+	@JSONField(serialize = false)
+	public java.util.Iterator<AccountRoleFace> getIteratorAccountRole() {
+		if (accountRole == null)
+			accountRole = new java.util.LinkedHashSet<AccountRoleFace>();
+		return accountRole.iterator();
+	}
+
+	public void setAccountRole(java.util.Collection<? extends AccountRoleFace> newAccountRole) {
+		removeAllAccountRole();
+		for (java.util.Iterator<? extends AccountRoleFace> iter = newAccountRole.iterator(); iter.hasNext();)
+			addAccountRole((AccountRoleFace) iter.next());
+	}
+
+	public void addAccountRole(AccountRoleFace newAccountRole) {
+		if (newAccountRole == null)
+			return;
+		if (this.accountRole == null)
+			this.accountRole = new java.util.LinkedHashSet<AccountRoleFace>();
+		if (!this.accountRole.contains(newAccountRole)) {
+			this.accountRole.add(newAccountRole);
+			newAccountRole.setAccount(this);
+		} else {
+			for (AccountRoleFace temp : this.accountRole) {
+				if (newAccountRole.equals(temp)) {
+					if (temp != newAccountRole) {
+						removeAccountRole(temp);
+						this.accountRole.add(newAccountRole);
+						newAccountRole.setAccount(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeAccountRole(AccountRoleFace oldAccountRole) {
+		if (oldAccountRole == null)
+			return;
+		if (this.accountRole != null)
+			if (this.accountRole.contains(oldAccountRole)) {
+				for (AccountRoleFace temp : this.accountRole) {
+					if (oldAccountRole.equals(temp)) {
+						if (temp != oldAccountRole) {
+							temp.setAccount((Account) null);
+						}
+						break;
+					}
+				}
+				this.accountRole.remove(oldAccountRole);
+				oldAccountRole.setAccount((Account) null);
+			}
+	}
+
+	public void removeAllAccountRole() {
+		if (accountRole != null) {
+			AccountRoleFace oldAccountRole;
+			for (java.util.Iterator<AccountRoleFace> iter = getIteratorAccountRole(); iter.hasNext();) {
+				oldAccountRole = (AccountRoleFace) iter.next();
+				iter.remove();
+				oldAccountRole.setAccount((Account) null);
+			}
+			accountRole.clear();
+		}
+	}
 }

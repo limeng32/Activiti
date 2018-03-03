@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.activiti.account.mapper.RoleMapper">
+	<cache />
+
+	<select id="select" resultMap="result">
+		flying#{?}:select
+	</select>
+
+	<select id="selectAll" resultMap="result">
+		flying:selectAll
+	</select>
+
+	<select id="selectOne" resultMap="result">
+		flying:selectOne
+	</select>
+
+	<select id="count" resultType="int">
+		flying:count
+	</select>
+
+	<insert id="insert">
+		flying:insert(uuid_no_line)
+	</insert>
+
+	<update id="update">
+		flying:update
+	</update>
+
+	<update id="updatePersistent">
+		flying:updatePersistent
+	</update>
+
+	<delete id="delete">
+		flying:delete
+	</delete>
+
+	<resultMap id="result" type="Role" autoMapping="true">
+		<id property="id" column="role_id" />
+	</resultMap>
+</mapper>
