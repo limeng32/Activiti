@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
-	<account NAME="alice" EMAIL="a2@l.c" />
-	<account NAME="bob" EMAIL="b@l.c" />
-	<account NAME="carl" EMAIL="c@l.c" />
+	<account NAME="alice" EMAIL="a2@l.c" STATUS="s"/>
+	<account NAME="bob" EMAIL="b@l.c" STATUS="s"/>
+	<account NAME="carl" EMAIL="c@l.c" STATUS="a"/>
 </dataset>

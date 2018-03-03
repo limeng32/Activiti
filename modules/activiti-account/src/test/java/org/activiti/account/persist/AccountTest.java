@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.sql.DataSource;
 
 import org.activiti.account.service.AccountService;
+import org.activiti.account.statics.AccountStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,15 +57,17 @@ public class AccountTest {
 
 		Account account = accountService.selectOne(a);
 		Assert.assertEquals("a@l.c", account.getEmail());
+		Assert.assertEquals("休眠", account.getStatus().text());
 
 		account.setEmail("a2@l.c");
 		Assert.assertEquals("1", account.getId());
 		int i = accountService.update(account);
 		Assert.assertEquals(1, i);
-		
+
 		Account a2 = new Account();
 		a2.setName("carl");
 		a2.setEmail("c@l.c");
+		a2.setStatus(AccountStatus.forId("AWAKE"));
 		accountService.insert(a2);
 	}
 }

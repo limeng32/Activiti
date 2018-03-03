@@ -3,10 +3,9 @@ package org.activiti.account.persist;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.management.relation.RoleStatus;
-
 import org.activiti.account.face.AccountRoleFace;
 import org.activiti.account.face.RoleFace;
+import org.activiti.account.statics.RoleStatus;
 import org.activiti.myExplorer.pojoHelper.PojoSupport;
 import org.apache.ibatis.type.JdbcType;
 
