@@ -41,6 +41,8 @@ public class ExecutionReturn implements Serializable {
 
 	private String taskId;
 
+	private String document;
+
 	@JSONField(serialize = false)
 	private boolean isSoftEnd;
 
@@ -98,6 +100,14 @@ public class ExecutionReturn implements Serializable {
 
 	public void setSoftEnd(boolean isSoftEnd) {
 		this.isSoftEnd = isSoftEnd;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
 }

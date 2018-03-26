@@ -491,6 +491,7 @@ public class CommonService {
 					executionReturn.setTaskId(taskE1.getId());
 					executionReturn.setActName(taskE1.getName());
 					executionReturn.setActRole(actRole);
+					executionReturn.setDocument(taskE1.getDescription());
 					if (formData != null) {
 						for (Map.Entry<String, Object> ee : formData.entrySet()) {
 							taskService.setVariable(taskE1.getId(), ee.getKey(), ee.getValue());
