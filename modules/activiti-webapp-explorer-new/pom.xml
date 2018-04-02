@@ -238,6 +238,7 @@
 		<profile>
 			<activation>
 				<property>
+					<!-- TEST是133专用 -->
 					<name>TEST</name>
 					<value>true</value>
 				</property>
