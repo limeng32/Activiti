@@ -3,6 +3,9 @@ package org.activiti.account.persist;
 import javax.sql.DataSource;
 
 import org.activiti.account.service.AccountRoleService;
+import org.activiti.account.service.AccountService;
+import org.activiti.account.service.RoleService;
+import org.activiti.account.statics.RoleStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +36,13 @@ public class AccountRoleTest {
 	private DataSource dataSourceAccount;
 
 	@Autowired
+	private AccountService accountService;
+
+	@Autowired
 	private AccountRoleService accountRoleService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@Test
 	public void test() {
@@ -47,7 +56,13 @@ public class AccountRoleTest {
 	@DatabaseTearDown(connection = "dataSourceAccount", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.result.xml")
 	public void testAccountRole() {
 		AccountRole accountRole = accountRoleService.select("ar1");
-		System.out.println("::"+accountRole);
 		Assert.assertEquals("alice", accountRole.getAccount().getName());
+		Assert.assertEquals(RoleStatus.a, accountRole.getRole().getValue());
+
+		Account account = accountService.select("a2");
+		Role role = roleService.select("r2");
+		accountRole.setAccount(account);
+		accountRole.setRole(role);
+		accountRoleService.update(accountRole);
 	}
 }
