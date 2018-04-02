@@ -13,7 +13,7 @@
        	http://www.springframework.org/schema/tx
        	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-	<context:component-scan base-package="org.activiti.account.*" />
+	<context:component-scan base-package="org.activiti.account.*, indi.mybatis.flying" />
 
 	<bean id="sqlSessionFactoryAccount" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
