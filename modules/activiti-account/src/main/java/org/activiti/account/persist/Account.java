@@ -3,6 +3,7 @@ package org.activiti.account.persist;
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.activiti.account.face.AccountBucketFace;
 import org.activiti.account.face.AccountFace;
 import org.activiti.account.face.AccountRoleFace;
 import org.activiti.account.statics.AccountStatus;
@@ -78,6 +79,8 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 	private Integer opLock;
 
 	private Collection<AccountRoleFace> accountRole;
+
+	private Collection<AccountBucketFace> accountBucket;
 
 	@Override
 	public String getId() {
@@ -208,6 +211,77 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 				oldAccountRole.setAccount((Account) null);
 			}
 			accountRole.clear();
+		}
+	}
+
+	public java.util.Collection<AccountBucketFace> getAccountBucket() {
+		if (accountBucket == null)
+			accountBucket = new java.util.LinkedHashSet<AccountBucketFace>();
+		return accountBucket;
+	}
+
+	@JSONField(serialize = false)
+	public java.util.Iterator<AccountBucketFace> getIteratorAccountBucket() {
+		if (accountBucket == null)
+			accountBucket = new java.util.LinkedHashSet<AccountBucketFace>();
+		return accountBucket.iterator();
+	}
+
+	public void setAccountBucket(java.util.Collection<? extends AccountBucketFace> newAccountBucket) {
+		removeAllAccountBucket();
+		for (java.util.Iterator<? extends AccountBucketFace> iter = newAccountBucket.iterator(); iter.hasNext();)
+			addAccountBucket((AccountBucketFace) iter.next());
+	}
+
+	public void addAccountBucket(AccountBucketFace newAccountBucket) {
+		if (newAccountBucket == null)
+			return;
+		if (this.accountBucket == null)
+			this.accountBucket = new java.util.LinkedHashSet<AccountBucketFace>();
+		if (!this.accountBucket.contains(newAccountBucket)) {
+			this.accountBucket.add(newAccountBucket);
+			newAccountBucket.setAccount(this);
+		} else {
+			for (AccountBucketFace temp : this.accountBucket) {
+				if (newAccountBucket.equals(temp)) {
+					if (temp != newAccountBucket) {
+						removeAccountBucket(temp);
+						this.accountBucket.add(newAccountBucket);
+						newAccountBucket.setAccount(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeAccountBucket(AccountBucketFace oldAccountBucket) {
+		if (oldAccountBucket == null)
+			return;
+		if (this.accountBucket != null)
+			if (this.accountBucket.contains(oldAccountBucket)) {
+				for (AccountBucketFace temp : this.accountBucket) {
+					if (oldAccountBucket.equals(temp)) {
+						if (temp != oldAccountBucket) {
+							temp.setAccount((Account) null);
+						}
+						break;
+					}
+				}
+				this.accountBucket.remove(oldAccountBucket);
+				oldAccountBucket.setAccount((Account) null);
+			}
+	}
+
+	public void removeAllAccountBucket() {
+		if (accountBucket != null) {
+			AccountBucketFace oldAccountBucket;
+			for (java.util.Iterator<AccountBucketFace> iter = getIteratorAccountBucket(); iter.hasNext();) {
+				oldAccountBucket = (AccountBucketFace) iter.next();
+				iter.remove();
+				oldAccountBucket.setAccount((Account) null);
+			}
+			accountBucket.clear();
 		}
 	}
 }
