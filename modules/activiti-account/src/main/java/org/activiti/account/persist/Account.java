@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.activiti.account.face.AccountBucketFace;
 import org.activiti.account.face.AccountFace;
 import org.activiti.account.face.AccountRoleFace;
+import org.activiti.account.face.LoginlogFace;
 import org.activiti.account.statics.AccountStatus;
 import org.activiti.myExplorer.pojoHelper.PojoSupport;
 import org.apache.ibatis.type.JdbcType;
@@ -81,6 +82,8 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 	private Collection<AccountRoleFace> accountRole;
 
 	private Collection<AccountBucketFace> accountBucket;
+
+	private Collection<LoginlogFace> loginlog;
 
 	@Override
 	public String getId() {
@@ -282,6 +285,77 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 				oldAccountBucket.setAccount((Account) null);
 			}
 			accountBucket.clear();
+		}
+	}
+
+	public java.util.Collection<LoginlogFace> getLoginlog() {
+		if (loginlog == null)
+			loginlog = new java.util.LinkedHashSet<LoginlogFace>();
+		return loginlog;
+	}
+
+	@JSONField(serialize = false)
+	public java.util.Iterator<LoginlogFace> getIteratorLoginlog() {
+		if (loginlog == null)
+			loginlog = new java.util.LinkedHashSet<LoginlogFace>();
+		return loginlog.iterator();
+	}
+
+	public void setLoginlog(java.util.Collection<? extends LoginlogFace> newLoginlog) {
+		removeAllLoginlog();
+		for (java.util.Iterator<? extends LoginlogFace> iter = newLoginlog.iterator(); iter.hasNext();)
+			addLoginlog((LoginlogFace) iter.next());
+	}
+
+	public void addLoginlog(LoginlogFace newLoginlog) {
+		if (newLoginlog == null)
+			return;
+		if (this.loginlog == null)
+			this.loginlog = new java.util.LinkedHashSet<LoginlogFace>();
+		if (!this.loginlog.contains(newLoginlog)) {
+			this.loginlog.add(newLoginlog);
+			newLoginlog.setAccount(this);
+		} else {
+			for (LoginlogFace temp : this.loginlog) {
+				if (newLoginlog.equals(temp)) {
+					if (temp != newLoginlog) {
+						removeLoginlog(temp);
+						this.loginlog.add(newLoginlog);
+						newLoginlog.setAccount(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeLoginlog(LoginlogFace oldLoginlog) {
+		if (oldLoginlog == null)
+			return;
+		if (this.loginlog != null)
+			if (this.loginlog.contains(oldLoginlog)) {
+				for (LoginlogFace temp : this.loginlog) {
+					if (oldLoginlog.equals(temp)) {
+						if (temp != oldLoginlog) {
+							temp.setAccount((Account) null);
+						}
+						break;
+					}
+				}
+				this.loginlog.remove(oldLoginlog);
+				oldLoginlog.setAccount((Account) null);
+			}
+	}
+
+	public void removeAllLoginlog() {
+		if (loginlog != null) {
+			LoginlogFace oldLoginlog;
+			for (java.util.Iterator<LoginlogFace> iter = getIteratorLoginlog(); iter.hasNext();) {
+				oldLoginlog = (LoginlogFace) iter.next();
+				iter.remove();
+				oldLoginlog.setAccount((Account) null);
+			}
+			loginlog.clear();
 		}
 	}
 }
