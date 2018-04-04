@@ -45,6 +45,7 @@ public class ModelEntity implements Model, HasRevision, PersistentObject, Serial
   protected String editorSourceValueId;
   protected String editorSourceExtraValueId;
   protected String tenantId = ProcessEngineConfiguration.NO_TENANT_ID;
+  protected Object tenant;
 
   public Object getPersistentState() {
     Map<String, Object> persistentState = new HashMap<String, Object>();
@@ -177,6 +178,15 @@ public class ModelEntity implements Model, HasRevision, PersistentObject, Serial
 	
 	public boolean hasEditorSourceExtra() {
 	  return this.editorSourceExtraValueId != null;
+	}
+
+	public Object getTenant() {
+		return tenant;
+	}
+
+	@Override
+	public void setTenant(Object tenant) {
+		this.tenant = tenant;
 	}
   
 }

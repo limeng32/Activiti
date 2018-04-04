@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.myExplorer.mapper.ProcessReturnMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSource:activiti_test):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>
@@ -43,6 +47,7 @@
 		<result property="title" column="TITLE" />
 		<result property="logo" column="LOGO" />
 		<association property="owner" javaType="User"
-			select="org.activiti.myExplorer.mapper.UserMapper.select" column="OWNER_ID" />
+			select="org.activiti.myExplorer.mapper.UserMapper.selectForAssociation"
+			column="OWNER_ID" />
 	</resultMap>
 </mapper>

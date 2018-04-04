@@ -3,6 +3,7 @@ package org.activiti.account.service;
 import java.util.Collection;
 
 import org.activiti.account.mapper.AccountBucketMapper;
+import org.activiti.account.persist.Account;
 import org.activiti.account.persist.AccountBucket;
 import org.activiti.myExplorer.pojoHelper.ServiceSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,4 +55,9 @@ public class AccountBucketService extends ServiceSupport<AccountBucket> implemen
 		return mapper.count(t);
 	}
 
+	public void loadAccount(Account account, AccountBucket accountBucket) {
+		account.removeAllAccountBucket();
+		accountBucket.setAccount(account);
+		account.setAccountBucket(mapper.selectAll(accountBucket));
+	}
 }

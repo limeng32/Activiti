@@ -61,4 +61,9 @@ public class UserService extends ServiceSupport<User> implements UserMapper {
 		return supportCount(mapper, t);
 	}
 
+	@Override
+	public User selectForAssociation(Object id) {
+		return mapper.selectForAssociation(id);
+	}
+
 }

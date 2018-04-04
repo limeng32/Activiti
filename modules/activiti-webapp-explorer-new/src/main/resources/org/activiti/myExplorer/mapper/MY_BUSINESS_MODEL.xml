@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.myExplorer.mapper.MyBusinessModelMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSource:activiti_test):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>
@@ -42,7 +46,7 @@
 		<id property="id" column="ID" />
 		<result property="businessId" column="BUSINESS_ID" />
 		<association property="actReModel" javaType="ActReModel"
-			select="org.activiti.myExplorer.mapper.ActReModelMapper.select"
+			select="org.activiti.myExplorer.mapper.ActReModelMapper.selectForAssociation"
 			column="MODEL_ID" />
 	</resultMap>
 </mapper>

@@ -13,6 +13,8 @@ import org.activiti.myExplorer.pojoHelper.MapperFace;
  * @since JDK 1.8
  */
 public interface ActReProcdefMapper extends MapperFace<ActReProcdef> {
+	
+	public ActReProcdef selectForAssociation(Object id);
 
 	@Override
 	public ActReProcdef select(Object id);

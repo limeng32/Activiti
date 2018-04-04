@@ -7,6 +7,7 @@ import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.pojoHelper.ServiceSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 /**
  * @author 李萌
  * @date 2017年11月6日 上午11:15:04
@@ -58,6 +59,11 @@ public class ActReModelService extends ServiceSupport<ActReModel> implements Act
 	@Override
 	public int count(ActReModel t) {
 		return supportCount(mapper, t);
+	}
+
+	@Override
+	public ActReModel selectForAssociation(Object id) {
+		return mapper.selectForAssociation(id);
 	}
 
 }

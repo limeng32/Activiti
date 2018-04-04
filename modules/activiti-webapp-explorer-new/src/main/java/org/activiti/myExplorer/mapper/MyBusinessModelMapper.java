@@ -14,6 +14,8 @@ import org.activiti.myExplorer.pojoHelper.MapperFace;
  */
 public interface MyBusinessModelMapper extends MapperFace<MyBusinessModel> {
 
+	public MyBusinessModel selectForAssociation(Object id);
+	
 	@Override
 	public MyBusinessModel select(Object id);
 

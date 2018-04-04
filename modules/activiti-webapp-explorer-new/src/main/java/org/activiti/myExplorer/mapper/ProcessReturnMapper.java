@@ -7,6 +7,8 @@ import org.activiti.myExplorer.pojoHelper.MapperFace;
 
 public interface ProcessReturnMapper extends MapperFace<ProcessReturn> {
 
+	public ProcessReturn selectForAssociation(Object id);
+	
 	@Override
 	public ProcessReturn select(Object id);
 

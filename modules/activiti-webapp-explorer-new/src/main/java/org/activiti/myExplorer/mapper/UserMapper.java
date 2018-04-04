@@ -7,6 +7,8 @@ import org.activiti.myExplorer.pojoHelper.MapperFace;
 
 public interface UserMapper extends MapperFace<User> {
 
+	public User selectForAssociation(Object id);
+	
 	@Override
 	public User select(Object id);
 

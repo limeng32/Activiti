@@ -13,6 +13,8 @@ import org.activiti.myExplorer.pojoHelper.MapperFace;
 
 public interface ActReModelMapper extends MapperFace<ActReModel> {
 
+	public ActReModel selectForAssociation(Object id);
+	
 	@Override
 	public ActReModel select(Object id);
 

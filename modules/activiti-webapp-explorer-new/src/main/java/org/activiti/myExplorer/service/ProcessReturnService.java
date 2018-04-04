@@ -61,4 +61,9 @@ public class ProcessReturnService extends ServiceSupport<ProcessReturn> implemen
 		return supportCount(mapper, t);
 	}
 
+	@Override
+	public ProcessReturn selectForAssociation(Object id) {
+		return mapper.selectForAssociation(id);
+	}
+
 }

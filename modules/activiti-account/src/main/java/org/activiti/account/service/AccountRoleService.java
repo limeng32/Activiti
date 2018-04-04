@@ -3,7 +3,9 @@ package org.activiti.account.service;
 import java.util.Collection;
 
 import org.activiti.account.mapper.AccountRoleMapper;
+import org.activiti.account.persist.Account;
 import org.activiti.account.persist.AccountRole;
+import org.activiti.account.persist.Role;
 import org.activiti.myExplorer.pojoHelper.ServiceSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,4 +56,15 @@ public class AccountRoleService extends ServiceSupport<AccountRole> implements A
 		return mapper.count(t);
 	}
 
+	public void loadAccount(Account account, AccountRole accountRole) {
+		account.removeAllAccountRole();
+		accountRole.setAccount(account);
+		account.setAccountRole(mapper.selectAll(accountRole));
+	}
+
+	public void loadRole(Role role, AccountRole accountRole) {
+		role.removeAllAccountRole();
+		accountRole.setRole(role);
+		role.setAccountRole(mapper.selectAll(accountRole));
+	}
 }

@@ -3,6 +3,7 @@ package org.activiti.account.service;
 import java.util.Collection;
 
 import org.activiti.account.mapper.ResetPasswordLogMapper;
+import org.activiti.account.persist.Account;
 import org.activiti.account.persist.ResetPasswordLog;
 import org.activiti.myExplorer.pojoHelper.ServiceSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,4 +55,9 @@ public class ResetPasswordLogService extends ServiceSupport<ResetPasswordLog> im
 		return mapper.count(t);
 	}
 
+	public void loadAccount(Account account, ResetPasswordLog resetPasswordLog) {
+		account.removeAllResetPasswordLog();
+		resetPasswordLog.setAccount(account);
+		account.setResetPasswordLog(mapper.selectAll(resetPasswordLog));
+	}
 }

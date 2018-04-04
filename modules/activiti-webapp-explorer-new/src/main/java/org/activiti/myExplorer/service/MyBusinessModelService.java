@@ -61,4 +61,9 @@ public class MyBusinessModelService extends ServiceSupport<MyBusinessModel> impl
 		return supportCount(mapper, t);
 	}
 
+	@Override
+	public MyBusinessModel selectForAssociation(Object id) {
+		return mapper.selectForAssociation(id);
+	}
+
 }

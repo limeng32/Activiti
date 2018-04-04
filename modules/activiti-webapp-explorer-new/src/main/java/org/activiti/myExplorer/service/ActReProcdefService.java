@@ -61,4 +61,9 @@ public class ActReProcdefService extends ServiceSupport<ActReProcdef> implements
 		return supportCount(mapper, t);
 	}
 
+	@Override
+	public ActReProcdef selectForAssociation(Object id) {
+		return mapper.selectForAssociation(id);
+	}
+
 }

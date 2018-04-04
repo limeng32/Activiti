@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.myExplorer.mapper.ActReModelMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSource:activiti_test):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>

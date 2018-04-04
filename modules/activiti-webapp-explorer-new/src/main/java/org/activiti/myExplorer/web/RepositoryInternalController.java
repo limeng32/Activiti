@@ -17,6 +17,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.activiti.account.persist.Account;
+import org.activiti.account.persist.AccountRole;
+import org.activiti.account.service.AccountRoleService;
+import org.activiti.account.service.AccountService;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.language.json.converter.BpmnJsonConverter;
@@ -58,6 +62,12 @@ import indi.mybatis.flying.pagination.PageParam;
 
 @Controller
 public class RepositoryInternalController {
+
+	@Autowired
+	private AccountService accountService;
+
+	@Autowired
+	private AccountRoleService accountRoleService;
 
 	@Autowired
 	private ProcessReturnService processReturnService;
@@ -117,6 +127,13 @@ public class RepositoryInternalController {
 			name = handleLikeValue(name);
 			l = repositoryService.createModelQuery().modelNameLike(name).listPage(first, pageSize);
 			c = (int) (repositoryService.createModelQuery().modelNameLike(name).count());
+		}
+		for (Model e : l) {
+			Account account = accountService.select(e.getTenantId());
+			if (account != null) {
+				accountRoleService.loadAccount(account, new AccountRole());
+			}
+			e.setTenant(account);
 		}
 		int maxPageNum = c / pageSize;
 		int pageNo = count + 1;

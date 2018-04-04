@@ -58,4 +58,6 @@ public interface Model {
   
   /** whether this model has editor source extra */
   boolean hasEditorSourceExtra();
+  
+  void setTenant(Object tenant);
 }
