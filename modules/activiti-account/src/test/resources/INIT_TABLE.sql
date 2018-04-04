@@ -102,14 +102,3 @@ create table role
    opLock               int ,
    primary key (role_id)
 );
-
-
-/*==============================================================*/
-/* Table: systemMonitor                                         */
-/*==============================================================*/
-create table systemMonitor
-(
-   systemMonitor_id     char(32) not null ,
-   heartBeatTime        datetime ,
-   primary key (systemMonitor_id)
-);

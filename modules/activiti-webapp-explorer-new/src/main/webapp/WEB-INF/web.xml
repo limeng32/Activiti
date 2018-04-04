@@ -16,6 +16,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			classpath:activiti-explorer-real.xml
+			classpath:activiti-account-real.xml
 		</param-value>
 	</context-param>
 

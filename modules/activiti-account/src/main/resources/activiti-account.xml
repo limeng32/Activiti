@@ -22,7 +22,7 @@
 		<property name="typeAliasesPackage" value="org.activiti.account" />
 	</bean>
 
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<bean id="mapperScannerConfigurerAccount" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="org.activiti.account.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAccount" />
 	</bean>

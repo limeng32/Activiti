@@ -322,6 +322,11 @@
 			<artifactId>activiti-remould-adapter</artifactId>
 			<version>${activiti.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-account</artifactId>
+			<version>${activiti.version}</version>
+		</dependency>
 
 		<!-- Database -->
 		<dependency>

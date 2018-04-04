@@ -4,7 +4,7 @@
 	<cache />
 
 	<select id="selectForAssociation" resultMap="result" useCache="false">
-		flying#{?}(smartDataSourceAccount:accountDb):select
+		flying#{?}(smartDataSourceAccount:activiti_account_test):select
 	</select>
 
 	<select id="select" resultMap="result">

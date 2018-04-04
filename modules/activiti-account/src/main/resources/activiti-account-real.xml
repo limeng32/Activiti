@@ -20,24 +20,17 @@
 
 	<bean id="dataSourceAccount" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="org.h2.jdbcx.JdbcDataSource" />
-		<property name="url"
-			value="jdbc:h2:mem:activiti_account_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
-		<property name="username" value="sa"></property>
-		<property name="password" value=""></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
+		<property name="username" value="${dbUser}"></property>
+		<property name="password" value="${dbPassword}"></property>
 	</bean>
-	<jdbc:initialize-database data-source="dataSourceAccount"
-		ignore-failures="ALL">
-		<jdbc:script location="classpath:/INIT_TABLE.sql"
-			encoding="UTF-8" />
-	</jdbc:initialize-database>
 	<bean id="smartDataSourceAccount"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource"
 		init-method="initConnection" destroy-method="closeConnection">
-		<property name="driverClassName" value="org.h2.jdbcx.JdbcDataSource" />
-		<property name="url"
-			value="jdbc:h2:mem:activiti_account_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
-		<property name="username" value="sa"></property>
-		<property name="password" value=""></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
+		<property name="username" value="${dbUser}"></property>
+		<property name="password" value="${dbPassword}"></property>
 	</bean>
 </beans>

@@ -142,5 +142,67 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.bpmn</include>
+					<include>**/*.drl</include>
+					<include>**/*.gif</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.jpg</include>
+					<include>**/*.json</include>
+					<include>**/*.png</include>
+					<include>**/*.properties</include>
+					<include>**/*.sql</include>
+					<include>**/*.svg</include>
+					<include>**/*.vm</include>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>${project.basedir}/src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.bpmn</include>
+					<include>**/*.drl</include>
+					<include>**/*.gif</include>
+					<include>**/*.jpeg</include>
+					<include>**/*.jpg</include>
+					<include>**/*.json</include>
+					<include>**/*.png</include>
+					<include>**/*.properties</include>
+					<include>**/*.sql</include>
+					<include>**/*.svg</include>
+					<include>**/*.vm</include>
+					<include>**/*.xml</include>
+				</includes>
+			</testResource>
+		</testResources>
 	</build>
+	<profiles>
+		<profile>
+			<activation>
+				<property>
+					<!-- TEST是133专用 -->
+					<name>TEST</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<id>test</id>
+			<properties>
+				<dbUrl>jdbc:mysql://10.0.209.148:3306/activiti_account_test?useUnicode=true</dbUrl>
+				<dbUrl2>characterEncoding=utf-8</dbUrl2>
+				<dbUser>sa</dbUser>
+				<dbPassword>!@#rjyjy</dbPassword>
+				<mailServerHost>10.0.209.105</mailServerHost>
+				<mailServerPassword>12345qwert</mailServerPassword>
+				<mailServerDefaultFrom>no-reply@chinaunicomryy.com</mailServerDefaultFrom>
+				<mailServerUsername>no-reply@chinaunicomryy.com</mailServerUsername>
+			</properties>
+		</profile>
+	</profiles>
 </project>
