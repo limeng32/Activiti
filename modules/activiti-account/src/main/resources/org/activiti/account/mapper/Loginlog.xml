@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.account.mapper.LoginlogMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSourceAccount:accountDb):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>
@@ -38,6 +42,7 @@
 	<resultMap id="result" type="Loginlog" autoMapping="true">
 		<id property="id" column="loginlog_id" />
 		<association property="account" javaType="Account"
-			select="org.activiti.account.mapper.AccountMapper.select" column="account_id" />
+			select="org.activiti.account.mapper.AccountMapper.selectForAssociation"
+			column="account_id" />
 	</resultMap>
 </mapper>

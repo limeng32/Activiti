@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.account.mapper.AccountMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSourceAccount:accountDb):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>
@@ -10,7 +14,7 @@
 	<select id="selectAll" resultMap="result">
 		flying:selectAll
 	</select>
-	
+
 	<select id="selectOne" resultMap="result">
 		flying:selectOne
 	</select>

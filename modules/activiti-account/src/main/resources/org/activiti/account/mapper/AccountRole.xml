@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.account.mapper.AccountRoleMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSourceAccount:accountDb):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>
@@ -38,8 +42,10 @@
 	<resultMap id="result" type="AccountRole" autoMapping="true">
 		<id property="id" column="accountrole_id" />
 		<association property="account" javaType="Account"
-			select="org.activiti.account.mapper.AccountMapper.select" column="account_id" />
+			select="org.activiti.account.mapper.AccountMapper.selectForAssociation"
+			column="account_id" />
 		<association property="role" javaType="Role"
-			select="org.activiti.account.mapper.RoleMapper.select" column="role_id" />
+			select="org.activiti.account.mapper.RoleMapper.selectForAssociation"
+			column="role_id" />
 	</resultMap>
 </mapper>

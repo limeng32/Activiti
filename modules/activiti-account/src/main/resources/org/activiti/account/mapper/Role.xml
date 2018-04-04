@@ -3,6 +3,10 @@
 <mapper namespace="org.activiti.account.mapper.RoleMapper">
 	<cache />
 
+	<select id="selectForAssociation" resultMap="result" useCache="false">
+		flying#{?}(smartDataSourceAccount:accountDb):select
+	</select>
+
 	<select id="select" resultMap="result">
 		flying#{?}:select
 	</select>
