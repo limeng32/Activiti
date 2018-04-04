@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum RoleStatus {
 
-	a("ADMIN", "管理员"), u("USER", "用户");
+	a("ADMIN", "管理员"), u("USER", "用户"), c("C", "集团接口人"), d("D", "形式审查人员"), e("E", "专家"), t("T", "分公司接口人");
 
 	private final String id;
 
