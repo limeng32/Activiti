@@ -7,6 +7,7 @@ import org.activiti.account.face.AccountBucketFace;
 import org.activiti.account.face.AccountFace;
 import org.activiti.account.face.AccountRoleFace;
 import org.activiti.account.face.LoginlogFace;
+import org.activiti.account.face.ResetPasswordLogFace;
 import org.activiti.account.statics.AccountStatus;
 import org.activiti.myExplorer.pojoHelper.PojoSupport;
 import org.apache.ibatis.type.JdbcType;
@@ -84,6 +85,8 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 	private Collection<AccountBucketFace> accountBucket;
 
 	private Collection<LoginlogFace> loginlog;
+
+	private Collection<ResetPasswordLogFace> resetPasswordLog;
 
 	@Override
 	public String getId() {
@@ -356,6 +359,77 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 				oldLoginlog.setAccount((Account) null);
 			}
 			loginlog.clear();
+		}
+	}
+
+	public java.util.Collection<ResetPasswordLogFace> getResetPasswordLog() {
+		if (resetPasswordLog == null)
+			resetPasswordLog = new java.util.LinkedHashSet<ResetPasswordLogFace>();
+		return resetPasswordLog;
+	}
+
+	@JSONField(serialize = false)
+	public java.util.Iterator<ResetPasswordLogFace> getIteratorResetPasswordLog() {
+		if (resetPasswordLog == null)
+			resetPasswordLog = new java.util.LinkedHashSet<ResetPasswordLogFace>();
+		return resetPasswordLog.iterator();
+	}
+
+	public void setResetPasswordLog(java.util.Collection<? extends ResetPasswordLogFace> newResetPasswordLog) {
+		removeAllResetPasswordLog();
+		for (java.util.Iterator<? extends ResetPasswordLogFace> iter = newResetPasswordLog.iterator(); iter.hasNext();)
+			addResetPasswordLog((ResetPasswordLogFace) iter.next());
+	}
+
+	public void addResetPasswordLog(ResetPasswordLogFace newResetPasswordLog) {
+		if (newResetPasswordLog == null)
+			return;
+		if (this.resetPasswordLog == null)
+			this.resetPasswordLog = new java.util.LinkedHashSet<ResetPasswordLogFace>();
+		if (!this.resetPasswordLog.contains(newResetPasswordLog)) {
+			this.resetPasswordLog.add(newResetPasswordLog);
+			newResetPasswordLog.setAccount(this);
+		} else {
+			for (ResetPasswordLogFace temp : this.resetPasswordLog) {
+				if (newResetPasswordLog.equals(temp)) {
+					if (temp != newResetPasswordLog) {
+						removeResetPasswordLog(temp);
+						this.resetPasswordLog.add(newResetPasswordLog);
+						newResetPasswordLog.setAccount(this);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeResetPasswordLog(ResetPasswordLogFace oldResetPasswordLog) {
+		if (oldResetPasswordLog == null)
+			return;
+		if (this.resetPasswordLog != null)
+			if (this.resetPasswordLog.contains(oldResetPasswordLog)) {
+				for (ResetPasswordLogFace temp : this.resetPasswordLog) {
+					if (oldResetPasswordLog.equals(temp)) {
+						if (temp != oldResetPasswordLog) {
+							temp.setAccount((Account) null);
+						}
+						break;
+					}
+				}
+				this.resetPasswordLog.remove(oldResetPasswordLog);
+				oldResetPasswordLog.setAccount((Account) null);
+			}
+	}
+
+	public void removeAllResetPasswordLog() {
+		if (resetPasswordLog != null) {
+			ResetPasswordLogFace oldResetPasswordLog;
+			for (java.util.Iterator<ResetPasswordLogFace> iter = getIteratorResetPasswordLog(); iter.hasNext();) {
+				oldResetPasswordLog = (ResetPasswordLogFace) iter.next();
+				iter.remove();
+				oldResetPasswordLog.setAccount((Account) null);
+			}
+			resetPasswordLog.clear();
 		}
 	}
 }
