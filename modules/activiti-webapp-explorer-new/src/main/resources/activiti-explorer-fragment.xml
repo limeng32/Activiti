@@ -58,7 +58,7 @@
 
 	<bean id="applicationContextProvder2" class="org.activiti.ApplicationContextProvider" />
 
-	<bean id="applicationContextProvder3" class="indi.mybatis.flying.ApplicationContextProvider" />
+	<bean id="applicationContextProvder3" class="indi.mybatis.flying.FlyingContextProvider" />
 
 	<bean class="org.activiti.myExplorer.demo.model.SIGroup" id="siGroup"></bean>
 </beans>
