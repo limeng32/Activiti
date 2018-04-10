@@ -18,12 +18,25 @@
 
 	<import resource="classpath:activiti-account.xml" />
 
-	<bean id="dataSourceAccount" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="dataSourceAccount" class="com.alibaba.druid.pool.DruidDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
+		
+		<property name="maxActive" value="20"></property>
+		<property name="initialSize" value="1"></property>
+		<property name="maxWait" value="60000"></property>
+		<property name="minIdle" value="1"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="60000"></property>
+		<property name="minEvictableIdleTimeMillis" value="300000"></property>
+		<property name="validationQuery" value="select 1"></property>
+		<property name="testWhileIdle" value="true"></property>
+		<property name="testOnBorrow" value="false"></property>
+		<property name="testOnReturn" value="false"></property>
+		<property name="poolPreparedStatements" value="true"></property>
+		<property name="maxOpenPreparedStatements" value="20"></property>
 	</bean>
 	<bean id="smartDataSourceAccount"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource"
