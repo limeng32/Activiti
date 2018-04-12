@@ -26,4 +26,11 @@
 		<property name="basePackage" value="org.activiti.account.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAccount" />
 	</bean>
+
+	<tx:annotation-driven transaction-manager="txManager" />
+	
+	<bean id="txManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSourceAccount"></property>
+	</bean>
 </beans>

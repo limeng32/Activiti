@@ -257,6 +257,9 @@
 			</activation>
 			<id>uat</id>
 			<properties>
+				<dbUser>sa</dbUser>
+				<dbPassword>rjyjy</dbPassword>
+				<dbUrl>jdbc:mysql://10.0.209.144:3306/activiti?useUnicode=true</dbUrl>
 			</properties>
 		</profile>
 		<profile>

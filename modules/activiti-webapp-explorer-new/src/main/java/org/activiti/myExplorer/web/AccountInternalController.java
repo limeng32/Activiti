@@ -10,14 +10,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.account.condition.ResetPasswordLogCondition;
+import org.activiti.account.exception.ActivitiAccountException;
 import org.activiti.account.exception.ActivitiAccountExceptionEnum;
 import org.activiti.account.persist.Account;
 import org.activiti.account.persist.AccountRole;
 import org.activiti.account.persist.ResetPasswordLog;
+import org.activiti.account.persist.Role;
 import org.activiti.account.service.AccountRoleService;
 import org.activiti.account.service.AccountService;
+import org.activiti.account.service.ActivitiAccountService;
 import org.activiti.account.service.ResetPasswordLogService;
+import org.activiti.account.service.RoleService;
+import org.activiti.account.statics.AccountStatus;
 import org.activiti.account.statics.ResetPasswordLogStatus;
+import org.activiti.account.statics.RoleStatus;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.service.RandomGenerator;
@@ -26,6 +32,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,7 +47,13 @@ public class AccountInternalController {
 	private AccountRoleService accountRoleService;
 
 	@Autowired
+	private ActivitiAccountService activitiAccountService;
+	
+	@Autowired
 	private ResetPasswordLogService resetPasswordLogService;
+
+	@Autowired
+	private RoleService roleService;
 
 	@Autowired
 	private ThirdVelocityEmailService thirdVelocityEmailService;
@@ -86,7 +99,6 @@ public class AccountInternalController {
 		CommonReturn cr = null;
 		Account ac = new Account();
 		ac.setEmail(email);
-		ac.setActivated(true);
 		int count = accountService.count(ac);
 		switch (count) {
 		case 0:
@@ -138,7 +150,6 @@ public class AccountInternalController {
 
 		Account ac = new Account();
 		ac.setEmail(email);
-		ac.setActivated(true);
 		int c = accountService.count(ac);
 		if (c > 0) {
 			cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.RepetitionEmail.description());
@@ -185,5 +196,101 @@ public class AccountInternalController {
 
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET }, value = "/activateAccount/{rplId}/{token}")
+	public String activateAccount(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@PathVariable("rplId") String rplId, @PathVariable("token") String token) {
+		CommonReturn cr = null;
+		ResetPasswordLog resetPasswordLog = resetPasswordLogService.select(rplId);
+		if (resetPasswordLog == null || !ResetPasswordLogStatus.i.equals(resetPasswordLog.getStatus())) {
+			/* 判断激活账号记录是否存在 */
+			cr = new CommonReturn(RetCode.EXCEPTION,
+					ActivitiAccountExceptionEnum.ActivateAccountLogNotExist.description());
+		} else if (resetPasswordLog.getTempAccount() == null || resetPasswordLog.getTempPassword() == null) {
+			/* 判断待激活的账号名和密码是否存在 */
+			cr = new CommonReturn(RetCode.EXCEPTION,
+					ActivitiAccountExceptionEnum.ActivatingAccountOrPasswordIsNull.description());
+		} else {
+			Date now = Calendar.getInstance().getTime();
+			if (now.getTime() > resetPasswordLog.getDueTime().getTime()) {
+				/* 判断当前时间在dueTime之前 */
+				cr = new CommonReturn(RetCode.EXCEPTION,
+						ActivitiAccountExceptionEnum.ActivateAccountUrlOverdue.description());
+			} else if (!token.equals(resetPasswordLog.getToken())) {
+				/* 判断token是否合法 */
+				cr = new CommonReturn(RetCode.EXCEPTION,
+						ActivitiAccountExceptionEnum.ActivateAccountTokenInvalid.description());
+			} else if (!resetPasswordLog.getAvailable()) {
+				/* 判断链接是否还没被使用 */
+				cr = new CommonReturn(RetCode.EXCEPTION,
+						ActivitiAccountExceptionEnum.ActivateAccountUrlUsed.description());
+			} else {
+				/* 判断密码是否已被时间上更近的激活请求激活过 */
+				ResetPasswordLogCondition rplc = new ResetPasswordLogCondition();
+				rplc.setAvailable(false);
+				rplc.setAccount(resetPasswordLog.getAccount());
+				rplc.setStatus(ResetPasswordLogStatus.i);
+				rplc.setEmailTimeGreaterThan(now);
+				int count = resetPasswordLogService.count(rplc);
+				if (count > 0) {
+					/* 已被时间上更近的激活请求激活过 */
+					cr = new CommonReturn(RetCode.EXCEPTION,
+							ActivitiAccountExceptionEnum.ANewerActivateAccountUrlWorks.description());
+				} else {
+					/* 可以开始激活 */
+					String tempAccount = resetPasswordLog.getTempAccount();
+					String tempPassword = resetPasswordLog.getTempPassword();
+					String name = resetPasswordLog.getName();
+					resetPasswordLog.setTempAccount("");
+					resetPasswordLog.setTempPassword("");
+					resetPasswordLog.setAvailable(false);
+					int temp = resetPasswordLogService.update(resetPasswordLog);
+					if (temp != 1) {
+						cr = new CommonReturn(RetCode.EXCEPTION,
+								ActivitiAccountExceptionEnum.ActivateAccountFail.description());
+					} else {
+						/* 激活成功 */
+						cr = signUp(tempAccount, tempPassword, name);
+					}
+				}
+			}
+		}
+//		mm.addAttribute("_content", cr);
+		if (RetCode.SUCCESS.equals(cr.getRetCode())) {
+			return "redirect:../../";
+		} else {
+			return "redirect:../../error/" ;
+		}
+//		return UNIQUE_PATH;
+	}
+
+	public CommonReturn signUp(String accountName, String password, String name) {
+		CommonReturn cr = null;
+
+		Account account = new Account();
+		account.setEmail(accountName);
+		account.setPassword(password);
+		account.setName(name);
+		account.setActivated(true);
+		account.setStatus(AccountStatus.a);
+		/* 新增账号的默认角色为TRANSMITTER */
+		Role rc = new Role();
+		rc.setValue(RoleStatus.u);
+		Collection<Role> c = roleService.selectAll(rc);
+		AccountRole accountRole = new AccountRole();
+		if (c.size() > 0) {
+			Role[] roles = c.toArray(new Role[c.size()]);
+			accountRole.setAccount(account);
+			accountRole.setRole(roles[0]);
+		}
+		/* 新增账号的默认所属单位为“客人” */
+		try {
+			activitiAccountService.insertAccountTransactive(account, accountRole);
+			cr = new CommonReturn(RetCode.SUCCESS, "账号已成功激活");
+		} catch (ActivitiAccountException e) {
+			cr = new CommonReturn(RetCode.EXCEPTION, e.getMessage());
+		}
+		return cr;
 	}
 }
