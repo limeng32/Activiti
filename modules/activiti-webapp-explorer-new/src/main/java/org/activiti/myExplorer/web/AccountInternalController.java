@@ -256,13 +256,11 @@ public class AccountInternalController {
 				}
 			}
 		}
-//		mm.addAttribute("_content", cr);
 		if (RetCode.SUCCESS.equals(cr.getRetCode())) {
-			return "redirect:../../";
+			return "redirect:../../../../";
 		} else {
-			return "redirect:../../error/" ;
+			return "redirect:../../../../error" ;
 		}
-//		return UNIQUE_PATH;
 	}
 
 	public CommonReturn signUp(String accountName, String password, String name) {

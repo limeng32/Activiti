@@ -24,7 +24,7 @@
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
-		
+
 		<property name="maxActive" value="20"></property>
 		<property name="initialSize" value="1"></property>
 		<property name="maxWait" value="60000"></property>
@@ -45,8 +45,9 @@
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
+		<property name="suppressClose" value="true" />
 	</bean>
-	
+
 	<bean id="demoDataConfiguration" class="org.activiti.explorer.conf.DemoDataConfiguration">
 		<property name="createDemoUsers" value="false" />
 		<property name="createDemoDefinitions" value="false" />

@@ -45,5 +45,6 @@
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
+		<property name="suppressClose" value="true" />
 	</bean>
 </beans>
