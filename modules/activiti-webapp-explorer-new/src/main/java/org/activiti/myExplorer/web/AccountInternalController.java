@@ -258,7 +258,9 @@ public class AccountInternalController {
 			}
 		}
 		if (RetCode.SUCCESS.equals(cr.getRetCode())) {
-			return "redirect:http://localhost:8000/#/user/global-success";
+			System.out.println(":::");
+			return "redirect:http://localhost:8000/#/user/global-success?status="
+					+ ActivitiAccountExceptionEnum.ActivateAccountSuccess.name();
 		} else {
 			return "redirect:../../../../error";
 		}
