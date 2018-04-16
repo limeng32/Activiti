@@ -48,7 +48,7 @@ public class AccountInternalController {
 
 	@Autowired
 	private ActivitiAccountService activitiAccountService;
-	
+
 	@Autowired
 	private ResetPasswordLogService resetPasswordLogService;
 
@@ -178,9 +178,10 @@ public class AccountInternalController {
 				resetPasswordLog.setTempPassword(DigestUtils.md5Hex(password));
 				resetPasswordLogService.insert(resetPasswordLog);
 
-				String url = "http://" + resetPasswordLog.getId() + "/" + randomToken;
+				String url = "http://localhost:8000" + "/api/activateAccount/" + resetPasswordLog.getId() + "/"
+						+ randomToken;
 				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("systemName", "科技评奖系统");
+				model.put("systemName", "工作流系统");
 				model.put("serviceName", "激活账号服务");
 				String userName = resetPasswordLog.getName();
 				model.put("userName", userName);
@@ -257,9 +258,9 @@ public class AccountInternalController {
 			}
 		}
 		if (RetCode.SUCCESS.equals(cr.getRetCode())) {
-			return "redirect:../../../../";
+			return "redirect:http://localhost:8000/#/user/global-success";
 		} else {
-			return "redirect:../../../../error" ;
+			return "redirect:../../../../error";
 		}
 	}
 

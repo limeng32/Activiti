@@ -21,7 +21,7 @@
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver">
 		</property>
-		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
+		<property name="url" value="${dbUrl}&amp;${dbUrl2}&amp;${dbUrl3}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
 

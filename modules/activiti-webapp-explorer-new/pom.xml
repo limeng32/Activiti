@@ -227,6 +227,7 @@
 				<sql.uuid>UUID()</sql.uuid>
 				<dbUrl>jdbc:mysql://10.0.209.148:3306/activiti_volatile?useUnicode=true</dbUrl>
 				<dbUrl2>characterEncoding=utf-8</dbUrl2>
+				<dbUrl3>autoReconnect=true</dbUrl3>
 				<dbUser>sa</dbUser>
 				<dbPassword>!@#rjyjy</dbPassword>
 				<mailServerHost>10.0.209.105</mailServerHost>
