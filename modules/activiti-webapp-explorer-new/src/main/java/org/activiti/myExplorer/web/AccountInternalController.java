@@ -206,26 +206,23 @@ public class AccountInternalController {
 		ResetPasswordLog resetPasswordLog = resetPasswordLogService.select(rplId);
 		if (resetPasswordLog == null || !ResetPasswordLogStatus.i.equals(resetPasswordLog.getStatus())) {
 			/* 判断激活账号记录是否存在 */
-			cr = new CommonReturn(RetCode.EXCEPTION,
-					ActivitiAccountExceptionEnum.ActivateAccountLogNotExist.description());
+			cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.ActivateAccountLogNotExist.name());
 		} else if (resetPasswordLog.getTempAccount() == null || resetPasswordLog.getTempPassword() == null) {
 			/* 判断待激活的账号名和密码是否存在 */
 			cr = new CommonReturn(RetCode.EXCEPTION,
-					ActivitiAccountExceptionEnum.ActivatingAccountOrPasswordIsNull.description());
+					ActivitiAccountExceptionEnum.ActivatingAccountOrPasswordIsNull.name());
 		} else {
 			Date now = Calendar.getInstance().getTime();
 			if (now.getTime() > resetPasswordLog.getDueTime().getTime()) {
 				/* 判断当前时间在dueTime之前 */
-				cr = new CommonReturn(RetCode.EXCEPTION,
-						ActivitiAccountExceptionEnum.ActivateAccountUrlOverdue.description());
+				cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.ActivateAccountUrlOverdue.name());
 			} else if (!token.equals(resetPasswordLog.getToken())) {
 				/* 判断token是否合法 */
 				cr = new CommonReturn(RetCode.EXCEPTION,
-						ActivitiAccountExceptionEnum.ActivateAccountTokenInvalid.description());
+						ActivitiAccountExceptionEnum.ActivateAccountTokenInvalid.name());
 			} else if (!resetPasswordLog.getAvailable()) {
 				/* 判断链接是否还没被使用 */
-				cr = new CommonReturn(RetCode.EXCEPTION,
-						ActivitiAccountExceptionEnum.ActivateAccountUrlUsed.description());
+				cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.ActivateAccountUrlUsed.name());
 			} else {
 				/* 判断密码是否已被时间上更近的激活请求激活过 */
 				ResetPasswordLogCondition rplc = new ResetPasswordLogCondition();
@@ -237,7 +234,7 @@ public class AccountInternalController {
 				if (count > 0) {
 					/* 已被时间上更近的激活请求激活过 */
 					cr = new CommonReturn(RetCode.EXCEPTION,
-							ActivitiAccountExceptionEnum.ANewerActivateAccountUrlWorks.description());
+							ActivitiAccountExceptionEnum.ANewerActivateAccountUrlWorks.name());
 				} else {
 					/* 可以开始激活 */
 					String tempAccount = resetPasswordLog.getTempAccount();
@@ -249,7 +246,7 @@ public class AccountInternalController {
 					int temp = resetPasswordLogService.update(resetPasswordLog);
 					if (temp != 1) {
 						cr = new CommonReturn(RetCode.EXCEPTION,
-								ActivitiAccountExceptionEnum.ActivateAccountFail.description());
+								ActivitiAccountExceptionEnum.ActivateAccountFail.name());
 					} else {
 						/* 激活成功 */
 						cr = signUp(tempAccount, tempPassword, name);
@@ -258,11 +255,10 @@ public class AccountInternalController {
 			}
 		}
 		if (RetCode.SUCCESS.equals(cr.getRetCode())) {
-			System.out.println(":::");
 			return "redirect:http://localhost:8000/#/user/global-success?status="
 					+ ActivitiAccountExceptionEnum.ActivateAccountSuccess.name();
 		} else {
-			return "redirect:../../../../error";
+			return "redirect:http://localhost:8000/#/user/global-error?status=" + cr.getRetVal();
 		}
 	}
 
