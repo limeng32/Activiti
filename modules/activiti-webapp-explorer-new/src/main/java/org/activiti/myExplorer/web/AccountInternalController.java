@@ -14,11 +14,13 @@ import org.activiti.account.exception.ActivitiAccountException;
 import org.activiti.account.exception.ActivitiAccountExceptionEnum;
 import org.activiti.account.persist.Account;
 import org.activiti.account.persist.AccountRole;
+import org.activiti.account.persist.Loginlog;
 import org.activiti.account.persist.ResetPasswordLog;
 import org.activiti.account.persist.Role;
 import org.activiti.account.service.AccountRoleService;
 import org.activiti.account.service.AccountService;
 import org.activiti.account.service.ActivitiAccountService;
+import org.activiti.account.service.LoginlogService;
 import org.activiti.account.service.ResetPasswordLogService;
 import org.activiti.account.service.RoleService;
 import org.activiti.account.statics.AccountStatus;
@@ -52,6 +54,9 @@ public class AccountInternalController {
 
 	@Autowired
 	private ActivitiAccountService activitiAccountService;
+
+	@Autowired
+	private LoginlogService loginlogService;
 
 	@Autowired
 	private ResetPasswordLogService resetPasswordLogService;
@@ -128,7 +133,33 @@ public class AccountInternalController {
 		case 1:
 			Account account = accountC.toArray(new Account[1])[0];
 			if (account.getActivated()) {
-				cr = new CommonReturn(RetCode.SUCCESS, "");
+				/* 开始插入日志 */
+				Loginlog lc = new Loginlog();
+				Date now = Calendar.getInstance().getTime();
+				lc.setLoginDate(now);
+				loginlogService.loadAccount(account, lc);
+				int c = account.getLoginlog().size();
+				switch (c) {
+				case 0:
+					Loginlog l = new Loginlog();
+					l.setAccount(account);
+					l.setLoginIP(request.getRemoteAddr());
+					l.setLoginDate(now);
+					try {
+						activitiAccountService.insertLoginlogTransactive(l);
+						cr = new CommonReturn(RetCode.SUCCESS, "");
+					} catch (ActivitiAccountException e) {
+						cr = new CommonReturn(RetCode.EXCEPTION, e.getMessage());
+					}
+					break;
+				case 1:
+					cr = new CommonReturn(RetCode.SUCCESS, "");
+					break;
+				default:
+					cr = new CommonReturn(RetCode.EXCEPTION,
+							ActivitiAccountExceptionEnum.FindRepeatedLoginLog.description());
+					break;
+				}
 			} else {
 				cr = new CommonReturn(RetCode.EXCEPTION,
 						ActivitiAccountExceptionEnum.YourAccountNeedActivate.description());

@@ -4,6 +4,7 @@ import org.activiti.account.exception.ActivitiAccountException;
 import org.activiti.account.exception.ActivitiAccountExceptionEnum;
 import org.activiti.account.persist.Account;
 import org.activiti.account.persist.AccountRole;
+import org.activiti.account.persist.Loginlog;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class ActivitiAccountService {
 	@Autowired
 	private ResetPasswordLogService resetPasswordLogService;
 
-	@Transactional(rollbackFor = {
+	@Transactional(value = "txManagerAccount", rollbackFor = {
 			ActivitiAccountException.class }, readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	/** 新增account时确保email是唯一的 */
 	public void insertAccountTransactive(Account account, AccountRole accountRole) throws ActivitiAccountException {
@@ -48,4 +49,21 @@ public class ActivitiAccountService {
 		accountRoleService.insert(accountRole);
 	}
 
+	@Transactional(value = "txManagerAccount", rollbackFor = {
+			ActivitiAccountException.class }, readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	public void insertLoginlogTransactive(Loginlog loginlog) throws ActivitiAccountException {
+		loginlogService.insert(loginlog);
+		Account ac = new Account();
+		ac.setId((String) loginlog.getAccount().getId());
+		Loginlog lc = new Loginlog();
+		lc.setAccount(ac);
+		lc.setLoginDate(loginlog.getLoginDate());
+		int count = loginlogService.count(lc);
+		switch (count) {
+		case 1:
+			return;
+		default:
+			throw new ActivitiAccountException(ActivitiAccountExceptionEnum.FailedToInsertLoginLog.toString());
+		}
+	}
 }

@@ -27,9 +27,9 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAccount" />
 	</bean>
 
-	<tx:annotation-driven transaction-manager="txManager" />
+	<tx:annotation-driven transaction-manager="txManagerAccount" />
 	
-	<bean id="txManager"
+	<bean id="txManagerAccount"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSourceAccount"></property>
 	</bean>
