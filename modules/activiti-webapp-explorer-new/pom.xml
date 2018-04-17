@@ -234,6 +234,8 @@
 				<mailServerPassword>12345qwert</mailServerPassword>
 				<mailServerDefaultFrom>no-reply@chinaunicomryy.com</mailServerDefaultFrom>
 				<mailServerUsername>no-reply@chinaunicomryy.com</mailServerUsername>
+				<account.url>http://localhost:8000/</account.url>
+				<microservice.url>http://localhost:8078/activiti-explorer/</microservice.url>
 			</properties>
 		</profile>
 		<profile>
@@ -247,6 +249,7 @@
 			<id>test</id>
 			<properties>
 				<dbUrl>jdbc:mysql://10.0.209.148:3306/activiti_test?useUnicode=true</dbUrl>
+				<account.url>http://localhost:7890/</account.url>
 			</properties>
 		</profile>
 		<profile>

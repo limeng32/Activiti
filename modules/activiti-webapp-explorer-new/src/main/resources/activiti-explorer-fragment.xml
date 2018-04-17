@@ -56,6 +56,11 @@
 		<property name="xmlEncoding" value="utf-8" />
 	</bean>
 
+	<bean id="activitiConfig" class="org.activiti.myExplorer.config.ActivitiConfig">
+		<property name="accountUrl" value="${account.url}" />
+		<property name="microserviceUrl" value="${microservice.url}" />
+	</bean>
+
 	<bean id="applicationContextProvder2" class="org.activiti.ApplicationContextProvider" />
 
 	<bean id="applicationContextProvder3" class="indi.mybatis.flying.FlyingContextProvider" />

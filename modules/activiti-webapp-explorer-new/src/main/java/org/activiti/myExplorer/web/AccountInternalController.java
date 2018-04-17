@@ -24,6 +24,7 @@ import org.activiti.account.service.RoleService;
 import org.activiti.account.statics.AccountStatus;
 import org.activiti.account.statics.ResetPasswordLogStatus;
 import org.activiti.account.statics.RoleStatus;
+import org.activiti.myExplorer.config.ActivitiConfig;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.service.RandomGenerator;
@@ -39,6 +40,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AccountInternalController {
+
+	@Autowired
+	private ActivitiConfig activitiConfig;
 
 	@Autowired
 	private AccountService accountService;
@@ -178,7 +182,7 @@ public class AccountInternalController {
 				resetPasswordLog.setTempPassword(DigestUtils.md5Hex(password));
 				resetPasswordLogService.insert(resetPasswordLog);
 
-				String url = "http://localhost:8000" + "/api/activateAccount/" + resetPasswordLog.getId() + "/"
+				String url = activitiConfig.getMicroserviceUrl() + "s/activateAccount/" + resetPasswordLog.getId() + "/"
 						+ randomToken;
 				Map<String, Object> model = new HashMap<String, Object>();
 				model.put("systemName", "工作流系统");
@@ -255,10 +259,10 @@ public class AccountInternalController {
 			}
 		}
 		if (RetCode.SUCCESS.equals(cr.getRetCode())) {
-			return "redirect:http://localhost:8000/#/user/global-success?status="
+			return "redirect:" + activitiConfig.getAccountUrl() + "#/user/global-success?status="
 					+ ActivitiAccountExceptionEnum.ActivateAccountSuccess.name();
 		} else {
-			return "redirect:http://localhost:8000/#/user/global-error?status=" + cr.getRetVal();
+			return "redirect:" + activitiConfig.getAccountUrl() + "#/user/global-error?status=" + cr.getRetVal();
 		}
 	}
 
