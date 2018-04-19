@@ -49,14 +49,14 @@ public class ActReProcdefTest {
 	@Test
 	public void test() {
 		Assert.assertNotNull(repositoryService);
-		redisCacheManger.setRedisCacheInfo("qwe", "asdfg11");
+		redisCacheManger.setRedisCacheInfo("中", "李");
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("::"+redisCacheManger.getRedisCacheInfo("qwe"));
+		System.out.println("::"+redisCacheManger.getRedisCacheInfo("中"));
 	}
 
 	@Test

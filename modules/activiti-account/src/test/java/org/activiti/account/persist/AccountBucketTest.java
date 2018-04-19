@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,10 +36,35 @@ public class AccountBucketTest {
 	@Autowired
 	private AccountBucketService accountBucketService;
 
+	@Autowired
+	private RedisTemplate<String, String> redisTemplateString;
+
+	@Autowired
+	private RedisTemplate<String, Integer> redisTemplateInteger;
+
 	@Test
 	public void test() {
 		Assert.assertNotNull(dataSourceAccount);
 		Assert.assertNotNull(accountBucketService);
+		String paramK = "中3";
+		String paramV = "英3";
+		redisTemplateString.opsForValue().set(paramK, paramV);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("::" + redisTemplateString.opsForValue().get(paramK));
+		redisTemplateInteger.opsForValue().set("asd", 12);
+		redisTemplateInteger.delete("asd");
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("::" + redisTemplateString.opsForValue().get("asd"));
 	}
 
 	@Test
@@ -49,7 +75,7 @@ public class AccountBucketTest {
 		AccountBucket accountBucket = accountBucketService.select("ab1");
 		Assert.assertEquals("a", accountBucket.getNickname());
 		Assert.assertEquals("alice", accountBucket.getAccount().getName());
-		
+
 		AccountBucket accountBucket2 = accountBucketService.select("ab2");
 		accountBucket2.setUploadedSize(200L);
 		accountBucketService.update(accountBucket2);
