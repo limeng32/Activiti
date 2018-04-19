@@ -22,9 +22,8 @@
 	<bean id="jedisConnectionFactory"
 		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
 		destroy-method="destroy">
+		<constructor-arg ref="redisSentinelConfiguration" />
 		<property name="poolConfig" ref="jedisPoolConfigAccount"></property>
-		<property name="hostName" value="${redis.ip}"></property>
-		<property name="port" value="${redis.port}"></property>
 		<property name="password" value="${redis.password}"></property>
 		<property name="timeout" value="15000"></property>
 		<property name="usePool" value="true"></property>
@@ -54,7 +53,23 @@
 		</property>
 	</bean>
 
-	<bean id="jedisConnFactory"
-		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-		p:usePool="true" />
+	<bean id="redisSentinelConfiguration"
+		class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+		<property name="master">
+			<bean class="org.springframework.data.redis.connection.RedisNode">
+				<property name="name" value="proj_dev_master">
+				</property>
+			</bean>
+		</property>
+		<property name="sentinels">
+			<set>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.ip}">
+					</constructor-arg>
+					<constructor-arg name="port" value="${redis_sentinel.port}">
+					</constructor-arg>
+				</bean>
+			</set>
+		</property>
+	</bean>
 </beans>

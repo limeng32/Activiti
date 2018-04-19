@@ -46,8 +46,8 @@ public class AccountBucketTest {
 	public void test() {
 		Assert.assertNotNull(dataSourceAccount);
 		Assert.assertNotNull(accountBucketService);
-		String paramK = "中3";
-		String paramV = "英3";
+		String paramK = "中5";
+		String paramV = "英5";
 		redisTemplateString.opsForValue().set(paramK, paramV);
 		try {
 			Thread.sleep(500);
