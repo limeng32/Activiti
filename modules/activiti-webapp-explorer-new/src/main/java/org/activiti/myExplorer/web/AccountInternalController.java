@@ -89,7 +89,7 @@ public class AccountInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.POST }, value = "/loginCheckEmail", params = { "value" })
+	@RequestMapping(method = { RequestMethod.POST }, value = "/noSession/loginCheckEmail", params = { "value" })
 	public String loginCheckEmail(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "value") String email) {
 		CommonReturn cr = null;

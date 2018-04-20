@@ -80,6 +80,7 @@
 
 	<servlet>
 		<servlet-name>service</servlet-name>
+		<description>activiti modeler use this</description>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
@@ -114,5 +115,14 @@
 	<filter-mapping>
 		<filter-name>UIFilter</filter-name>
 		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>loginFilter</filter-name>
+		<filter-class>org.activiti.myExplorer.filter.LoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/s/*</url-pattern>
 	</filter-mapping>
 </web-app>

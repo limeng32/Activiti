@@ -9,7 +9,7 @@ package org.activiti.myExplorer.model;
  */
 public enum RetCode {
 
-	ERROR("0"), SUCCESS("1"), EXCEPTION("2");
+	ERROR("0"), SUCCESS("1"), EXCEPTION("2"), NOSESSION("3");
 
 	private final String code;
 
