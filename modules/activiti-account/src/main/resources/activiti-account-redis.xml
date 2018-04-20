@@ -30,6 +30,17 @@
 		<property name="database" value="14"></property>
 	</bean>
 
+	<bean id="redisTemplateJson" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="jedisConnectionFactory"></property>
+		<property name="keySerializer">
+			<bean
+				class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+		</property>
+		<property name="valueSerializer">
+			<bean class="org.activiti.account.cache.FastJsonRedisSerializer" />
+		</property>
+	</bean>
+
 	<bean id="redisTemplateString" class="org.springframework.data.redis.core.RedisTemplate">
 		<property name="connectionFactory" ref="jedisConnectionFactory"></property>
 		<property name="keySerializer">

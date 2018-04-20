@@ -48,7 +48,7 @@ public class Account extends PojoSupport<Account> implements Serializable, Accou
 	 * 登录密码
 	 * 
 	 */
-	@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR)
+	@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = "noPassword")
 	private java.lang.String password;
 
 	/**

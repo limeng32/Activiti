@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,12 +28,14 @@ import org.activiti.account.statics.AccountStatus;
 import org.activiti.account.statics.ResetPasswordLogStatus;
 import org.activiti.account.statics.RoleStatus;
 import org.activiti.myExplorer.config.ActivitiConfig;
+import org.activiti.myExplorer.model.AccountSession;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.service.RandomGenerator;
 import org.activiti.myExplorer.service.ThirdVelocityEmailService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,6 +69,9 @@ public class AccountInternalController {
 
 	@Autowired
 	private ThirdVelocityEmailService thirdVelocityEmailService;
+
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplateJson;
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
@@ -153,7 +159,15 @@ public class AccountInternalController {
 					}
 					break;
 				case 1:
-					cr = new CommonReturn(RetCode.SUCCESS, "");
+					/* 写入session */
+					account.removeAllLoginlog();
+					boolean b = saveSession(account);
+					if (b) {
+						cr = new CommonReturn(RetCode.SUCCESS, "");
+					} else {
+						cr = new CommonReturn(RetCode.EXCEPTION,
+								ActivitiAccountExceptionEnum.SessionSaveFail.description());
+					}
 					break;
 				default:
 					cr = new CommonReturn(RetCode.EXCEPTION,
@@ -297,7 +311,23 @@ public class AccountInternalController {
 		}
 	}
 
-	public CommonReturn signUp(String accountName, String password, String name) {
+	private boolean saveSession(Account account) {
+		Date now = Calendar.getInstance().getTime();
+		Date expirationTime = new Date(now.getTime() + 60000);
+		AccountSession accountSession = new AccountSession(account, expirationTime);
+		redisTemplateJson.opsForValue().set(account.getId(), accountSession);
+		boolean b = redisTemplateJson.expire(account.getId(), 60, TimeUnit.SECONDS);
+		return b;
+	}
+
+	public String getSession(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) {
+		Object o = redisTemplateJson.opsForValue().get(id);
+		mm.addAttribute("_content", o);
+		return UNIQUE_PATH;
+	}
+
+	private CommonReturn signUp(String accountName, String password, String name) {
 		CommonReturn cr = null;
 
 		Account account = new Account();
