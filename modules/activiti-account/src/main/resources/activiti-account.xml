@@ -13,8 +13,6 @@
        	http://www.springframework.org/schema/tx
        	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-	<import resource="classpath:activiti-account-redis.xml" />
-
 	<context:component-scan base-package="org.activiti.account.*, indi.mybatis.flying" />
 
 	<bean id="sqlSessionFactoryAccount" class="org.mybatis.spring.SqlSessionFactoryBean">

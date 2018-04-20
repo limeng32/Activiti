@@ -1,7 +1,6 @@
 package org.activiti.myExplorer.service;
 
 import org.activiti.engine.RepositoryService;
-import org.activiti.myExplorer.cache.RedisCacheManger;
 import org.activiti.myExplorer.persist.ActReModel;
 import org.activiti.myExplorer.persist.ActReProcdef;
 import org.activiti.myExplorer.persist.MyBusinessModel;
@@ -42,21 +41,10 @@ public class ActReProcdefTest {
 
 	@Autowired
 	private RepositoryService repositoryService;
-	
-	@Autowired
-	private RedisCacheManger redisCacheManger;
 
 	@Test
 	public void test() {
 		Assert.assertNotNull(repositoryService);
-		redisCacheManger.setRedisCacheInfo("中", "李");
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("::"+redisCacheManger.getRedisCacheInfo("中"));
 	}
 
 	@Test

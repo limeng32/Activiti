@@ -14,9 +14,9 @@
        	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
 	<bean id="jedisPoolConfigAccount" class="redis.clients.jedis.JedisPoolConfig">
-		<property name="maxTotal" value="32"></property>
-		<property name="maxIdle" value="6"></property>
-		<property name="testOnBorrow" value="true" />
+		<property name="maxTotal" value="${redis.pool.maxTotal}"></property>
+		<property name="maxIdle" value="${redis.pool.maxIdle}"></property>
+		<property name="testOnBorrow" value="${redis.pool.testOnBorrow}" />
 	</bean>
 
 	<bean id="jedisConnectionFactory"
@@ -65,6 +65,18 @@
 			<set>
 				<bean class="org.springframework.data.redis.connection.RedisNode">
 					<constructor-arg name="host" value="${redis.ip}">
+					</constructor-arg>
+					<constructor-arg name="port" value="${redis_sentinel.port}">
+					</constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.ip2}">
+					</constructor-arg>
+					<constructor-arg name="port" value="${redis_sentinel.port}">
+					</constructor-arg>
+				</bean>
+				<bean class="org.springframework.data.redis.connection.RedisNode">
+					<constructor-arg name="host" value="${redis.ip3}">
 					</constructor-arg>
 					<constructor-arg name="port" value="${redis_sentinel.port}">
 					</constructor-arg>

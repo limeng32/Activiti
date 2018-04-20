@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,35 +36,11 @@ public class AccountBucketTest {
 	@Autowired
 	private AccountBucketService accountBucketService;
 
-	@Autowired
-	private RedisTemplate<String, String> redisTemplateString;
-
-	@Autowired
-	private RedisTemplate<String, Integer> redisTemplateInteger;
-
 	@Test
+	@IfProfileValue(name = "REDIS", value = "true")
 	public void test() {
 		Assert.assertNotNull(dataSourceAccount);
 		Assert.assertNotNull(accountBucketService);
-		String paramK = "中5";
-		String paramV = "英5";
-		redisTemplateString.opsForValue().set(paramK, paramV);
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("::" + redisTemplateString.opsForValue().get(paramK));
-		redisTemplateInteger.opsForValue().set("asd", 12);
-		redisTemplateInteger.delete("asd");
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("::" + redisTemplateString.opsForValue().get("asd"));
 	}
 
 	@Test
