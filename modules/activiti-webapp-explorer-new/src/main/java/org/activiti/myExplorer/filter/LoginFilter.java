@@ -42,7 +42,8 @@ public class LoginFilter implements Filter {
 		if (path.startsWith("/s/noSession")) {
 			chain.doFilter(request, response);
 		} else {
-			if (redisTemplateJson.opsForValue().get("asd") == null) {
+			String _uid = req.getParameter("_uid");
+			if (_uid == null || redisTemplateJson.opsForValue().get(_uid) == null) {
 				CommonReturn cr = new CommonReturn(RetCode.NOSESSION, ActivitiAccountExceptionEnum.NoSession.name());
 				doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
 			} else {

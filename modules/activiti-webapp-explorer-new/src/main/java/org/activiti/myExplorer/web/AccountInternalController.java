@@ -27,12 +27,12 @@ import org.activiti.account.service.RoleService;
 import org.activiti.account.statics.AccountStatus;
 import org.activiti.account.statics.ResetPasswordLogStatus;
 import org.activiti.account.statics.RoleStatus;
+import org.activiti.myExplorer.commonservice.RandomGenerator;
+import org.activiti.myExplorer.commonservice.ThirdVelocityEmailService;
 import org.activiti.myExplorer.config.ActivitiConfig;
 import org.activiti.myExplorer.model.AccountSession;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
-import org.activiti.myExplorer.commonservice.RandomGenerator;
-import org.activiti.myExplorer.commonservice.ThirdVelocityEmailService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -164,7 +164,7 @@ public class AccountInternalController {
 					account.removeAllLoginlog();
 					boolean b = saveSession(account);
 					if (b) {
-						cr = new CommonReturn(RetCode.SUCCESS, "");
+						cr = new CommonReturn(RetCode.SUCCESS, account.getEmail());
 					} else {
 						cr = new CommonReturn(RetCode.EXCEPTION,
 								ActivitiAccountExceptionEnum.SessionSaveFail.description());
@@ -317,8 +317,8 @@ public class AccountInternalController {
 		Date now = Calendar.getInstance().getTime();
 		Date expirationTime = new Date(now.getTime() + 60000);
 		AccountSession accountSession = new AccountSession(account, expirationTime);
-		redisTemplateJson.opsForValue().set(account.getId(), accountSession);
-		boolean b = redisTemplateJson.expire(account.getId(), 60, TimeUnit.SECONDS);
+		redisTemplateJson.opsForValue().set(account.getEmail(), accountSession);
+		boolean b = redisTemplateJson.expire(account.getEmail(), 60, TimeUnit.SECONDS);
 		return b;
 	}
 
