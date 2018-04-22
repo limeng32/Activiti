@@ -1,4 +1,4 @@
-package org.activiti.myExplorer.service;
+package org.activiti.myExplorer.commonservice;
 
 import java.io.File;
 import java.util.Map;

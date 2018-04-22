@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
+@SuppressWarnings("unchecked")
 public class LoginFilter implements Filter {
 
 	@Override
@@ -25,12 +26,19 @@ public class LoginFilter implements Filter {
 		// Just make sonarqube happy
 	}
 
+	private static RedisTemplate<String, Object> redisTemplateJson;
+
+	static {
+		redisTemplateJson = (RedisTemplate<String, Object>) ApplicationContextProvider.getApplicationContext()
+				.getBean("redisTemplateJson", RedisTemplate.class);
+	}
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String path = req.getRequestURI().substring(req.getContextPath().length());
-		System.out.println("::" + path + " " + getRedisTemplateJson());
+		System.out.println("1::" + path + " " + redisTemplateJson);
 		if (path.startsWith("/s/noSession")) {
 			System.out.println("::");
 			// request.getRequestDispatcher("/#/user/global-error").forward(request,
@@ -45,12 +53,6 @@ public class LoginFilter implements Filter {
 	@Override
 	public void destroy() {
 		// Just make sonarqube happy
-	}
-
-	@SuppressWarnings("unchecked")
-	private RedisTemplate<String, Object> getRedisTemplateJson() {
-		return (RedisTemplate<String, Object>) ApplicationContextProvider.getApplicationContext()
-				.getBean("redisTemplateJson", RedisTemplate.class);
 	}
 
 	private static void doWriteResp(ServletResponse response, String toWriteStr) throws IOException {
