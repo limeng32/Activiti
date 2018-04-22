@@ -164,7 +164,7 @@ public class AccountInternalController {
 					account.removeAllLoginlog();
 					boolean b = saveSession(account);
 					if (b) {
-						cr = new CommonReturn(RetCode.SUCCESS, account.getEmail());
+						cr = new CommonReturn(RetCode.SUCCESS, account.getId());
 					} else {
 						cr = new CommonReturn(RetCode.EXCEPTION,
 								ActivitiAccountExceptionEnum.SessionSaveFail.description());
@@ -317,8 +317,8 @@ public class AccountInternalController {
 		Date now = Calendar.getInstance().getTime();
 		Date expirationTime = new Date(now.getTime() + 60000);
 		AccountSession accountSession = new AccountSession(account, expirationTime);
-		redisTemplateJson.opsForValue().set(account.getEmail(), accountSession);
-		boolean b = redisTemplateJson.expire(account.getEmail(), 60, TimeUnit.SECONDS);
+		redisTemplateJson.opsForValue().set(account.getId(), accountSession);
+		boolean b = redisTemplateJson.expire(account.getId(), 60, TimeUnit.SECONDS);
 		return b;
 	}
 
@@ -356,5 +356,13 @@ public class AccountInternalController {
 			cr = new CommonReturn(RetCode.EXCEPTION, e.getMessage());
 		}
 		return cr;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/heartBeat", params = {
+			"_uid" })
+	public String heartBreak(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "_uid") String _uid) {
+		redisTemplateJson.expire(_uid, 60, TimeUnit.SECONDS);
+		return UNIQUE_PATH;
 	}
 }
