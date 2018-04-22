@@ -39,7 +39,7 @@
 	</bean>
 
 	<bean id="thirdVelocityEmailService"
-		class="org.activiti.myExplorer.service.ThirdVelocityEmailService">
+		class="org.activiti.myExplorer.commonservice.ThirdVelocityEmailService">
 		<property name="systemEmail" value="${email.username}" />
 	</bean>
 

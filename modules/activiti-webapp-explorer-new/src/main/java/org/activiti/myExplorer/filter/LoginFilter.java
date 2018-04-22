@@ -11,6 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.activiti.ApplicationContextProvider;
+import org.activiti.account.exception.ActivitiAccountExceptionEnum;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,15 +39,15 @@ public class LoginFilter implements Filter {
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String path = req.getRequestURI().substring(req.getContextPath().length());
-		System.out.println("1::" + path + " " + redisTemplateJson);
 		if (path.startsWith("/s/noSession")) {
-			System.out.println("::");
-			// request.getRequestDispatcher("/#/user/global-error").forward(request,
-			// response);
-			CommonReturn cr = new CommonReturn(RetCode.NOSESSION, "");
-			doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
-		} else {
 			chain.doFilter(request, response);
+		} else {
+			if (redisTemplateJson.opsForValue().get("asd") == null) {
+				CommonReturn cr = new CommonReturn(RetCode.NOSESSION, ActivitiAccountExceptionEnum.NoSession.name());
+				doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
+			} else {
+				chain.doFilter(request, response);
+			}
 		}
 	}
 

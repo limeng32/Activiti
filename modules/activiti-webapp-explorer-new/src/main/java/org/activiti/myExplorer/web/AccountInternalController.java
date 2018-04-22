@@ -108,7 +108,7 @@ public class AccountInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.POST }, value = "/registerCheckEmail", params = { "value" })
+	@RequestMapping(method = { RequestMethod.POST }, value = "/noSession/registerCheckEmail", params = { "value" })
 	public String registerCheckEmail(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "value") String email) {
 		CommonReturn cr = null;
@@ -127,7 +127,8 @@ public class AccountInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.POST }, value = "/accountLogin", params = { "email", "password" })
+	@RequestMapping(method = { RequestMethod.POST }, value = "/noSession/accountLogin", params = { "email",
+			"password" })
 	public String accountLogin(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "email") String email, @RequestParam(value = "password") String password) {
 		CommonReturn cr = null;
@@ -191,7 +192,8 @@ public class AccountInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.POST }, value = "/sendRegisterEmail", params = { "email", "password" })
+	@RequestMapping(method = { RequestMethod.POST }, value = "/noSession/sendRegisterEmail", params = { "email",
+			"password" })
 	public String sendRegisterEmail(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "email") String email, @RequestParam(value = "password") String password) {
 		String ip = request.getRemoteAddr();
@@ -227,8 +229,8 @@ public class AccountInternalController {
 				resetPasswordLog.setTempPassword(DigestUtils.md5Hex(password));
 				resetPasswordLogService.insert(resetPasswordLog);
 
-				String url = activitiConfig.getMicroserviceUrl() + "s/activateAccount/" + resetPasswordLog.getId() + "/"
-						+ randomToken;
+				String url = activitiConfig.getMicroserviceUrl() + "s/noSession/activateAccount/"
+						+ resetPasswordLog.getId() + "/" + randomToken;
 				Map<String, Object> model = new HashMap<String, Object>();
 				model.put("systemName", "工作流系统");
 				model.put("serviceName", "激活账号服务");
@@ -248,7 +250,7 @@ public class AccountInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET }, value = "/activateAccount/{rplId}/{token}")
+	@RequestMapping(method = { RequestMethod.GET }, value = "/noSession/activateAccount/{rplId}/{token}")
 	public String activateAccount(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@PathVariable("rplId") String rplId, @PathVariable("token") String token) {
 		CommonReturn cr = null;
