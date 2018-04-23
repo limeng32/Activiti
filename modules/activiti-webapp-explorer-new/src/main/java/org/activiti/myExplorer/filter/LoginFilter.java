@@ -8,6 +8,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.activiti.ApplicationContextProvider;
@@ -42,7 +43,14 @@ public class LoginFilter implements Filter {
 		if (path.startsWith("/s/noSession")) {
 			chain.doFilter(request, response);
 		} else {
-			String _uid = req.getParameter("_uid");
+			Cookie[] cookies = req.getCookies();
+			String _uid = null;
+			for (Cookie cookie : cookies) {
+				if ("uid".equals(cookie.getName())) {
+					_uid = cookie.getValue();
+					break;
+				}
+			}
 			if (_uid == null || redisTemplateJson.opsForValue().get(_uid) == null) {
 				CommonReturn cr = new CommonReturn(RetCode.NOSESSION, ActivitiAccountExceptionEnum.NoSession.name());
 				doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));

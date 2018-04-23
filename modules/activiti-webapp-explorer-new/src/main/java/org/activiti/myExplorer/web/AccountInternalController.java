@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -365,11 +366,23 @@ public class AccountInternalController {
 		return cr;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/heartBeat", params = { "_uid" })
-	public String heartBreak(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "_uid") String _uid) {
-		redisTemplateJson.expire(_uid, 60, TimeUnit.SECONDS);
-		CommonReturn cr = new CommonReturn(RetCode.SUCCESS, "");
+	@RequestMapping(method = { RequestMethod.POST }, value = "/heartBeat")
+	public String heartBreak(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
+		Cookie[] cookies = request.getCookies();
+		String _uid = null;
+		CommonReturn cr = null;
+		for (Cookie cookie : cookies) {
+			if ("uid".equals(cookie.getName())) {
+				_uid = cookie.getValue();
+				break;
+			}
+		}
+		if (_uid == null) {
+			cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.NoSession.name());
+		} else {
+			redisTemplateJson.expire(_uid, 60, TimeUnit.SECONDS);
+			cr = new CommonReturn(RetCode.SUCCESS, "");
+		}
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
 	}
