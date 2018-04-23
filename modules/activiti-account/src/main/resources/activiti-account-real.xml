@@ -24,7 +24,7 @@
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}&amp;${dbUrl3}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
-		
+
 		<property name="maxActive" value="20"></property>
 		<property name="initialSize" value="1"></property>
 		<property name="maxWait" value="60000"></property>
@@ -33,11 +33,13 @@
 		<property name="minEvictableIdleTimeMillis" value="300000"></property>
 		<property name="validationQuery" value="select 1"></property>
 		<property name="testWhileIdle" value="true"></property>
-		<property name="testOnBorrow" value="false"></property>
+		<property name="testOnBorrow" value="true"></property>
 		<property name="testOnReturn" value="false"></property>
 		<property name="poolPreparedStatements" value="true"></property>
 		<property name="maxOpenPreparedStatements" value="20"></property>
-		<property name="validationQueryTimeout" value="3600" />
+		<property name="validationQueryTimeout" value="1000"></property>
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeoutMillis" value="180000" />
 	</bean>
 	<bean id="smartDataSourceAccount"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource"

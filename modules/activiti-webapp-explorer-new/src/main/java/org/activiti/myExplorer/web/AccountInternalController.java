@@ -154,7 +154,9 @@ public class AccountInternalController {
 					l.setLoginDate(now);
 					try {
 						activitiAccountService.insertLoginlogTransactive(l);
-						cr = new CommonReturn(RetCode.SUCCESS, "");
+						/* 写入session */
+						account.removeAllLoginlog();
+						cr = loginAndSaveSession(account);
 					} catch (ActivitiAccountException e) {
 						cr = new CommonReturn(RetCode.EXCEPTION, e.getMessage());
 					}
@@ -162,13 +164,7 @@ public class AccountInternalController {
 				case 1:
 					/* 写入session */
 					account.removeAllLoginlog();
-					boolean b = saveSession(account);
-					if (b) {
-						cr = new CommonReturn(RetCode.SUCCESS, account.getId());
-					} else {
-						cr = new CommonReturn(RetCode.EXCEPTION,
-								ActivitiAccountExceptionEnum.SessionSaveFail.description());
-					}
+					cr = loginAndSaveSession(account);
 					break;
 				default:
 					cr = new CommonReturn(RetCode.EXCEPTION,
@@ -248,6 +244,17 @@ public class AccountInternalController {
 
 		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
+	}
+
+	private CommonReturn loginAndSaveSession(Account account) {
+		CommonReturn cr;
+		boolean b = saveSession(account);
+		if (b) {
+			cr = new CommonReturn(RetCode.SUCCESS, account.getId());
+		} else {
+			cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.SessionSaveFail.description());
+		}
+		return cr;
 	}
 
 	@RequestMapping(method = { RequestMethod.GET }, value = "/noSession/activateAccount/{rplId}/{token}")
@@ -358,11 +365,12 @@ public class AccountInternalController {
 		return cr;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/heartBeat", params = {
-			"_uid" })
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/heartBeat", params = { "_uid" })
 	public String heartBreak(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "_uid") String _uid) {
 		redisTemplateJson.expire(_uid, 60, TimeUnit.SECONDS);
+		CommonReturn cr = new CommonReturn(RetCode.SUCCESS, "");
+		mm.addAttribute("_content", cr);
 		return UNIQUE_PATH;
 	}
 }
