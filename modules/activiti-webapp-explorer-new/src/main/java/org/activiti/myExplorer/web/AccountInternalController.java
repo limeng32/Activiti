@@ -34,6 +34,8 @@ import org.activiti.myExplorer.config.ActivitiConfig;
 import org.activiti.myExplorer.model.AccountSession;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
+import org.activiti.myExplorer.persist.AccountBucket;
+import org.activiti.myExplorer.service.AccountBucketService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -67,6 +69,9 @@ public class AccountInternalController {
 
 	@Autowired
 	private RoleService roleService;
+
+	@Autowired
+	private AccountBucketService accountBucketService;
 
 	@Autowired
 	private ThirdVelocityEmailService thirdVelocityEmailService;
@@ -384,6 +389,14 @@ public class AccountInternalController {
 			cr = new CommonReturn(RetCode.SUCCESS, "");
 		}
 		mm.addAttribute("_content", cr);
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.GET }, value = "/noSession/test", params = { "id" })
+	public String test(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "id") String id) {
+		AccountBucket accountBucket = accountBucketService.select(id);
+		mm.addAttribute("_content", accountBucket);
 		return UNIQUE_PATH;
 	}
 }
