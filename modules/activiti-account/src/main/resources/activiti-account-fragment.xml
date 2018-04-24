@@ -19,7 +19,7 @@
 		<property name="configLocation" value="classpath:Configuration.xml" />
 		<property name="dataSource" ref="dataSourceAccount" />
 		<property name="mapperLocations" value="classpath*:org/activiti/myExplorer/mapper*/*.xml" />
-		<property name="typeAliasesPackage" value="org.activiti.account" />
+		<property name="typeAliasesPackage" value="org.activiti.account,org.activiti.myExplorer" />
 	</bean>
 
 	<bean id="mapperScannerConfigurerAccount" class="org.mybatis.spring.mapper.MapperScannerConfigurer">

@@ -22,7 +22,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:activiti-explorer-test.xml" })
+@ContextConfiguration({ "classpath:activiti-explorer-test.xml", "classpath:activiti-account-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
@@ -49,7 +49,7 @@ public class UserTest {
 		Assert.assertEquals(10, user.getNotifyCount().intValue());
 
 	}
-	
+
 	@Test
 	@DatabaseSetup(type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/myExplorer/service/userTest/testUser2.xml")
 	@ExpectedDatabase(assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/userTest/testUser2.result.xml")
@@ -59,14 +59,14 @@ public class UserTest {
 		user.setName("n");
 		user.setNotifyCount(10);
 		userService.insert(user);
-		
+
 		User user2 = new User();
 		user2.setName("n2");
 		userService.insert(user2);
-		
+
 		int c = userService.count(new User());
 		Assert.assertEquals(2, c);
-		
+
 		userService.delete(user2);
 	}
 }
