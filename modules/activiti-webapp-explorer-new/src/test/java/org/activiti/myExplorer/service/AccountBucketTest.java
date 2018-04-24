@@ -24,9 +24,8 @@ import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 @ContextConfiguration({ "classpath:activiti-explorer-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
+@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource"})
 public class AccountBucketTest {
-
 
 	@Autowired
 	private AccountBucketService accountBucketService;
