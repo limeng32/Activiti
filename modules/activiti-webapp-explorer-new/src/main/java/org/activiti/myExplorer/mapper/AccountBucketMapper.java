@@ -1,8 +1,8 @@
-package org.activiti.account.mapper;
+package org.activiti.myExplorer.mapper;
 
 import java.util.Collection;
 
-import org.activiti.account.persist.AccountBucket;
+import org.activiti.myExplorer.persist.AccountBucket;
 import org.activiti.myExplorer.pojoHelper.MapperFace;
 
 public interface AccountBucketMapper extends MapperFace<AccountBucket> {

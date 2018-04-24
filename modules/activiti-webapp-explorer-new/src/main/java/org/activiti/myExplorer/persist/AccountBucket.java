@@ -1,8 +1,9 @@
-package org.activiti.account.persist;
+package org.activiti.myExplorer.persist;
 
 import java.io.Serializable;
 
 import org.activiti.account.face.AccountBucketFace;
+import org.activiti.account.persist.Account;
 import org.activiti.myExplorer.pojoHelper.PojoSupport;
 import org.apache.ibatis.type.JdbcType;
 

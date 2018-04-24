@@ -18,9 +18,6 @@ public class ActivitiAccountService {
 	public static final FastDateFormat DATE_HHmmss_FORMAT = FastDateFormat.getInstance("HH:mm:ss");
 
 	@Autowired
-	private AccountBucketService accountBucketService;
-
-	@Autowired
 	private AccountRoleService accountRoleService;
 
 	@Autowired

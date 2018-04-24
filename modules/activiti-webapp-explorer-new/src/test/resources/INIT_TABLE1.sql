@@ -241,3 +241,16 @@ create table PROCESSRETURN (
     OWNER_ID int,
     primary key (ID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+drop table if exists accountBucket;
+create table accountBucket
+(
+   accountBucket_id     varchar(40) not null ,
+   account_id           varchar(40) ,
+   nickname             varchar(20) ,
+   originalPortrait     varchar(300) ,
+   portraitModify       varchar(50) ,
+   tempOriginalPortrait varchar(300) ,
+   uploadedSize         bigint ,
+   primary key (accountBucket_id)
+);

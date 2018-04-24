@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+	<ACCOUNTBUCKET ACCOUNTBUCKET_ID="ab1" NICKNAME="a"
+		UPLOADEDSIZE="100" />
+	<ACCOUNTBUCKET ACCOUNTBUCKET_ID="ab2" NICKNAME="b"
+		UPLOADEDSIZE="200" />
+</dataset>

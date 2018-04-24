@@ -1,10 +1,10 @@
-package org.activiti.account.service;
+package org.activiti.myExplorer.service;
 
 import java.util.Collection;
 
-import org.activiti.account.mapper.AccountBucketMapper;
 import org.activiti.account.persist.Account;
-import org.activiti.account.persist.AccountBucket;
+import org.activiti.myExplorer.mapper.AccountBucketMapper;
+import org.activiti.myExplorer.persist.AccountBucket;
 import org.activiti.myExplorer.pojoHelper.ServiceSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
