@@ -1,5 +1,6 @@
 package org.activiti.myExplorer.service;
 
+import org.activiti.myExplorer.persist.AccountBucket;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +21,7 @@ import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:activiti-account-test.xml", "classpath:activiti-explorer-test.xml" })
+@ContextConfiguration({ "classpath:activiti-explorer-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
 @DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
@@ -40,5 +41,7 @@ public class AccountBucketTest {
 	@ExpectedDatabase(connection = "dataSource", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/myExplorer/service/accountBucketTest/testAccountBucket.result.xml")
 	@DatabaseTearDown(connection = "dataSource", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/accountBucketTest/testAccountBucket.result.xml")
 	public void testAccountBucket() {
+		AccountBucket accountBucket = accountBucketService.select("ab1");
+		Assert.assertEquals("a", accountBucket.getNickname());
 	}
 }

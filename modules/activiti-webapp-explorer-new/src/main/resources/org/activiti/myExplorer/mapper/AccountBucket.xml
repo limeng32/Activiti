@@ -41,8 +41,9 @@
 
 	<resultMap id="result" type="AccountBucket" autoMapping="true">
 		<id property="id" column="accountBucket_id" />
-		<association property="account" javaType="org.activiti.account.persist.Account"
+		<!-- <association property="account"
+			javaType="org.activiti.account.persist.Account"
 			select="org.activiti.account.mapper.AccountMapper.selectForAssociation"
-			column="account_id" />
+			column="account_id" /> -->
 	</resultMap>
 </mapper>
