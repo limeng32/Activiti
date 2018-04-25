@@ -40,6 +40,7 @@
 		<property name="validationQueryTimeout" value="1000"></property>
 		<property name="removeAbandoned" value="true" />
 		<property name="removeAbandonedTimeoutMillis" value="180000" />
+		<property name="keepAlive" value="true" />
 	</bean>
 	<bean id="smartDataSourceAccount"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource"
