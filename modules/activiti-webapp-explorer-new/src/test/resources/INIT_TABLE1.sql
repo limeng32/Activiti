@@ -247,10 +247,12 @@ create table accountBucket
 (
    accountBucket_id     varchar(40) not null ,
    account_id           varchar(40) ,
-   nickname             varchar(20) ,
+   name             	varchar(20) ,
    originalPortrait     varchar(300) ,
    portraitModify       varchar(50) ,
    tempOriginalPortrait varchar(300) ,
    uploadedSize         bigint ,
+   unreadNotifyCount	int	,
+   avatar				varchar(512) ,
    primary key (accountBucket_id)
 );

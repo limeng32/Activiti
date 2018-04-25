@@ -51,7 +51,9 @@ public class AccountBucketTest {
 			@DatabaseTearDown(connection = "dataSourceAccount", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/myExplorer/service/accountBucketTest/testAccountBucket.dataSourceAccount.result.xml") })
 	public void testAccountBucket() {
 		AccountBucket accountBucket = accountBucketService.select("ab1");
-		Assert.assertEquals("a", accountBucket.getNickname());
+		Assert.assertEquals("a", accountBucket.getName());
 		Assert.assertEquals("alice", accountBucket.getAccount().getName());
+		Assert.assertEquals(2, accountBucket.getUnreadNotifyCount().intValue());
+		Assert.assertEquals("asd", accountBucket.getAvatar());
 	}
 }

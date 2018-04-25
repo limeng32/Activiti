@@ -36,6 +36,7 @@ import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.AccountBucket;
 import org.activiti.myExplorer.service.AccountBucketService;
+import org.activiti.myExplorer.util.RequestUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -81,10 +82,17 @@ public class AccountInternalController {
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
-	@RequestMapping(method = { RequestMethod.GET }, value = "/accountAsd")
-	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
-		System.out.println("asdasdasd");
-		mm.addAttribute("_content", "asdsad");
+	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
+	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "value") String email) {
+		String uid = RequestUtil.getCookieValue(request, "uid");
+		if (uid != null && !"".equals(uid)) {
+			AccountSession accountSession = (AccountSession) (redisTemplateJson.opsForValue().get(uid));
+			AccountBucket ab = new AccountBucket();
+			ab.setAccount(accountSession.getAccount());
+			AccountBucket accountBucket = accountBucketService.selectOne(ab);
+			mm.addAttribute("_content", accountBucket);
+		}
 		return UNIQUE_PATH;
 	}
 
@@ -361,9 +369,16 @@ public class AccountInternalController {
 			accountRole.setAccount(account);
 			accountRole.setRole(roles[0]);
 		}
-		/* 新增账号的默认所属单位为“客人” */
 		try {
 			activitiAccountService.insertAccountTransactive(account, accountRole);
+
+			/* 初始化AccountBucket */
+			AccountBucket ab = new AccountBucket();
+			ab.setAccount(account);
+			ab.setName(account.getName());
+			ab.setAvatar("https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png");
+			ab.setUnreadNotifyCount(0);
+			accountBucketService.insert(ab);
 			cr = new CommonReturn(RetCode.SUCCESS, "账号已成功激活");
 		} catch (ActivitiAccountException e) {
 			cr = new CommonReturn(RetCode.EXCEPTION, e.getMessage());

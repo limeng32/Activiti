@@ -8,13 +8,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.activiti.ApplicationContextProvider;
 import org.activiti.account.exception.ActivitiAccountExceptionEnum;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.RetCode;
+import org.activiti.myExplorer.util.RequestUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.alibaba.fastjson.JSON;
@@ -43,14 +43,7 @@ public class LoginFilter implements Filter {
 		if (path.startsWith("/s/noSession")) {
 			chain.doFilter(request, response);
 		} else {
-			Cookie[] cookies = req.getCookies();
-			String _uid = null;
-			for (Cookie cookie : cookies) {
-				if ("uid".equals(cookie.getName())) {
-					_uid = cookie.getValue();
-					break;
-				}
-			}
+			String _uid = RequestUtil.getCookieValue(req, "uid");
 			if (_uid == null || redisTemplateJson.opsForValue().get(_uid) == null) {
 				CommonReturn cr = new CommonReturn(RetCode.NOSESSION, ActivitiAccountExceptionEnum.NoSession.name());
 				doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));

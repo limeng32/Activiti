@@ -26,8 +26,8 @@ public class AccountBucket extends PojoSupport<AccountBucket> implements Seriali
 	 * 用户昵称
 	 * 
 	 */
-	@FieldMapperAnnotation(dbFieldName = "nickname", jdbcType = JdbcType.VARCHAR)
-	private java.lang.String nickname;
+	@FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR)
+	private java.lang.String name;
 
 	/**
 	 * 头像原始图片地址
@@ -57,7 +57,21 @@ public class AccountBucket extends PojoSupport<AccountBucket> implements Seriali
 	@FieldMapperAnnotation(dbFieldName = "uploadedSize", jdbcType = JdbcType.BIGINT)
 	private Long uploadedSize;
 
-	@FieldMapperAnnotation(dbFieldName = "account_id", jdbcType = JdbcType.VARCHAR, dbAssociationUniqueKey = "account_id")
+	/**
+	 * 未读信息条数
+	 * 
+	 */
+	@FieldMapperAnnotation(dbFieldName = "unreadNotifyCount", jdbcType = JdbcType.INTEGER)
+	private Integer unreadNotifyCount;
+
+	/**
+	 * 头像地址（内网专用）
+	 * 
+	 */
+	@FieldMapperAnnotation(dbFieldName = "avatar", jdbcType = JdbcType.VARCHAR)
+	private String avatar;
+
+	@FieldMapperAnnotation(dbFieldName = "account_id", jdbcType = JdbcType.VARCHAR, dbCrossedAssociationUniqueKey = "account_id")
 	private Account account;
 
 	public String getId() {
@@ -68,12 +82,12 @@ public class AccountBucket extends PojoSupport<AccountBucket> implements Seriali
 		this.id = id;
 	}
 
-	public java.lang.String getNickname() {
-		return nickname;
+	public java.lang.String getName() {
+		return name;
 	}
 
-	public void setNickname(java.lang.String nickname) {
-		this.nickname = nickname;
+	public void setName(java.lang.String name) {
+		this.name = name;
 	}
 
 	public java.lang.String getOriginalPortrait() {
@@ -106,6 +120,22 @@ public class AccountBucket extends PojoSupport<AccountBucket> implements Seriali
 
 	public void setUploadedSize(Long uploadedSize) {
 		this.uploadedSize = uploadedSize;
+	}
+
+	public Integer getUnreadNotifyCount() {
+		return unreadNotifyCount;
+	}
+
+	public void setUnreadNotifyCount(Integer unreadNotifyCount) {
+		this.unreadNotifyCount = unreadNotifyCount;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public Account getAccount() {

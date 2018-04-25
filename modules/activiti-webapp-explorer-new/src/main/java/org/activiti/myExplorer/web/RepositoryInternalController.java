@@ -83,13 +83,6 @@ public class RepositoryInternalController {
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
-	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
-		User user = userService.select(1);
-		mm.addAttribute("_content", user);
-		return UNIQUE_PATH;
-	}
-
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list")
 	public String fakeList(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count) {
