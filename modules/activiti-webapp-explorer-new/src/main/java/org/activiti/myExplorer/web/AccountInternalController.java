@@ -83,8 +83,7 @@ public class AccountInternalController {
 	public static final String UNIQUE_PATH = "__unique_path";
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
-	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
-			@RequestParam(value = "value") String email) {
+	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
 		String uid = RequestUtil.getCookieValue(request, "uid");
 		if (uid != null && !"".equals(uid)) {
 			AccountSession accountSession = (AccountSession) (redisTemplateJson.opsForValue().get(uid));

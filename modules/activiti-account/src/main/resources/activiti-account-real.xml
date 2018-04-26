@@ -42,8 +42,7 @@
 		<property name="removeAbandonedTimeoutMillis" value="180000" />
 		<property name="keepAlive" value="true" />
 	</bean>
-	<bean id="smartDataSourceAccount"
-		class="org.springframework.jdbc.datasource.SingleConnectionDataSource"
+	<bean id="smartDataSourceAccount" class="org.activiti.MySmartDataSource"
 		init-method="initConnection" destroy-method="closeConnection">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
