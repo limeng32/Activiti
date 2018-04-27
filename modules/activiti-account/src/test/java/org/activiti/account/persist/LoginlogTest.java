@@ -26,7 +26,7 @@ import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 @ContextConfiguration({ "classpath:activiti-account-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSourceAccount" })
+@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
 public class LoginlogTest {
 
 	@Autowired
@@ -42,14 +42,14 @@ public class LoginlogTest {
 	}
 
 	@Test
-	@DatabaseSetup(connection = "dataSourceAccount", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/loginlogTest/testLoginlog.xml")
-	@ExpectedDatabase(connection = "dataSourceAccount", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/loginlogTest/testLoginlog.result.xml")
-	@DatabaseTearDown(connection = "dataSourceAccount", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/loginlogTest/testLoginlog.result.xml")
+	@DatabaseSetup(connection = "dataSource", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/loginlogTest/testLoginlog.xml")
+	@ExpectedDatabase(connection = "dataSource", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/loginlogTest/testLoginlog.result.xml")
+	@DatabaseTearDown(connection = "dataSource", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/loginlogTest/testLoginlog.result.xml")
 	public void testLoginlog() {
 		Loginlog loginlog = loginlogService.select("l1");
 		Assert.assertEquals("aaa", loginlog.getLoginIP());
 		Assert.assertEquals("alice", loginlog.getAccount().getName());
-		
+
 		Loginlog loginlog2 = loginlogService.select("l2");
 		loginlog2.setLoginIP("ccc");
 		loginlog2.setAccount(loginlog.getAccount());

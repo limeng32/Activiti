@@ -19,7 +19,7 @@ import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 @ContextConfiguration({ "classpath:activiti-account-test.xml", "classpath:activiti-account-redis.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSourceAccount" })
+@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
 public class RedisTest {
 
 	@Autowired

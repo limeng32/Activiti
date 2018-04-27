@@ -42,14 +42,14 @@
 		<property name="removeAbandonedTimeoutMillis" value="180000" />
 		<property name="keepAlive" value="true" />
 	</bean>
-	<bean id="smartDataSource" class="org.activiti.MySmartDataSource"
+	<!-- <bean id="smartDataSource" class="org.activiti.MySmartDataSource"
 		init-method="initConnection" destroy-method="closeConnection">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
 		<property name="suppressClose" value="true" />
-	</bean>
+	</bean> -->
 
 	<bean id="demoDataConfiguration" class="org.activiti.explorer.conf.DemoDataConfiguration">
 		<property name="createDemoUsers" value="false" />

@@ -29,7 +29,7 @@ import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 @ContextConfiguration({ "classpath:activiti-account-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSourceAccount" })
+@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
 public class AccountRoleTest {
 
 	@Autowired
@@ -51,9 +51,9 @@ public class AccountRoleTest {
 	}
 
 	@Test
-	@DatabaseSetup(connection = "dataSourceAccount", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.xml")
-	@ExpectedDatabase(connection = "dataSourceAccount", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.result.xml")
-	@DatabaseTearDown(connection = "dataSourceAccount", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.result.xml")
+	@DatabaseSetup(connection = "dataSource", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.xml")
+	@ExpectedDatabase(connection = "dataSource", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.result.xml")
+	@DatabaseTearDown(connection = "dataSource", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/accountRoleTest/testAccountRole.result.xml")
 	public void testAccountRole() {
 		AccountRole accountRole = accountRoleService.select("ar1");
 		Assert.assertEquals("alice", accountRole.getAccount().getName());

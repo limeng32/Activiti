@@ -17,7 +17,7 @@
 
 	<bean id="sqlSessionFactoryAccount" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
-		<property name="dataSource" ref="dataSourceAccount" />
+		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" value="classpath*:org/activiti/myExplorer/mapper*/*.xml" />
 		<property name="typeAliasesPackage" value="org.activiti.account,org.activiti.myExplorer" />
 	</bean>
@@ -31,6 +31,6 @@
 
 	<bean id="txManagerAccount"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSourceAccount"></property>
+		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 </beans>

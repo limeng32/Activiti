@@ -71,7 +71,7 @@ public class AccountBucket extends PojoSupport<AccountBucket> implements Seriali
 	@FieldMapperAnnotation(dbFieldName = "avatar", jdbcType = JdbcType.VARCHAR)
 	private String avatar;
 
-	@FieldMapperAnnotation(dbFieldName = "account_id", jdbcType = JdbcType.VARCHAR, dbCrossedAssociationUniqueKey = "account_id")
+	@FieldMapperAnnotation(dbFieldName = "account_id", jdbcType = JdbcType.VARCHAR, dbAssociationUniqueKey = "account_id")
 	private Account account;
 
 	public String getId() {

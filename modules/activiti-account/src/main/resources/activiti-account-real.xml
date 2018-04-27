@@ -18,7 +18,7 @@
 
 	<import resource="classpath:activiti-account-fragment.xml" />
 
-	<bean id="dataSourceAccount" class="com.alibaba.druid.pool.DruidDataSource"
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}&amp;${dbUrl3}"></property>
@@ -42,12 +42,12 @@
 		<property name="removeAbandonedTimeoutMillis" value="180000" />
 		<property name="keepAlive" value="true" />
 	</bean>
-	<bean id="smartDataSourceAccount" class="org.activiti.MySmartDataSource"
+	<!-- <bean id="smartDataSourceAccount" class="org.activiti.MySmartDataSource"
 		init-method="initConnection" destroy-method="closeConnection">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="${dbUrl}&amp;${dbUrl2}"></property>
 		<property name="username" value="${dbUser}"></property>
 		<property name="password" value="${dbPassword}"></property>
 		<property name="suppressClose" value="true" />
-	</bean>
+	</bean> -->
 </beans>

@@ -29,7 +29,7 @@ import com.github.springtestdbunit.dataset.FlatXmlDataSetLoader;
 @ContextConfiguration({ "classpath:activiti-account-test.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
 		DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSourceAccount" })
+@DbUnitConfiguration(dataSetLoader = FlatXmlDataSetLoader.class, databaseConnection = { "dataSource" })
 public class AccountTest {
 
 	@Autowired
@@ -45,9 +45,9 @@ public class AccountTest {
 	}
 
 	@Test
-	@DatabaseSetup(connection = "dataSourceAccount", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/accountTest/testAccount.xml")
-	@ExpectedDatabase(connection = "dataSourceAccount", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/accountTest/testAccount.result.xml")
-	@DatabaseTearDown(connection = "dataSourceAccount", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/accountTest/testAccount.result.xml")
+	@DatabaseSetup(connection = "dataSource", type = DatabaseOperation.CLEAN_INSERT, value = "/org/activiti/account/service/accountTest/testAccount.xml")
+	@ExpectedDatabase(connection = "dataSource", assertionMode = DatabaseAssertionMode.NON_STRICT_UNORDERED, value = "/org/activiti/account/service/accountTest/testAccount.result.xml")
+	@DatabaseTearDown(connection = "dataSource", type = DatabaseOperation.DELETE_ALL, value = "/org/activiti/account/service/accountTest/testAccount.result.xml")
 	public void testAccount() {
 		Assert.assertNotNull(accountService);
 		Account a = new Account();

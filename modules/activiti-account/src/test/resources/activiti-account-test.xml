@@ -18,20 +18,20 @@
 
 	<import resource="classpath:activiti-account-fragment.xml" />
 
-	<bean id="dataSourceAccount" class="org.apache.commons.dbcp.BasicDataSource"
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="org.h2.jdbcx.JdbcDataSource" />
 		<property name="url"
-			value="jdbc:h2:mem:activiti_account_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
+			value="jdbc:h2:mem:activiti_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
 		<property name="username" value="sa"></property>
 		<property name="password" value=""></property>
 	</bean>
-	<jdbc:initialize-database data-source="dataSourceAccount"
+	<jdbc:initialize-database data-source="dataSource"
 		ignore-failures="ALL">
 		<jdbc:script location="classpath:/INIT_TABLE.sql"
 			encoding="UTF-8" />
 	</jdbc:initialize-database>
-	<bean id="smartDataSourceAccount"
+	<!-- <bean id="smartDataSourceAccount"
 		class="org.springframework.jdbc.datasource.SingleConnectionDataSource"
 		init-method="initConnection" destroy-method="closeConnection">
 		<property name="driverClassName" value="org.h2.jdbcx.JdbcDataSource" />
@@ -39,5 +39,5 @@
 			value="jdbc:h2:mem:activiti_account_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"></property>
 		<property name="username" value="sa"></property>
 		<property name="password" value=""></property>
-	</bean>
+	</bean> -->
 </beans>

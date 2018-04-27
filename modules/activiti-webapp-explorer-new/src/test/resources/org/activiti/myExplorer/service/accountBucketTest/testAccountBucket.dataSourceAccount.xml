@@ -1,5 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<dataset>
-	<account ACCOUNT_ID="1" NAME="alice" EMAIL="a@l.c" OPLOCK="1"
-		STATUS="s" />
-</dataset>
