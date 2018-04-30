@@ -82,7 +82,30 @@ public class AccountInternalController {
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/currentUser")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/changeName")
+	public String changeName(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "newName") String newName) {
+		String uid = RequestUtil.getCookieValue(request, "uid");
+		if (uid != null && !"".equals(uid)) {
+			CommonReturn cr = null;
+			Account ac = new Account();
+			ac.setId(uid);
+			AccountBucket ab = new AccountBucket();
+			ab.setAccount(ac);
+			AccountBucket accountBucket = accountBucketService.selectOne(ab);
+			accountBucket.setName(newName);
+			int i = accountBucketService.update(accountBucket);
+			if (i == 1) {
+				cr = new CommonReturn(accountBucket, RetCode.SUCCESS, "您的昵称已经更新");
+			} else {
+				cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.ChangeNameFail.description());
+			}
+			mm.addAttribute("_content", cr);
+		}
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.POST }, value = "/currentUser")
 	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
 		String uid = RequestUtil.getCookieValue(request, "uid");
 		if (uid != null && !"".equals(uid)) {
@@ -335,10 +358,10 @@ public class AccountInternalController {
 
 	private boolean saveSession(Account account) {
 		Date now = Calendar.getInstance().getTime();
-		Date expirationTime = new Date(now.getTime() + 60000);
+		Date expirationTime = new Date(now.getTime() + 300000);
 		AccountSession accountSession = new AccountSession(account, expirationTime);
 		redisTemplateJson.opsForValue().set(account.getId(), accountSession);
-		boolean b = redisTemplateJson.expire(account.getId(), 60, TimeUnit.SECONDS);
+		boolean b = redisTemplateJson.expire(account.getId(), 300, TimeUnit.SECONDS);
 		return b;
 	}
 
@@ -399,7 +422,7 @@ public class AccountInternalController {
 		if (_uid == null) {
 			cr = new CommonReturn(RetCode.EXCEPTION, ActivitiAccountExceptionEnum.NoSession.name());
 		} else {
-			redisTemplateJson.expire(_uid, 60, TimeUnit.SECONDS);
+			redisTemplateJson.expire(_uid, 300, TimeUnit.SECONDS);
 			cr = new CommonReturn(RetCode.SUCCESS, "");
 		}
 		mm.addAttribute("_content", cr);

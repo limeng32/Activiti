@@ -18,7 +18,8 @@ public enum ActivitiAccountExceptionEnum {
 			"激活账号链接已过期"), ActivateAccountTokenInvalid("激活账号令牌无效"), ActivateAccountUrlUsed(
 			"激活账号链接已被使用"), ANewerActivateAccountUrlWorks("有更新的激活请求已经生效"), ActivatingAccountOrPasswordIsNull(
 			"待激活的账号或密码为null"), ActivateAccountFail("激活账号失败，请重试"), UpdateAccountFail(
-			"更新用户名称失败，请您稍后再试"),ActivateAccountSuccess("账户激活成功"),SessionSaveFail("用户登录信息保存失败"),NoSession("登录信息失效");
+			"更新用户名称失败，请您稍后再试"),ActivateAccountSuccess("账户激活成功"),SessionSaveFail("用户登录信息保存失败"),
+			NoSession("登录信息失效"),ChangeNameFail("更新昵称失败");
 
 	private final String description;
 
