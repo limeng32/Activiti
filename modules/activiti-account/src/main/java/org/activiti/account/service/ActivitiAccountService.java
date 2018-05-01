@@ -48,6 +48,19 @@ public class ActivitiAccountService {
 
 	@Transactional(value = "txManagerAccount", rollbackFor = {
 			ActivitiAccountException.class }, readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
+	/** 修改account时确保email是唯一的 */
+	public void updateAccountTransactive(Account account) throws ActivitiAccountException {
+		accountService.update(account);
+		Account ac = new Account();
+		ac.setEmail(account.getEmail());
+		int c = accountService.count(ac);
+		if (c > 1) {
+			throw new ActivitiAccountException(ActivitiAccountExceptionEnum.ChangeAccountFail.toString());
+		}
+	}
+
+	@Transactional(value = "txManagerAccount", rollbackFor = {
+			ActivitiAccountException.class }, readOnly = false, propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED)
 	public void insertLoginlogTransactive(Loginlog loginlog) throws ActivitiAccountException {
 		loginlogService.insert(loginlog);
 		Account ac = new Account();

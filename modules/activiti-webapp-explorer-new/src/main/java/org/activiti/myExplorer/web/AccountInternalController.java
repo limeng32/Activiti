@@ -82,6 +82,25 @@ public class AccountInternalController {
 
 	public static final String UNIQUE_PATH = "__unique_path";
 
+	@RequestMapping(method = { RequestMethod.POST }, value = "/changePassword")
+	public String changePassword(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "newPassword") String newPassword) {
+		String uid = RequestUtil.getCookieValue(request, "uid");
+		if (uid != null && !"".equals(uid)) {
+			CommonReturn cr = null;
+			Account account = accountService.select(uid);
+			account.setPassword(DigestUtils.md5Hex(newPassword));
+			try {
+				activitiAccountService.updateAccountTransactive(account);
+				cr = new CommonReturn(RetCode.SUCCESS, "密码已更新成功");
+			} catch (ActivitiAccountException e) {
+				cr = new CommonReturn(RetCode.EXCEPTION, e.getMessage());
+			}
+			mm.addAttribute("_content", cr);
+		}
+		return UNIQUE_PATH;
+	}
+
 	@RequestMapping(method = { RequestMethod.POST }, value = "/changeName")
 	public String changeName(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "newName") String newName) {
