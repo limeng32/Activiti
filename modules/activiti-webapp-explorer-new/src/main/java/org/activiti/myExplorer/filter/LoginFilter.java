@@ -46,9 +46,13 @@ public class LoginFilter implements Filter {
 		} else {
 			String _uid = RequestUtil.getCookieValue(req, "uid");
 			if (_uid == null || redisTemplateJson.opsForValue().get(_uid) == null) {
-//				CommonReturn cr = new CommonReturn(RetCode.NOSESSION, ActivitiAccountExceptionEnum.NoSession.name());
-//				doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
-				((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
+				if (path.startsWith("/s/safeNoSession")) {
+					CommonReturn cr = new CommonReturn(RetCode.NOSESSION,
+							ActivitiAccountExceptionEnum.NoSession.name());
+					doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
+				} else {
+					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
+				}
 			} else {
 				chain.doFilter(request, response);
 			}

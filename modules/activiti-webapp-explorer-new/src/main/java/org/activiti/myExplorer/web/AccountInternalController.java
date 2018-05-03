@@ -124,7 +124,7 @@ public class AccountInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.POST }, value = "/currentUser")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/safeNoSession/currentUser")
 	public String currentUser(HttpServletRequest request, HttpServletResponse response, ModelMap mm) {
 		String uid = RequestUtil.getCookieValue(request, "uid");
 		if (uid != null && !"".equals(uid)) {
