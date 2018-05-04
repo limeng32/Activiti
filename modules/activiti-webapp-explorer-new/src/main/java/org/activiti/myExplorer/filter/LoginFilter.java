@@ -9,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.activiti.ApplicationContextProvider;
 import org.activiti.account.exception.ActivitiAccountExceptionEnum;
@@ -46,13 +45,8 @@ public class LoginFilter implements Filter {
 		} else {
 			String _uid = RequestUtil.getCookieValue(req, "uid");
 			if (_uid == null || redisTemplateJson.opsForValue().get(_uid) == null) {
-				if (path.startsWith("/s/safeNoSession")) {
-					CommonReturn cr = new CommonReturn(RetCode.NOSESSION,
-							ActivitiAccountExceptionEnum.NoSession.name());
-					doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
-				} else {
-					((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
-				}
+				CommonReturn cr = new CommonReturn(RetCode.NOSESSION, ActivitiAccountExceptionEnum.NoSession.name());
+				doWriteRespAndFlush(response, JSON.toJSONString(cr, SerializerFeature.WriteEnumUsingToString));
 			} else {
 				chain.doFilter(request, response);
 			}
