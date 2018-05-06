@@ -40,7 +40,6 @@ import org.activiti.myExplorer.model.PageInfo;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.ProcessReturn;
 import org.activiti.myExplorer.service.ProcessReturnService;
-import org.activiti.myExplorer.service.UserService;
 import org.activiti.myExplorer.util.RequestUtil;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
@@ -75,9 +74,6 @@ public class RepositoryInternalController {
 	private ProcessReturnService processReturnService;
 
 	@Autowired
-	private UserService userService;
-
-	@Autowired
 	private RepositoryService repositoryService;
 
 	@Autowired
@@ -109,7 +105,7 @@ public class RepositoryInternalController {
 		return new StringBuffer("%").append(parameter).append("%").toString();
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDesigning")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/listDesigning")
 	public String listDesigning(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize,
 			@RequestParam(value = "name", required = false) String name) {
@@ -148,7 +144,7 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDeployed")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/listDeployed")
 	public String listDeployed(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize,
 			@RequestParam(value = "name", required = false) String name) {
@@ -187,7 +183,7 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/doStart")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/doStart")
 	public String doStart(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "id") String id) {
 		CommonReturn cr = null;
@@ -201,7 +197,7 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/doDeploy")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/doDeploy")
 	public String doDeploy(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "id") String id) {
 		Model model = repositoryService.getModel(id);
@@ -225,7 +221,7 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listShowImg")
+	@RequestMapping(method = { RequestMethod.GET }, value = "/listShowImg")
 	public void listShowImg(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "id") String id) {
 		response.setContentType("image/png");
@@ -248,7 +244,7 @@ public class RepositoryInternalController {
 		}
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/listDevelopedImg")
+	@RequestMapping(method = { RequestMethod.GET }, value = "/listDevelopedImg")
 	public void listDevelopedImg(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "id") String id) {
 		response.setContentType("image/png");
@@ -321,7 +317,43 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/copyProcess")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/newProcess")
+	public String newProcess(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
+			@RequestParam(value = "name") String name, @RequestParam(value = "description") String description) {
+		String uid = RequestUtil.getCookieValue(request, "uid");
+		if (uid != null && !"".equals(uid)) {
+			CommonReturn cr = null;
+			AccountSession accountSession = (AccountSession) (redisTemplateJson.opsForValue().get(uid));
+			Model newModelData = repositoryService.newModel();
+			ObjectNode modelObjectNode = new ObjectMapper().createObjectNode();
+			modelObjectNode.put("name", name);
+			modelObjectNode.put("description", description);
+			newModelData.setMetaInfo(modelObjectNode.toString());
+			newModelData.setName(name);
+			newModelData.setTenantId(accountSession.getAccount().getId());
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			ObjectNode editorNode = objectMapper.createObjectNode();
+			editorNode.put("id", "canvas");
+			editorNode.put("resourceId", "canvas");
+			ObjectNode stencilSetNode = objectMapper.createObjectNode();
+			stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
+			editorNode.put("stencilset", stencilSetNode);
+			modelObjectNode.put("revision", 1);
+
+			repositoryService.saveModel(newModelData);
+			try {
+				repositoryService.addModelEditorSource(newModelData.getId(), editorNode.toString().getBytes("utf-8"));
+				cr = new CommonReturn(newModelData.getId(), RetCode.SUCCESS, " 模型创建完成，名称为 " + name);
+			} catch (UnsupportedEncodingException e) {
+				cr = new CommonReturn(RetCode.EXCEPTION, "模型创建时发生异常：" + e.getMessage());
+			}
+			mm.addAttribute("_content", cr);
+		}
+		return UNIQUE_PATH;
+	}
+
+	@RequestMapping(method = { RequestMethod.POST }, value = "/copyProcess")
 	public String copyProcess(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "id") String id, @RequestParam(value = "name") String name,
 			@RequestParam(value = "description") String description) {
@@ -336,6 +368,7 @@ public class RepositoryInternalController {
 			modelObjectNode.put("description", description);
 			newModelData.setMetaInfo(modelObjectNode.toString());
 			newModelData.setName(name);
+			newModelData.setTenantId(model.getTenantId());
 			repositoryService.saveModel(newModelData);
 
 			repositoryService.addModelEditorSource(newModelData.getId(),
@@ -348,7 +381,7 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/deleteModel")
+	@RequestMapping(method = { RequestMethod.POST }, value = "/deleteModel")
 	public String deleteModel(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "id") String id) {
 		CommonReturn cr = null;
@@ -367,7 +400,7 @@ public class RepositoryInternalController {
 		return UNIQUE_PATH;
 	}
 
-	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/exportModel")
+	@RequestMapping(method = { RequestMethod.GET }, value = "/exportModel")
 	public void exportModel(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "id") String id) throws IOException, UnsupportedEncodingException {
 		byte[] bpmnBytes = null;
