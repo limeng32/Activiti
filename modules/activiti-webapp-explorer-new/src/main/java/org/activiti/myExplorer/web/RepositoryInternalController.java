@@ -34,18 +34,20 @@ import org.activiti.explorer.ui.process.simple.editor.SimpleTableEditorConstants
 import org.activiti.explorer.util.XmlUtil;
 import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.activiti.myExplorer.condition.ProcessReturnCondition;
+import org.activiti.myExplorer.model.AccountSession;
 import org.activiti.myExplorer.model.CommonReturn;
 import org.activiti.myExplorer.model.PageInfo;
 import org.activiti.myExplorer.model.RetCode;
 import org.activiti.myExplorer.persist.ProcessReturn;
-import org.activiti.myExplorer.persist.User;
 import org.activiti.myExplorer.service.ProcessReturnService;
 import org.activiti.myExplorer.service.UserService;
+import org.activiti.myExplorer.util.RequestUtil;
 import org.activiti.workflow.simple.converter.WorkflowDefinitionConversion;
 import org.activiti.workflow.simple.definition.WorkflowDefinition;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,6 +83,9 @@ public class RepositoryInternalController {
 	@Autowired
 	private RuntimeService runtimeService;
 
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplateJson;
+
 	public static final String UNIQUE_PATH = "__unique_path";
 
 	@RequestMapping(method = { RequestMethod.GET, RequestMethod.POST }, value = "/fake_list")
@@ -108,30 +113,38 @@ public class RepositoryInternalController {
 	public String listDesigning(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize,
 			@RequestParam(value = "name", required = false) String name) {
-		count = count > 0 ? count - 1 : count;
-		pageSize = pageSize == 0 ? 5 : pageSize;
-		int first = count * pageSize;
-		Collection<Model> l = null;
-		int c = 0;
-		if (name == null || "".equals(name)) {
-			l = repositoryService.createModelQuery().listPage(first, pageSize);
-			c = (int) (repositoryService.createModelQuery().count());
-		} else {
-			name = handleLikeValue(name);
-			l = repositoryService.createModelQuery().modelNameLike(name).listPage(first, pageSize);
-			c = (int) (repositoryService.createModelQuery().modelNameLike(name).count());
-		}
-		for (Model e : l) {
-			Account account = accountService.select(e.getTenantId());
-			if (account != null) {
-				accountRoleService.loadAccount(account, new AccountRole());
+		String uid = RequestUtil.getCookieValue(request, "uid");
+		if (uid != null && !"".equals(uid)) {
+			AccountSession accountSession = (AccountSession) (redisTemplateJson.opsForValue().get(uid));
+			count = count > 0 ? count - 1 : count;
+			pageSize = pageSize == 0 ? 5 : pageSize;
+			int first = count * pageSize;
+			Collection<Model> l = null;
+			int c = 0;
+			if (name == null || "".equals(name)) {
+				l = repositoryService.createModelQuery().modelTenantId(accountSession.getAccount().getId())
+						.listPage(first, pageSize);
+				c = (int) (repositoryService.createModelQuery().modelTenantId(accountSession.getAccount().getId())
+						.count());
+			} else {
+				name = handleLikeValue(name);
+				l = repositoryService.createModelQuery().modelTenantId(accountSession.getAccount().getId())
+						.modelNameLike(name).listPage(first, pageSize);
+				c = (int) (repositoryService.createModelQuery().modelTenantId(accountSession.getAccount().getId())
+						.modelNameLike(name).count());
 			}
-			e.setTenant(account);
+			for (Model e : l) {
+				Account account = accountService.select(e.getTenantId());
+				if (account != null) {
+					accountRoleService.loadAccount(account, new AccountRole());
+				}
+				e.setTenant(account);
+			}
+			int maxPageNum = c / pageSize;
+			int pageNo = count + 1;
+			PageInfo<Model> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
+			mm.addAttribute("_content", pi);
 		}
-		int maxPageNum = c / pageSize;
-		int pageNo = count + 1;
-		PageInfo<Model> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
-		mm.addAttribute("_content", pi);
 		return UNIQUE_PATH;
 	}
 
@@ -139,30 +152,38 @@ public class RepositoryInternalController {
 	public String listDeployed(HttpServletRequest request, HttpServletResponse response, ModelMap mm,
 			@RequestParam(value = "count") int count, @RequestParam(value = "pageSize") int pageSize,
 			@RequestParam(value = "name", required = false) String name) {
-		count = count > 0 ? count - 1 : count;
-		pageSize = pageSize == 0 ? 5 : pageSize;
-		int first = count * pageSize;
-		Collection<ProcessDefinition> l = null;
-		int c = 0;
-		if (name == null || "".equals(name)) {
-			l = repositoryService.createProcessDefinitionQuery().latestVersion().listPage(first, pageSize);
-			c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion().count());
-		} else {
-			name = handleLikeValue(name);
-			l = repositoryService.createProcessDefinitionQuery().processDefinitionKeyLike(name).latestVersion()
-					.listPage(first, pageSize);
-			c = (int) (repositoryService.createProcessDefinitionQuery().processDefinitionKeyLike(name).latestVersion()
-					.count());
+		String uid = RequestUtil.getCookieValue(request, "uid");
+		if (uid != null && !"".equals(uid)) {
+			AccountSession accountSession = (AccountSession) (redisTemplateJson.opsForValue().get(uid));
+			count = count > 0 ? count - 1 : count;
+			pageSize = pageSize == 0 ? 5 : pageSize;
+			int first = count * pageSize;
+			Collection<ProcessDefinition> l = null;
+			int c = 0;
+			if (name == null || "".equals(name)) {
+				l = repositoryService.createProcessDefinitionQuery().latestVersion()
+						.processDefinitionTenantId(accountSession.getAccount().getId()).listPage(first, pageSize);
+				c = (int) (repositoryService.createProcessDefinitionQuery().latestVersion()
+						.processDefinitionTenantId(accountSession.getAccount().getId()).count());
+			} else {
+				name = handleLikeValue(name);
+				l = repositoryService.createProcessDefinitionQuery()
+						.processDefinitionTenantId(accountSession.getAccount().getId()).processDefinitionKeyLike(name)
+						.latestVersion().listPage(first, pageSize);
+				c = (int) (repositoryService.createProcessDefinitionQuery()
+						.processDefinitionTenantId(accountSession.getAccount().getId()).processDefinitionKeyLike(name)
+						.latestVersion().count());
+			}
+			for (ProcessDefinition p : l) {
+				Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(p.getDeploymentId())
+						.singleResult();
+				p.setDeployment(deployment);
+			}
+			int maxPageNum = c / pageSize;
+			int pageNo = count + 1;
+			PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
+			mm.addAttribute("_content", pi);
 		}
-		for (ProcessDefinition p : l) {
-			Deployment deployment = repositoryService.createDeploymentQuery().deploymentId(p.getDeploymentId())
-					.singleResult();
-			p.setDeployment(deployment);
-		}
-		int maxPageNum = c / pageSize;
-		int pageNo = count + 1;
-		PageInfo<ProcessDefinition> pi = new PageInfo<>(l, pageNo, maxPageNum, c, pageSize);
-		mm.addAttribute("_content", pi);
 		return UNIQUE_PATH;
 	}
 
@@ -194,8 +215,8 @@ public class RepositoryInternalController {
 			byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnMode);
 
 			String processName = model.getName() + ".bpmn20.xml";
-			repositoryService.createDeployment().name(model.getName()).addString(processName, new String(bpmnBytes))
-					.deploy();
+			repositoryService.createDeployment().name(model.getName()).tenantId(model.getTenantId())
+					.addString(processName, new String(bpmnBytes)).deploy();
 			cr = new CommonReturn(RetCode.SUCCESS, "流程模型 " + model.getName() + " 已经部署");
 		} catch (Exception e) {
 			cr = new CommonReturn(RetCode.EXCEPTION, "ID 为 " + id + " 的流程模型部署时发生异常：" + e.getMessage());
